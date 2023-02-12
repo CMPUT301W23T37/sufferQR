@@ -1,17 +1,17 @@
-# User
+#  PlayerProfile
 
 ## PlayerProfileVaildate
 
 | Responsibilities                     | Collaborators             |
 | :----------------------------------- | :------------------------ |
-| Options to create a new user profile | PlayerProfileDBController |
+| Options to validate if user first time using the app | PlayerProfileDBController |
 | Connect with cloud db for verify     |                           |
 
 ## PlayerProfileRegister
 
 | Responsibilities                                    | Collaborators             |
 | :-------------------------------------------------- | :------------------------ |
-| Record user name/password and store the information | PlayerProfileDBController |
+| Record the device_id for future reconization        | PlayerProfileDBController |
 | Generate qr code profile for new user               |                           |
 | Ability to remember the users device                |                           |
 
@@ -19,7 +19,7 @@
 
 | Responsibilities                        | Collaborators             |
 | :-------------------------------------- | :------------------------ |
-| Allow user to modify user name/password | PlayerProfileDBController |
+| Allow user to modify their profile      | PlayerProfileDBController |
 | Delete account                          |                           |
 
 ## PlayerProfileRemove
@@ -36,25 +36,26 @@
 
 ## PlayerProfileLeaderBoard
 
-| Responsibilities      | Collaborators             |
-| :-------------------- | :------------------------ |
-| Show top score boards | PlayerProfileDBController |
+| Responsibilities        | Collaborators             |
+| :--------------------   | :------------------------ |
+| Show top score boards   | PlayerProfileDBController |
+| allow user choose region| |
 
 ## Logoned mainActivity
 
 | Responsibilities                                  | Collaborators      |
 | :------------------------------------------------ | :----------------- |
-| Allow user to add new qr codes                    | UserDBconnect      |
+| Allow user to add new qr codes                    | PlayerProfileDBconnect      |
 | Allow user access their QRrecord                  | GameQrAddActivity  |
 | Go to see  all scanned information                | GameQrCodeActivity |
 | See highest score/last score/total score directly | GameQRcode         |
-| Allow user go to  scanned location map            | GameQRcode         |
+| Allow user go to scanned location map             | MapActivity        |
 
 ## PlayerProfileDBController
 
 | Responsibilities            | Collaborators |
 | :-------------------------- | :------------ |
-| Store new user information  | UserDBconnect |
+| Store new user information  | PlayerProfileDBconnect |
 | Update modified information | GameQRcode    |
 | Delete  user information    |               |
 
@@ -62,7 +63,7 @@
 
 | Responsibilities                             | Collaborators |
 | :------------------------------------------- | :------------ |
-| Store new user information                   | UserDBconnect |
+| Store new user information                   |  PlayerProfileDBconnect |
 | Update modified information                  | GameQRcode    |
 | Delete  user information                     |               |
 | Saving all the account holding information   |               |
@@ -151,13 +152,26 @@
 |Store the data divided by region(could be split continent,  country,  attitude etc.)|QrRecordDBconnect|
 
 
-# NearbyQrDBConnect
+## NearbyQrDBConnect
 | Responsibilities                            | Collaborators   |
 | :------------------------------------------ | :-------------- |
 |Connect to NearbyQR record Firestore database|NearybyQrRecordDB|
 
 
 # adding QR
+
+## QRcode scanner
+| Responsibilities                            | Collaborators   |
+| :------------------------------------------ | :-------------- |
+| record the location|QRcodescore| 
+| scam the QR code||
+| ask if user their privercy perferences||
+
+##  Qrcoscore
+| Responsibilities                            | Collaborators   |
+| :------------------------------------------ | :-------------- |
+| Calculates the score of a QR code when given | QrRecordDB|
+|update users ranking| PlayerProfile|
 
 
 
