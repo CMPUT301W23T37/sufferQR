@@ -1,5 +1,3 @@
-# Object-Oriented-Analysis-(CRC-cards)
-
 #  PlayerProfile
 
 ## PlayerProfileVaildate
@@ -50,7 +48,7 @@
 | Allow user to add new qr codes                    | PlayerProfileDBconnect      |
 | Allow user access their QRrecord                  | GameQrAddActivity  |
 | Go to see  all scanned information                | GameQrCodeActivity |
-| See highest score/last score/total score directly | GameQRcode         |
+| See highest score/lowest score/total score directly | GameQRcode         |
 | Allow user go to scanned location map             | MapActivity        |
 
 ## PlayerProfileDBController
@@ -96,18 +94,24 @@
 |Showing lowing score|Logoned main activity|
 |Showing total score||
 
+## GameQRSum
+| Responsibilities                            | Collaborators   |
+| :------------------------------------------ | :-------------- |
+|shows the sum of all QR code|GameQRRecordStorage|
+||PlayerProfile|
 
-## GameQrAddActivity
+
+## GameQRAddActivity
 | Responsibilities                            | Collaborators   |
 | :------------------------------------------ | :-------------- |
 | Adding QR record into the DB|GameQrRecordStorageController|
 
-## GameQrChangeActivity
+## GameQRChangeActivity
 | Responsibilities                            | Collaborators   |
 | :------------------------------------------ | :-------------- |
 | Give users can update if they want to remove their information.|GameQrRecordStorageController|
 
-## GameQrRecordStorageController
+## GameQRRecordStorageController
 | Responsibilities                            | Collaborators   |
 | :------------------------------------------ | :-------------- |
 |Keep access record locally(geolocation, picture,etc)|NearbyQRController|
@@ -127,6 +131,24 @@
 | Responsibilities                            | Collaborators   |
 | :------------------------------------------ | :-------------- |
 |Connect to QR record Firestore database | QrRecordDB|
+
+## GameQRScanner
+| Responsibilities                            | Collaborators   |
+| :------------------------------------------ | :-------------- |
+|Record geolocation|GameQrRecordStorage|
+|Scan QR code for said location||
+
+## GameQrProcessing
+| Responsibilities                            | Collaborators   |
+| :------------------------------------------ | :-------------- |
+|Validate the QR code and if valid would be stored in the database|  QrRecordDBconnect|
+|If invalid it would return a error message||
+
+## GameQrDrawing
+| Responsibilities                            | Collaborators   |
+| :------------------------------------------ | :-------------- |
+|Using dictionaries,draws the Qr monsters| QrRecordDBconnect|
+|Calculates the score of a QR code when given|QrRecordDB|
 
 
 # NearbyQR
@@ -160,20 +182,6 @@
 |Connect to NearbyQR record Firestore database|NearybyQrRecordDB|
 
 
-# adding QR
-
-## QRcode scanner
-| Responsibilities                            | Collaborators   |
-| :------------------------------------------ | :-------------- |
-| record the location|QRcodescore| 
-| scam the QR code||
-| ask if user their privercy perferences||
-
-##  Qrcoscore
-| Responsibilities                            | Collaborators   |
-| :------------------------------------------ | :-------------- |
-| Calculates the score of a QR code when given | QrRecordDB|
-|update users ranking| PlayerProfile|
 
 
 
