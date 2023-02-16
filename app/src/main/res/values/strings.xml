@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">sufferQR</string>
+    <string name="nav_open">NavOpen</string>
+    <string name="nav_close">NavClose</string>
 </resources>
