@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "11007745679",
-    "project_id": "sufferqr",
-    "storage_bucket": "sufferqr.appspot.com"
+    "project_number": "125511663244",
+    "project_id": "sufferqr-65324",
+    "storage_bucket": "sufferqr-65324.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:11007745679:android:41a604d94b9df37a421afa",
+        "mobilesdk_app_id": "1:125511663244:android:b1ee244b7e4a58051c85a9",
         "android_client_info": {
           "package_name": "com.example.sufferqr"
         }
       },
       "oauth_client": [
         {
-          "client_id": "11007745679-9j3cm4k6mn64rprol2v7tk0b6rfjkk0b.apps.googleusercontent.com",
+          "client_id": "125511663244-g100p9nugnm8atvjm886a7q7dp51m96r.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyC01ujozqCFoxX28TKM1ZDrTVnDQTWH0Ec"
+          "current_key": "AIzaSyA6zMsmH3FWpf1JDI2oskhVtoUE0M5xMCg"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "11007745679-9j3cm4k6mn64rprol2v7tk0b6rfjkk0b.apps.googleusercontent.com",
+              "client_id": "125511663244-g100p9nugnm8atvjm886a7q7dp51m96r.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
