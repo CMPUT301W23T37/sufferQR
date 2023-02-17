@@ -21,6 +21,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".UserProfile" />
+        <activity android:name=".RegisterPage"/>
+        <activity android:name=".EditProfile"/>
     </application>
 
 </manifest>
