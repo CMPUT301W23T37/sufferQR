@@ -23,36 +23,49 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
-public class CreateUniqueName implements UniqueTemplete {
-    private String UniqueName;
-
+/**
+ * This is a class that connect with database GameQRRecord
+ */
+public class GameQrRecordDB {
     private FirebaseFirestore db;
-    private Boolean Conres=true;
-    private Boolean resultExist=true;
-    private String NewRandomName;
 
-    public CreateUniqueName() {
-        db = FirebaseFirestore.getInstance();
+
+    public GameQrRecordDB(HashMap<String, String> data) {
         //getRandomUniqueString();
         // do not enable unless necessory
         // https://blog.csdn.net/u011435933/article/details/117419082
         //UpdateRandomWord("/data/data/com.example.sufferqr/cache/wordlist.txt",50);
+        String nowname ="";
+        getRandomUniqueString(data,nowname);
 
     }
 
-    public void getRandomUniqueString(CreateUniqueName CUN){
+    public GameQrRecordDB(HashMap<String, String> dat, String Myname){
+        CheckUnique(Myname,false,dat);
+    }
+
+    public GameQrRecordDB(String Path, int amount){
+        try {
+            UpdateRandomWord("/data/data/com.example.sufferqr/cache/wordlist.txt", 50);
+        } catch (IOException e) {
+            System.out.println("io open fail");
+        }
+    }
+
+    /**
+     * This given random name,and send to validate,if conflict,length will extent
+     */
+    public void getRandomUniqueString(HashMap<String, String> data, final String MyName) {
         db = FirebaseFirestore.getInstance();
         final CollectionReference collectionReferenceOrigin = db.collection("RandomName");
 
-        int words = 3;
+        int words = 2;
         String TAG = null;
-        final String[] myname2 = {"dsjhfa"};
         // asynchronously retrieve all documents
-        resultExist=false;
         collectionReferenceOrigin.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()){
+                if (task.isSuccessful()) {
                     ArrayList<String> name = new ArrayList<>();
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         //Log.d(TAG,document.getId() + " => " + document.getData());
@@ -60,24 +73,15 @@ public class CreateUniqueName implements UniqueTemplete {
                         String tt = document.getId();
                         name.add(tt);
                     }
-                    String myname ="";
+                    String MyName2 = MyName;
                     Random rand = new Random();
-                    for (int i=0;i<words;i++){
+                    for (int i = 0; i < words; i++) {
                         int iRand = (int) rand.nextInt(name.size());
-                        myname = myname + name.get(iRand);
+                        MyName2 = MyName2 + name.get(iRand);
                     }
-                    boolean unique=false;
-                    while (!unique){
-                        CheckUnique(myname,CUN);
-                        // waiting for result comeback
-                        while (!resultExist);
-                        if (!unique){
-                            int iRand = rand.nextInt(name.size());
-                            myname = myname + name.get(iRand);
-                        }
-                    }
-                    CUN.onCallback("new",false,myname);
-                }else {
+                    boolean unique = false;
+                    CheckUnique(MyName2,true,data);
+                } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
                 }
 
@@ -85,35 +89,63 @@ public class CreateUniqueName implements UniqueTemplete {
         });
     }
 
-
-
-    public void CheckUnique(String name,CreateUniqueName CUN){
+    /**
+     * check if user id if unique if it is ,push it to db
+     * @return
+     * null
+     */
+    public void CheckUnique(String name,boolean RetryIfFail,HashMap<String, String> data) {
         db = FirebaseFirestore.getInstance();
         final CollectionReference collectionReferenceDest = db.collection("GameQr");
-        final Boolean[] ifUnique = {true};
-        NewRandomName = name;
-        resultExist=false;
+        // check if id is unique in the FameQr datavase
         collectionReferenceDest.document(name).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()){
+                if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
-                    if (document.exists()){
-                        ifUnique[0] = false;
+                    // if result exist
+                    if (document.exists()) {
+                        if (RetryIfFail==true){
+                            getRandomUniqueString(data,name);
+                        }else {
+                            // put a toast message
+                            System.out.println("repeat exist");
+                        }
                     } else {
-                        ifUnique[0] = true;
+                        //  put success staff here.
+                        String TAG=null;
+                        collectionReferenceDest
+                                .document(name).set(data).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        // These are a method which gets executed when the task is succeeded
+                                        Log.d(TAG, "Data has been added successfully!");
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        // These are a method which gets executed if there’s any problem
+                                        Log.d(TAG, "Data could not be added!" + e.toString());
+                                    }
+                                });
                     }
-                    CUN.onCallback("new",false,null);
-                }else {
+                   // when sucess exit
+                } else {
                     System.out.println("fail to connect");
                 }
             }
         });
     }
 
-    public void UpdateRandomWord (String Path,int number) throws IOException {
+    /**
+     * Create a random list on the database on the cloud
+     * @return
+     * null
+     */
+    public void UpdateRandomWord(String Path, int number) throws IOException {
+        db = FirebaseFirestore.getInstance();
         // random words list credit
-        int Skip = (int)30000/number;
+        int Skip = (int) 30000 / number;
         // https://github.com/staceybellerose/RandomWordGenerator/tree/main/wordlists/12dicts/processed
         final CollectionReference collectionReference = db.collection("RandomName");
 
@@ -124,29 +156,29 @@ public class CreateUniqueName implements UniqueTemplete {
         } catch (FileNotFoundException e) {
             System.out.println("file open fail");
         }
-        int count=0;
+        int count = 0;
+        // grab line in file
         String RadomName;
-        while ((RadomName = bufReader.readLine()) != null){
+        while ((RadomName = bufReader.readLine()) != null) {
             count++;
-            if (count % Skip == 0){
+            if (count % Skip == 0) {
+                // read the words into db in every "skip" line
                 HashMap<String, String> data = new HashMap<>();
-                data.put("Name",RadomName);
-                String TAG ="example";
-                final String docname= RadomName;
+                data.put("Name", RadomName);
+                String TAG = "example";
+                final String docname = RadomName;
                 collectionReference
-                        .document(docname)
-                        .set(data)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        .document(docname).set(data).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-// These are a method which gets executed when the task is succeeded
+                                // These are a method which gets executed when the task is succeeded
                                 Log.d(TAG, "Data has been added successfully!");
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-// These are a method which gets executed if there’s any problem
+                                // These are a method which gets executed if there’s any problem
                                 Log.d(TAG, "Data could not be added!" + e.toString());
                             }
                         });
@@ -154,28 +186,4 @@ public class CreateUniqueName implements UniqueTemplete {
         }
     }
 
-
-    @Override
-    public void onCallback(String reType, boolean Conflict, String NewName) {
-        if (reType == "new"){
-            Conres =Conflict;
-            NewRandomName =NewName;
-        } else {
-            Conres =Conflict;
-        }
-        resultExist=true;
-        System.out.println(NewName);
-    }
-
-    public boolean getResultExist(){
-        return resultExist;
-    }
-
-    public boolean getConflict(){
-        return Conres;
-    }
-
-    public String getNewRandomName(){
-        return NewRandomName;
-    }
 }

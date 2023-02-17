@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -13,10 +14,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        try {
-            new CreateUniqueName();
-        } catch (IOException e) {
-            System.out.println(e.toString());
-        }
+
+
+
     }
 }
