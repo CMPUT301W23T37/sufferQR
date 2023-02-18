@@ -13,8 +13,12 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -22,6 +26,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicMarkableReference;
 
 /**
  * This is a class that connect with database GameQRRecord
@@ -44,9 +50,9 @@ public class GameQrRecordDB {
         CheckUnique(Myname,false,dat);
     }
 
-    public GameQrRecordDB(String Path, int amount){
+    public GameQrRecordDB(int amount){
         try {
-            UpdateRandomWord("/data/data/com.example.sufferqr/cache/wordlist.txt", 50);
+            UpdateRandomWord(50);
         } catch (IOException e) {
             System.out.println("io open fail");
         }
@@ -57,7 +63,7 @@ public class GameQrRecordDB {
      */
     public void getRandomUniqueString(HashMap<String, String> data, final String MyName) {
         db = FirebaseFirestore.getInstance();
-        final CollectionReference collectionReferenceOrigin = db.collection("RandomName");
+        final CollectionReference collectionReferenceOrigin = db.collection("newRand");
 
         int words = 2;
         String TAG = null;
@@ -142,48 +148,78 @@ public class GameQrRecordDB {
      * @return
      * null
      */
-    public void UpdateRandomWord(String Path, int number) throws IOException {
+    public void UpdateRandomWord(int number) throws IOException {
         db = FirebaseFirestore.getInstance();
-        // random words list credit
-        int Skip = (int) 30000 / number;
-        // https://github.com/staceybellerose/RandomWordGenerator/tree/main/wordlists/12dicts/processed
-        final CollectionReference collectionReference = db.collection("RandomName");
+        // file location gs://sufferqr-65324.appspot.com/nwordlist.txt //replace this on main repo
+        // Create a storage reference from our app
+        int skip=1000/number;
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+        // referencing about 1000 words documents
+        StorageReference gsReference = storage.getReferenceFromUrl("gs://sufferqr.appspot.com/nwordlist.txt");
 
-        // do not enable this part of code unless necessory
-        BufferedReader bufReader = null;
-        try {
-            bufReader = new BufferedReader(new InputStreamReader(new FileInputStream(Path)));
-        } catch (FileNotFoundException e) {
-            System.out.println("file open fail");
-        }
-        int count = 0;
-        // grab line in file
-        String RadomName;
-        while ((RadomName = bufReader.readLine()) != null) {
-            count++;
-            if (count % Skip == 0) {
-                // read the words into db in every "skip" line
-                HashMap<String, String> data = new HashMap<>();
-                data.put("Name", RadomName);
-                String TAG = "example";
-                final String docname = RadomName;
-                collectionReference
-                        .document(docname).set(data).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                // These are a method which gets executed when the task is succeeded
-                                Log.d(TAG, "Data has been added successfully!");
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                // These are a method which gets executed if there’s any problem
-                                Log.d(TAG, "Data could not be added!" + e.toString());
-                            }
-                        });
+        File localFile = File.createTempFile("rnd", "txt");
+        // fetch file online
+        gsReference.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                // Local temp file has been created
+                // random words list credit
+                // https://github.com/staceybellerose/RandomWordGenerator/tree/main/wordlists/12dicts/processed
+                final CollectionReference collectionReference = db.collection("RandomName");
+                // open file
+                FileInputStream input = null;
+                BufferedReader bufReader = null;
+                //tried open file
+                try {
+                    input = new FileInputStream(localFile);
+                    bufReader = new BufferedReader(new InputStreamReader(input));
+                    // grab context
+                    int count = 0;
+                    // grab line in file
+                    String RadomName;
+                    while ((RadomName = bufReader.readLine()) != null) {
+                        count++;
+                        System.out.println(RadomName);
+                        if (count % 100 == 0) {
+                            // read the words into db in every "skip" line
+                            HashMap<String, String> data = new HashMap<>();
+                            data.put("Name", RadomName);
+                            String TAG = "example";
+                            final String docname = RadomName;
+                            collectionReference
+                                    .document(docname).set(data).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            // These are a method which gets executed when the task is succeeded
+                                            Log.d(TAG, "Data has been added successfully!");
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            // These are a method which gets executed if there’s any problem
+                                            Log.d(TAG, "Data could not be added!" + e.toString());
+                                        }
+                                    });
+                        }
+                    }
+                } catch (FileNotFoundException e){
+                    e.printStackTrace();
+                    System.out.println("file open fail");
+                } catch (IOException e){
+                    System.out.println(e.toString());
+                }
             }
-        }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+            }
+        });
+
+
+
     }
 
 }
