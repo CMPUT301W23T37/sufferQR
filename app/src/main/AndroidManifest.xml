@@ -66,9 +66,7 @@
             android:exported="false"
             android:label="@string/title_activity_qrdetail"
             android:theme="@style/Theme.SufferQR.NoActionBar" />
-        <activity
-            android:name=".CamerScaner"
-            android:exported="false" />
+
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="barcode" />

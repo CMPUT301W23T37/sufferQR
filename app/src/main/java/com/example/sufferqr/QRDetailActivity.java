@@ -42,7 +42,7 @@ public class QRDetailActivity extends AppCompatActivity implements PermissionsLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Mapbox.getInstance(getApplicationContext(), "pk.eyJ1Ijoiem1haTEzMDEiLCJhIjoiY2xlYXRjdmZhMG1lOTNwbzljMmdvbDEyeCJ9.rmhZUTFBNaem1p3LoUmepA");
+        Mapbox.getInstance(getApplicationContext(), getResources().getString(R.string.mapbox_access_token));
         binding = ActivityQrdetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
