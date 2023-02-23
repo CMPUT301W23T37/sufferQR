@@ -15,6 +15,6 @@ public class SearchPlayer extends DrawerBase {
         activitySearchPlayerBinding = ActivitySearchPlayerBinding.inflate(getLayoutInflater());
         super.onCreate(savedInstanceState);
         setContentView(activitySearchPlayerBinding.getRoot());
-        allocateActivityTitle("SearchPlayer");
+        allocateActivityTitle("Search Player");
     }
 }

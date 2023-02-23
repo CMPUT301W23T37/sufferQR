@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".RegisterPage">
-    
+
+<!--    Main text     -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,6 +17,7 @@
         android:textStyle="bold"
         android:textSize="20sp"/>
 
+<!--    Input Layout (vertical)     -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,11 +26,14 @@
         android:layout_marginStart="80dp"
         android:paddingRight="80dp">
 
+<!--        Input container for username (input type -> text)     -->
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Username"
             android:inputType="text" />
+
+<!--        Input container for Email (input type -> Email)-->
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,6 +43,7 @@
 
     </LinearLayout>
 
+<!--    QR id layout (horizontal)     -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -46,6 +52,7 @@
         android:layout_marginEnd="70dp"
         android:orientation="horizontal">
 
+<!--        The box that contains QR id      -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -53,7 +60,9 @@
             android:layout_gravity="center"
             android:paddingRight="30dp">
 
+<!--            QR id text      -->
             <TextView
+                android:id="@+id/qr_id_register"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="asndcoasdnflkasnd"
@@ -66,6 +75,7 @@
 
         </LinearLayout>
 
+<!--        Change QR id button      -->
         <ImageButton
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -77,6 +87,7 @@
 
     </LinearLayout>
 
+<!--    Confirm register button     -->
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

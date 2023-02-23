@@ -13,6 +13,6 @@ public class LeaderBoard extends DrawerBase {
         activityLeaderBoardBinding = ActivityLeaderBoardBinding.inflate(getLayoutInflater());
         super.onCreate(savedInstanceState);
         setContentView(activityLeaderBoardBinding.getRoot());
-        allocateActivityTitle("LeaderBoard");
+        allocateActivityTitle("Leader Board");
     }
 }

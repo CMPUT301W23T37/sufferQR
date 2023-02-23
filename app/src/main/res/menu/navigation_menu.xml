@@ -6,10 +6,7 @@
             android:id="@+id/nav_user"
             android:icon="@drawable/userhead"
             android:title="User Name"
-            app:showAsAction="never"
-            />
-
-    <group>
+            app:showAsAction="never" />
 
         <item
             android:id="@+id/nav_dash"
@@ -40,7 +37,6 @@
             android:id="@+id/nav_search"
             android:title="Search Player"
             android:icon="@drawable/search"/>
-    </group>
 
 
 

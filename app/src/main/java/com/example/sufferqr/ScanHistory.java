@@ -15,6 +15,6 @@ public class ScanHistory extends DrawerBase {
         activityScanHistoryBinding = ActivityScanHistoryBinding.inflate(getLayoutInflater());
         super.onCreate(savedInstanceState);
         setContentView(activityScanHistoryBinding.getRoot());
-        allocateActivityTitle("ScanHistory");
+        allocateActivityTitle("Scan History");
     }
 }

@@ -15,6 +15,6 @@ public class ScanCode extends DrawerBase {
         activityScanCodeBinding = ActivityScanCodeBinding.inflate(getLayoutInflater());
         super.onCreate(savedInstanceState);
         setContentView(activityScanCodeBinding.getRoot());
-        allocateActivityTitle("ScanCode");
+        allocateActivityTitle("Suffer QR");
     }
 }

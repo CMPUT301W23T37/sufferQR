@@ -9,6 +9,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -17,17 +18,32 @@ import android.widget.FrameLayout;
 
 import com.google.android.material.navigation.NavigationView;
 
+/**
+ * This class is used to set up the base of the drawer functionality
+ * it will create the side bar drawer and navigate between activities.
+ * All other class that needs a drawer will extends from this class
+ * @version 1.0
+ */
+
 public class DrawerBase extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     DrawerLayout drawerLayout;
 
+    /**
+     * This method is use to set up modified drawer content view to the activities that extends from this
+     * calls the set content view method.
+     * @param view
+     * view will be the binding of that class
+     */
     @Override
     public void setContentView(View view) {
+//        Set the actual view on top of the frame layout
         drawerLayout = (DrawerLayout) getLayoutInflater().inflate(R.layout.activity_drawer_base, null);
         FrameLayout container = drawerLayout.findViewById(R.id.activityContainer);
         container.addView(view);
         super.setContentView(drawerLayout);
 
+//        creating the tool bar
         Toolbar toolbar = drawerLayout.findViewById(R.id.toolBar);
         setSupportActionBar(toolbar);
 
@@ -39,6 +55,13 @@ public class DrawerBase extends AppCompatActivity implements NavigationView.OnNa
         toggle.syncState();
     }
 
+    /**
+     * This method is used to detect when the item in the navigation view is clicked
+     * and take action correspondingly
+     * @param item The selected item/ the clicked item
+     * @return false
+     */
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         drawerLayout.closeDrawer(GravityCompat.START);
@@ -85,9 +108,13 @@ public class DrawerBase extends AppCompatActivity implements NavigationView.OnNa
         return false;
     }
 
-    protected void allocateActivityTitle(String titles){
+    /**
+     * This method is used to set up all the titles for the class that extends drawerbase class
+     * @param title name of the activity
+     */
+    protected void allocateActivityTitle(String title){
         if(getSupportActionBar() != null){
-            getSupportActionBar().setTitle(titles);
+            getSupportActionBar().setTitle(title);
         }
     }
 }

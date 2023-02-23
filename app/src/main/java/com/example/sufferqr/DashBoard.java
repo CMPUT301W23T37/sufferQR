@@ -7,6 +7,14 @@ import android.os.Bundle;
 
 import com.example.sufferqr.databinding.ActivityDashBoardBinding;
 
+/**
+ * This class is the dash board of the application
+ * it will have a short cut to camera, the total number of the score collected
+ * the total number of code been scanned, the highest score ever, and the score for
+ * the last code scanned. Also, a small scale of map will display at the bottom with
+ * indications of surrounding scannable code
+ *
+ */
 public class DashBoard extends DrawerBase {
 
     ActivityDashBoardBinding activityDashBoardBinding;
@@ -16,6 +24,6 @@ public class DashBoard extends DrawerBase {
         super.onCreate(savedInstanceState);
         activityDashBoardBinding = ActivityDashBoardBinding.inflate(getLayoutInflater());
         setContentView(activityDashBoardBinding.getRoot());
-        allocateActivityTitle("DashBoard");
+        allocateActivityTitle("Suffer QR");
     }
 }
