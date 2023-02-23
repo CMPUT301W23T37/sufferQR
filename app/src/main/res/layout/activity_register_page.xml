@@ -27,12 +27,14 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Username"/>
+            android:hint="Username"
+            android:inputType="text" />
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Email Address"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="10dp"
+            android:inputType="textEmailAddress"/>
 
     </LinearLayout>
 
