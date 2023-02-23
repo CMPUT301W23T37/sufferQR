@@ -1,6 +1,16 @@
 <resources>
+
     <string name="app_name">SufferQR</string>
     <string name="nav_open">NavOpen</string>
     <string name="nav_close">NavClose</string>
     <string name="cancel_string">Cancel</string>
+
+    <string name="title_activity_qrdetail">QRDetailActivity</string>
+    <string name="tab_text_1">General</string>
+    <string name="tab_text_2">Image</string>
+    <string name="tab_text_3">Location</string>
+    <string name="mapbox_access_token">pk.eyJ1Ijoiem1haTEzMDEiLCJhIjoiY2xlYXRjdmZhMG1lOTNwbzljMmdvbDEyeCJ9.rmhZUTFBNaem1p3LoUmepA</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>
