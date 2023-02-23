@@ -74,6 +74,11 @@ public class DrawerBase extends AppCompatActivity implements NavigationView.OnNa
                 overridePendingTransition(0,0);
                 break;
 
+            case R.id.nav_History:
+                startActivity(new Intent(this, ScanHistory.class));
+                overridePendingTransition(0,0);
+                break;
+
         }
 
 
