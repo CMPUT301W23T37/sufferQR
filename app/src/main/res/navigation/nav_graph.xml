@@ -11,13 +11,4 @@
         android:label="activity_main"
         tools:layout="@layout/activity_main"/>
 
-
-    <activity
-        android:id="@+id/cameraPage"
-        android:name="com.example.sufferqr.MainActivity"
-        android:label="cameraPage"
-        tools:layout="@layout/camera_page"
-
-        />
-
 </navigation>

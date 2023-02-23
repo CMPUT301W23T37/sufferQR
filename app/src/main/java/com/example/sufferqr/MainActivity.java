@@ -6,6 +6,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -31,60 +35,48 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        drawerLayout = findViewById(R.id.nav_drawer_layout);
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.nav_open, R.string.nav_close);
-
-        drawerLayout.addDrawerListener(actionBarDrawerToggle);
-        actionBarDrawerToggle.syncState();
-
-        NavigationView navigationView = findViewById(R.id.navigation_view);
-//        navigationView.setNavigationItemSelectedListener();
-
-        // to make the Navigation drawer icon always appear on the action bar
-        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
     }
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.nav_drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)){
-            drawer.closeDrawer(GravityCompat.START);
-        } else{
-            super.onBackPressed();
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.navigation_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-
-
-        if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-//        onNavigationItemSelected(item);
-
-        return super.onOptionsItemSelected(item);
-    }
-
-
-    public boolean onNavigationItemSelected(MenuItem item) {
-
-        int id = item.getItemId();
-
-        if (id == R.id.nav_user){
-            Toast.makeText(getApplicationContext(), "Camera is clicked", Toast.LENGTH_SHORT).show();
-        }
-
-        DrawerLayout drawer = findViewById(R.id.nav_drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
+//
+//    @Override
+//    public void onBackPressed() {
+//        DrawerLayout drawer = findViewById(R.id.nav_drawer_layout);
+//        if (drawer.isDrawerOpen(GravityCompat.START)){
+//            drawer.closeDrawer(GravityCompat.START);
+//        } else{
+//            super.onBackPressed();
+//        }
+//    }
+//
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.navigation_menu, menu);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+//
+//
+//        if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
+//            return true;
+//        }
+////        onNavigationItemSelected(item);
+//
+//        return super.onOptionsItemSelected(item);
+//    }
+//
+//
+//    public boolean onNavigationItemSelected(MenuItem item) {
+//
+//        int id = item.getItemId();
+//
+//        if (id == R.id.nav_user){
+//            Toast.makeText(getApplicationContext(), "Camera is clicked", Toast.LENGTH_SHORT).show();
+//        }
+//
+//        DrawerLayout drawer = findViewById(R.id.nav_drawer_layout);
+//        drawer.closeDrawer(GravityCompat.START);
+//        return true;
+//    }
 
 }

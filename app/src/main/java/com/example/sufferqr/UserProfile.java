@@ -1,16 +1,20 @@
 package com.example.sufferqr;
 
-import android.app.Activity;
-import android.os.Bundle;
-
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class UserProfile extends AppCompatActivity {
+import android.os.Bundle;
+
+import com.example.sufferqr.databinding.ActivityUserProfileBinding;
+
+public class UserProfile extends DrawerBase {
+
+    ActivityUserProfileBinding activityUserProfileBinding;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.user_profile_page);
+        activityUserProfileBinding = ActivityUserProfileBinding.inflate(getLayoutInflater());
+        setContentView(activityUserProfileBinding.getRoot());
+        allocateActivityTitle("UserProfile");
     }
 }
