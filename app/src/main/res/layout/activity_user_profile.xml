@@ -29,23 +29,7 @@
                 android:id="@+id/user_name_profile"/>
 
 <!--            The box that contains Username     -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="20sp"
-                android:layout_marginEnd="60dp"
-                android:background="@color/grey">
 
-<!--                Username text     -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="James Bond"
-                    android:textSize="14sp"
-                    android:layout_marginStart="10sp"
-                    android:textColor="@color/black"/>
-
-            </LinearLayout>
 
         </LinearLayout>
 
@@ -62,23 +46,10 @@
                 android:textSize="16sp" />
 
 <!--            The box that contains the email address     -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="20sp"
-                android:layout_marginEnd="60dp"
-                android:background="@color/grey">
 
 <!--                Email text     -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="jamesbond@cia.uk"
-                    android:textSize="14sp"
-                    android:layout_marginStart="10sp"
-                    android:textColor="@color/black"/>
 
-            </LinearLayout>
+
 
         </LinearLayout>
 

@@ -27,19 +27,44 @@
         android:paddingRight="80dp">
 
 <!--        Input container for username (input type -> text)     -->
-        <EditText
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/user_name_register"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Username"
-            android:inputType="text" />
+            android:background="@color/white"
+            app:endIconMode="clear_text"
+            app:counterEnabled="true"
+            app:counterMaxLength="20"
+            app:errorEnabled="true"
+            app:boxBackgroundColor="@color/white">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
 <!--        Input container for Email (input type -> Email)-->
-        <EditText
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/email_register"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Email Address"
-            android:layout_marginTop="10dp"
-            android:inputType="textEmailAddress"/>
+            android:hint="Email"
+            android:background="@color/white"
+            app:endIconMode="clear_text"
+            app:errorEnabled="true"
+            app:boxBackgroundColor="@color/white">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
 
     </LinearLayout>
 
@@ -47,57 +72,40 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="80dp"
         android:layout_marginStart="70dp"
         android:layout_marginEnd="70dp"
         android:orientation="horizontal">
 
 <!--        The box that contains QR id      -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/grey"
-            android:layout_gravity="center"
-            android:paddingRight="30dp">
 
-<!--            QR id text      -->
-            <TextView
-                android:id="@+id/qr_id_register"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="asndcoasdnflkasnd"
-                android:layout_gravity="center_horizontal"
-                android:textSize="16sp"
-                android:textColor="@color/black"
-                android:layout_marginStart="30dp"
-                android:gravity="center"/>
-
-
-        </LinearLayout>
 
 <!--        Change QR id button      -->
-        <ImageButton
+        <Button
+            style="?attr/materialIconButtonStyle"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="20dp"
-            android:background="@color/app_sub_blue"
-            android:ellipsize="none"
-            android:src="@drawable/dashboard_20"
-            android:textColor="@color/white" />
+            android:layout_height="wrap_content"
+
+            app:icon="@drawable/reload"
+            android:text="sndckashdflaasdfsd"/>
+
 
     </LinearLayout>
 
 <!--    Confirm register button     -->
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Confirm"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:background="@color/lighter_blue"
-        android:layout_marginTop="120dp"
-        android:layout_marginStart="70dp"
-        android:layout_marginEnd="70dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.Material3.Button.ElevatedButton"
+            android:backgroundTint="@color/lighter_blue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Confirm"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="100dp"
+            android:layout_marginStart="70dp"
+            android:layout_marginEnd="70dp" />
+
 
 
 </LinearLayout>
