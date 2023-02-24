@@ -29,6 +29,7 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.SettingsClient;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.textfield.TextInputEditText;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.mapboxsdk.Mapbox;
@@ -44,6 +45,7 @@ import com.mapbox.mapboxsdk.maps.SupportMapFragment;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.utils.BitmapUtils;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -74,7 +76,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
     private Location locationCurrent;
     private boolean reqLocationUpdate = false;
     private HashMap <String,Object> data;
-    String mode= "new";
+    String mode= "new",user="example",name;
 
 
     Button CancelBt,ConfirmBt;
@@ -111,7 +113,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         imageBundle = new Bundle();
         GeneralBundle = new Bundle();
 
-
+        data = new HashMap<>();
 
 
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager(),mapBundle,imageBundle,GeneralBundle);
@@ -133,24 +135,91 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                 finish();
             }
         });
+        ConfirmBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HashMapValidate("user",user);
+                GameQrRecordDB DBconnect = new GameQrRecordDB();
+                if (name.length()==0){
+                    DBconnect.NewQRWithRandomGeneratedWords("",data);
+                } else {
+                    DBconnect.CheckUnique(name,true,data);
+                    finish();
+                }
+
+            }
+        });
 
 
 
+    }
+
+    private void HashMapValidate(String id,Object ob){
+        if (data.containsKey(id)) {
+            data.replace(id,ob);
+        } else {
+            data.put(id,ob);
+        }
     }
 
 
     @Override
     public void onImageUpdate(String QRtext,Boolean imageOn) {
+        // future representation
+        int qr_le= QRtext.length();
+        if (qr_le > 0 && mode.equals("new")) {
+            TextInputEditText visual = findViewById(R.id.qr_detail_general_visual_text);
+            visual.setText(QRtext);
+            // future point updates length for now
+            TextInputEditText points = findViewById(R.id.qr_detail_general_qrtext_points);
+            String qr_le_str = String.valueOf(qr_le);
+            points.setText(qr_le_str);
+        }
 
+
+        if(mode.equals("new")){
+            HashMapValidate("points",qr_le);
+            HashMapValidate("imageExist",imageOn);
+
+            if (imageOn){
+                HashMapValidate("QRtext",QRtext);
+
+            } else {
+                // future visual represent
+                HashMapValidate("QRtext","");
+            }
+        }else{
+
+        }
     }
 
     @Override
     public void onLocationUpdate(Boolean btOn, Double longitude, Double latitude, String name, String address) {
+        if(mode.equals("new")){
+            HashMapValidate("LocationExist",btOn);
+
+            if (btOn){
+                HashMapValidate("LocationLatitude",latitude);
+                HashMapValidate("LocationLongitude",longitude);
+                HashMapValidate("LocationName",name);
+                HashMapValidate("LocationAddress",address);
+            } else {
+                // future visual represent
+                HashMapValidate("LocationLatitude",0.0);
+                HashMapValidate("LocationLongitude",0.0);
+                HashMapValidate("LocationName","");
+                HashMapValidate("LocationAddress","");
+            }
+        }else{
+
+        }
 
     }
 
     @Override
-    public void onGeneralUpdate(String QRcodename) {
-
+    public void onGeneralUpdate(String QRcodename,String today) {
+        HashMapValidate("QRname",QRcodename);
+        HashMapValidate("date",today);
+        name=QRcodename;
     }
 }

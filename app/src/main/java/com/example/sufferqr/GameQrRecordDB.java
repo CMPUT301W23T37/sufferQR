@@ -1,7 +1,10 @@
 package com.example.sufferqr;
 
+import static android.app.PendingIntent.getActivity;
+
 import android.util.Log;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -163,6 +166,7 @@ public class GameQrRecordDB {
             @Override
             public void onFailure(@NonNull Exception exception) {
                 // Handle any errors
+                System.out.println("fetch fail");
             }
         });
     }

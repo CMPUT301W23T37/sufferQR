@@ -119,13 +119,13 @@ public class QRDetailLocationFragment extends Fragment {
     private OnFragmentInteractionListener listener;
 
     // new/visitor/modify
-    String mode= "new";
+    String mode= "new",localName,localAdress;
 
     // TODO: Rename and change types of parameters
 
     Bundle mymapBundle,sIState;
     String POI,token="";
-    Double NS,EA;
+    Double localLongtiude,localLatiude;
     Intent intent;
     SwitchMaterial locEnable;
     TextView privacy_text;
@@ -220,9 +220,7 @@ public class QRDetailLocationFragment extends Fragment {
                         if (mode.equals("new")){
                             poi_card.setVisibility(View.VISIBLE);
                             map_card.setVisibility(View.VISIBLE);
-//                            if (!LocExist){
-//                                switchLocUpdate();
-//                            }
+                            listener.onLocationUpdate(locEnable.isChecked(),localLongtiude,localLatiude,localName,localAdress);
                         }  else if (mode.equals("modify")) {
 
                         } else {
@@ -301,14 +299,18 @@ public class QRDetailLocationFragment extends Fragment {
                         if (results.size() > 0) {
                             TextView textView_name=view.findViewById(R.id.qr_detail_loacation_name);
                             textView_name.setText(results.get(0).text());
+                            localName=results.get(0).text();
                             TextView textView_address=view.findViewById(R.id.qr_detail_loacation_address);
                             textView_address.setText(results.get(0).placeName());
+                            localAdress=results.get(0).placeName();
                             textView_address.setVisibility(View.VISIBLE);
                             TextView textView_longtiude=view.findViewById(R.id.qr_detail_loacation_longtiude);
                             textView_longtiude.setText("longtiude:"+longtiude);
+                            localLongtiude=longtiude;
                             textView_longtiude.setVisibility(View.VISIBLE);
                             TextView textView_latitude=view.findViewById(R.id.qr_detail_loacation_latitude);
                             textView_latitude.setText("latitude:"+latiude);
+                            localLatiude=latiude;
                             textView_latitude.setVisibility(View.VISIBLE);
 
                             listener.onLocationUpdate(locEnable.isChecked(),longtiude,latiude,results.get(0).text(),results.get(0).placeName());
