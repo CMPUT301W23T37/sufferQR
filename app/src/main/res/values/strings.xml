@@ -14,5 +14,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="activity_qrdetail_waiting">waiting...</string>
     <string name="qrdetail_privacy_changes_warning">Privacy Settings takes effect upon confirm button pressed</string>
+    <string name="qr_detail_loacation_waiting_sign">Location available shortly...</string>
+    <string name="qr_detail_image_title">save image content</string>
 
 </resources>

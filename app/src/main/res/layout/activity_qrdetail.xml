@@ -62,6 +62,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
+            android:layout_marginStart="14sp"
+            android:layout_marginEnd="14sp"
             app:layout_constraintStart_toStartOf="parent"
             android:orientation="horizontal">
 
@@ -74,8 +76,7 @@
                 android:textAlignment="center"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginStart="5sp"
-                android:layout_marginEnd="10sp"
+                android:layout_marginEnd="20sp"
                 app:layout_constraintEnd_toStartOf="@+id/activity_qr_detail_bottom_bar_confirm_bt"
                 app:layout_constraintStart_toStartOf="parent" />
 
@@ -87,8 +88,6 @@
                 android:textAlignment="center"
                 android:textColor="@color/white"
                 android:textSize="14sp"
-                android:layout_marginStart="10sp"
-                android:layout_marginEnd="5sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
@@ -100,13 +99,13 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_marginBottom="66dp"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+<!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--        android:id="@+id/fab"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_gravity="bottom|end"-->
+<!--        android:layout_marginEnd="@dimen/fab_margin"-->
+<!--        android:layout_marginBottom="66dp"-->
+<!--        app:srcCompat="@android:drawable/ic_dialog_email" />-->
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
