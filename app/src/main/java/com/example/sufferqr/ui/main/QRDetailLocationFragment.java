@@ -10,6 +10,7 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconOffset;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -75,6 +76,8 @@ import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.mapboxsdk.utils.BitmapUtils;
 
 import android.os.Bundle;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 
@@ -113,6 +116,8 @@ public class QRDetailLocationFragment extends Fragment {
     private Location locationCurrent;
     private boolean reqLocationUpdate = false;
 
+    private OnFragmentInteractionListener listener;
+
     // new/visitor/modify
     String mode= "new";
 
@@ -125,6 +130,7 @@ public class QRDetailLocationFragment extends Fragment {
     SwitchMaterial locEnable;
     TextView privacy_text;
     CardView poi_card,map_card;
+    Boolean LocExist=false;
 
 
     public QRDetailLocationFragment(Bundle mapBundle) {
@@ -132,6 +138,9 @@ public class QRDetailLocationFragment extends Fragment {
     }
 
 
+    public interface OnFragmentInteractionListener{
+        void onLocationUpdate(Boolean btOn,Double longitude,Double latitude,String name,String address);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -143,6 +152,17 @@ public class QRDetailLocationFragment extends Fragment {
 //
 
 
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof QRDetailLocationFragment.OnFragmentInteractionListener){
+            listener = (OnFragmentInteractionListener) context;
+        }else {
+            throw new RuntimeException(context.toString()
+                    + "must implement OnFragmentInteractionListener");
+        }
     }
 
 
@@ -158,7 +178,7 @@ public class QRDetailLocationFragment extends Fragment {
         map_card=view.findViewById(R.id.qr_detail_location_map_cardview);
         poi_card=view.findViewById(R.id.qr_detail_location_poi_cardview);
 
-
+        listener.onLocationUpdate(false,0.0,0.0,"","");
         // init with mapwill to university of alberta ccis
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
@@ -200,6 +220,9 @@ public class QRDetailLocationFragment extends Fragment {
                         if (mode.equals("new")){
                             poi_card.setVisibility(View.VISIBLE);
                             map_card.setVisibility(View.VISIBLE);
+//                            if (!LocExist){
+//                                switchLocUpdate();
+//                            }
                         }  else if (mode.equals("modify")) {
 
                         } else {
@@ -209,6 +232,8 @@ public class QRDetailLocationFragment extends Fragment {
                         if (mode.equals("new")){
                             poi_card.setVisibility(View.INVISIBLE);
                             map_card.setVisibility(View.INVISIBLE);
+                            listener.onLocationUpdate(locEnable.isChecked(),0.0,0.0,"","");
+
                         } else if (mode.equals("modify")) {
 
                         } else {
@@ -256,12 +281,11 @@ public class QRDetailLocationFragment extends Fragment {
                         mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), null);
                         mapboxMapGlobal = mapboxMap;
 
-
                     }
                 });
 
                 stopLocationUpdate();
-
+                LocExist=true;
                 MapboxGeocoding mapboxGeocoding =MapboxGeocoding.builder()
                         .accessToken(getResources().getString(R.string.mapbox_access_token))
                         .query(Point.fromLngLat(longtiude,latiude))
@@ -286,6 +310,8 @@ public class QRDetailLocationFragment extends Fragment {
                             TextView textView_latitude=view.findViewById(R.id.qr_detail_loacation_latitude);
                             textView_latitude.setText("latitude:"+latiude);
                             textView_latitude.setVisibility(View.VISIBLE);
+
+                            listener.onLocationUpdate(locEnable.isChecked(),longtiude,latiude,results.get(0).text(),results.get(0).placeName());
                         } else {
                             // No result for your request were found.
                             Log.d(TAG, "onResponse: No result found");
@@ -313,29 +339,33 @@ public class QRDetailLocationFragment extends Fragment {
         // when a at adding mode will get location
 
         if (mode.equals("new")){
-            Dexter.withContext(requireActivity())
-                    .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                    .withListener(new PermissionListener() {
-                        @Override
-                        public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
-                            reqLocationUpdate = true;
-                            startLocationUpdate();
-                        }
-
-                        @Override
-                        public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
-                            // do nothing
-                        }
-
-                        @Override
-                        public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
-                            permissionToken.continuePermissionRequest();
-                        }
-                    }).check();
+            switchLocUpdate();
         }
 
         // Inflate the layout for this fragment
         return view;
+    }
+
+    private void switchLocUpdate(){
+        Dexter.withContext(requireActivity())
+                .withPermission(Manifest.permission.ACCESS_FINE_LOCATION )
+                .withListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {reqLocationUpdate = true;startLocationUpdate();}
+
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
+                        // do nothing
+                        Toast.makeText(getApplicationContext(),"Fine location required, check your settings.",Toast.LENGTH_SHORT).show();
+                        locEnable.setChecked(false);
+                        poi_card.setVisibility(View.INVISIBLE);
+                        map_card.setVisibility(View.INVISIBLE);
+                        listener.onLocationUpdate(false,0.0,0.0,"","");
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {permissionToken.continuePermissionRequest();}
+                }).check();
     }
 
     private void openSettings(){
@@ -350,8 +380,10 @@ public class QRDetailLocationFragment extends Fragment {
     private void startLocationUpdate(){
         settingsClient.checkLocationSettings(locationSettingsRequest)
                 .addOnSuccessListener(requireActivity() , new OnSuccessListener<LocationSettingsResponse>() {
+                    @SuppressLint("MissingPermission")   // it will work with or with out this line
                     @Override
                     public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+
                         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
                     }
                 }).addOnFailureListener(requireActivity(), (OnFailureListener) new OnFailureListener() {

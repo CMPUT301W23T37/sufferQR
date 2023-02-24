@@ -13,10 +13,10 @@ import com.example.sufferqr.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link QRDetailGeneralFragment#newInstance} factory method to
+ * Use the {@link QRDetailGeneralFragment} factory method to
  * create an instance of this fragment.
  */
-public class QRDetailGeneralFragment extends Fragment {
+public class QRDetailGeneralFragment extends Fragment implements QRDetailImageFragment.OnFragmentInteractionListener{
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -27,27 +27,17 @@ public class QRDetailGeneralFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private QRDetailGeneralFragment.OnFragmentInteractionListener listener;
 
-    public QRDetailGeneralFragment() {
+    Bundle myGeneralBudle;
 
+
+    public QRDetailGeneralFragment(Bundle gbundle) {
+        myGeneralBudle = gbundle;
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment QRDetailGeneralFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static QRDetailGeneralFragment newInstance(String param1, String param2) {
-        QRDetailGeneralFragment fragment = new QRDetailGeneralFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    public interface OnFragmentInteractionListener{
+        void onGeneralUpdate(String QRcodename);
     }
 
     @Override
@@ -65,5 +55,10 @@ public class QRDetailGeneralFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_q_r_detail_general, container, false);
+    }
+
+    @Override
+    public void onImageUpdate(String QRtext, Boolean imageOn) {
+
     }
 }

@@ -86,7 +86,7 @@
 
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/qr_detail_image_textfield"
+                    android:id="@+id/qr_detail_image_textfield_layout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginBottom="10sp"
@@ -102,6 +102,7 @@
                     >
 
                     <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/qr_detail_image_textfield"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:inputType="textMultiLine"
@@ -129,7 +130,7 @@
             android:layout_marginRight="7pt"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/qr_detail_image_qrtext_cardview"
+            app:layout_constraintTop_toTopOf="parent"
             app:cardCornerRadius="10sp">
 
             <ImageButton

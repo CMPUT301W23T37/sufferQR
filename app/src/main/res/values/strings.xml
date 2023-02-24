@@ -16,5 +16,7 @@
     <string name="qrdetail_privacy_changes_warning">Privacy Settings takes effect upon confirm button pressed</string>
     <string name="qr_detail_loacation_waiting_sign">Location available shortly...</string>
     <string name="qr_detail_image_title">save image content</string>
+    <string name="qr_detail_general_visual_text_startup_msg">Available once you scan qr code\n\n\n\n\n To add QR code,go to image page\n and tag the lower botton to scan</string>
+    <string name="qr_detail_general_visual_text_tittle">visual representation of yout QRcode</string>
 
 </resources>

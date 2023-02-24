@@ -32,6 +32,99 @@
             android:orientation="vertical"
             app:cardCornerRadius="10sp">
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/qr_detail_general_qrtext_name_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="name"
+                    app:helperTextEnabled="true"
+                    app:helperText="leave it blank to random"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="20"
+                    android:maxLines="1"
+                    android:layout_marginTop="6sp"
+                    android:layout_marginStart="6sp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_marginEnd="150sp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/qr_detail_general_qrtext_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:maxLength="20"
+                        />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/qr_detail_general_qrtext_points_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="250sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:hint="points"
+                    android:layout_marginTop="6sp"
+                    android:layout_marginEnd="6sp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:gravity="end"
+                    >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/qr_detail_general_qrtext_points"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="false"
+                        android:gravity="end"
+                        android:text="0"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/qr_detail_general_qrtext_date"
+                    android:layout_width="150sp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:text="YYYY_MM_DD"
+                    android:layout_marginTop="180sp"
+                    android:layout_marginStart="6sp"
+                    android:layout_marginEnd="200sp"
+                    android:gravity="start"
+                    android:layout_marginBottom="6sp"/>
+
+                <Button
+                    android:id="@+id/elevatedButton"
+                    style="@style/Widget.Material3.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:text="DELETE"
+                    android:textSize="15sp"
+                    android:enabled="false"
+                    android:backgroundTint="@color/delete_red"
+                    android:layout_marginBottom="6sp"
+                    android:layout_marginTop="170sp"
+                    android:layout_marginStart="250sp"
+                    android:layout_marginEnd="1sp"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
         </androidx.cardview.widget.CardView>
 
         <!-- qr code location dusplay -->
@@ -50,6 +143,35 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/qr_detail_general_textfield"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="10sp"
+                android:inputType="textMultiLine"
+                android:textSize="13sp"
+                android:hint="@string/qr_detail_general_visual_text_tittle"
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="parent"
+                app:startIconContentDescription="content"
+                >
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/qr_detail_general_visual_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:inputType="textMultiLine"
+                    android:enabled="false"
+                    android:focusable="false"
+                    android:text="@string/qr_detail_general_visual_text_startup_msg"
+                    android:gravity="center"
+                    />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
 
         </androidx.cardview.widget.CardView>

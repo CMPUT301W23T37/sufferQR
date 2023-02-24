@@ -21,12 +21,14 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     private static final int[] TAB_TITLES = new int[]{R.string.tab_text_1, R.string.tab_text_2,R.string.tab_text_3};
     private final Context mContext;
 
-    Bundle adapterMapBundle;
+    Bundle adapterMapBundle,adapterImageBundle,adapterGeneralBundle;
 
-    public SectionsPagerAdapter(Context context, FragmentManager fm,Bundle mapBundle) {
+    public SectionsPagerAdapter(Context context, FragmentManager fm,Bundle mapBundle,Bundle imageBundle,Bundle GeneralBundle) {
         super(fm);
         mContext = context;
         adapterMapBundle = mapBundle;
+        adapterImageBundle =imageBundle;
+        adapterGeneralBundle = GeneralBundle;
 
     }
 
@@ -35,9 +37,9 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         // getItem is called to instantiate the fragment for the given page.
         // Return a PlaceholderFragment (defined as a static inner class below).
         if(position == 0) {
-            return new QRDetailGeneralFragment();
+            return new QRDetailGeneralFragment(adapterGeneralBundle);
         } else if (position==1){
-            return new QRDetailImageFragment();
+            return new QRDetailImageFragment(adapterImageBundle);
         } else if (position==2) {
             return new QRDetailLocationFragment(adapterMapBundle);
         } else {

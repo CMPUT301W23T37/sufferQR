@@ -19,6 +19,9 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.sufferqr.databinding.ActivityQrdetailBinding;
+import com.example.sufferqr.ui.main.QRDetailGeneralFragment;
+import com.example.sufferqr.ui.main.QRDetailImageFragment;
+import com.example.sufferqr.ui.main.QRDetailLocationFragment;
 import com.example.sufferqr.ui.main.SectionsPagerAdapter;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -41,10 +44,12 @@ import com.mapbox.mapboxsdk.maps.SupportMapFragment;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.utils.BitmapUtils;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-public class QRDetailActivity extends AppCompatActivity {
+public class QRDetailActivity extends AppCompatActivity implements QRDetailLocationFragment.OnFragmentInteractionListener,
+        QRDetailImageFragment.OnFragmentInteractionListener, QRDetailGeneralFragment.OnFragmentInteractionListener {
 
     private ActivityQrdetailBinding binding;
 
@@ -68,6 +73,7 @@ public class QRDetailActivity extends AppCompatActivity {
     private LocationCallback locationCallback;
     private Location locationCurrent;
     private boolean reqLocationUpdate = false;
+    private HashMap <String,Object> data;
     String mode= "new";
 
 
@@ -101,13 +107,14 @@ public class QRDetailActivity extends AppCompatActivity {
         String Mode = myNewIntent.getStringExtra("mode");
 
         mapBundle = new Bundle();
+        mapBundle.putString("mode",Mode);
         imageBundle = new Bundle();
         GeneralBundle = new Bundle();
-//        mapBundle.putString("mode",Mode);
 
 
 
-        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager(),mapBundle);
+
+        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager(),mapBundle,imageBundle,GeneralBundle);
         int limit = (sectionsPagerAdapter.getCount() > 1 ? sectionsPagerAdapter.getCount() -1 : 1);
         ViewPager viewPager = binding.viewPager;
         viewPager.setAdapter(sectionsPagerAdapter);
@@ -132,10 +139,18 @@ public class QRDetailActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onImageUpdate(String QRtext,Boolean imageOn) {
 
+    }
 
+    @Override
+    public void onLocationUpdate(Boolean btOn, Double longitude, Double latitude, String name, String address) {
 
+    }
 
+    @Override
+    public void onGeneralUpdate(String QRcodename) {
 
-
+    }
 }
