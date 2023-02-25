@@ -43,7 +43,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         } else if (position==2) {
             return new QRDetailLocationFragment(adapterMapBundle);
         } else {
-                return null;
+            return null;
         }
     }
 
@@ -56,6 +56,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         // Show 2 total pages.
-        return TAB_TITLES.length;
+        return 3;
     }
+
 }

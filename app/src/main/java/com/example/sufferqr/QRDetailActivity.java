@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -121,6 +122,9 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         ViewPager viewPager = binding.viewPager;
         viewPager.setAdapter(sectionsPagerAdapter);
         viewPager.setOffscreenPageLimit(limit);
+        viewPager.beginFakeDrag(); // disable drag
+
+
 
         TabLayout tabs = binding.tabs;
         tabs.setupWithViewPager(viewPager);
