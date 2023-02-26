@@ -29,9 +29,6 @@ public class EmojiDraw {
         }
     }
 
-    public static void main(String[] args) {
-        drawCircleTemplate();
-    }
 
 
 
