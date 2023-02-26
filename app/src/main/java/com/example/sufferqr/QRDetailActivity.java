@@ -376,10 +376,20 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         int qr_le= QRtext.length();
         if (qr_le > 0 && mode.equals("new")) {
             TextInputEditText visual = findViewById(R.id.qr_detail_general_visual_text);
-            visual.setText(QRtext);
-            // future point updates length for now
+
+            // insert here for visual demo
+            String demoText = QRtext;
+
+            visual.setText(demoText);
+
+
+
             TextInputEditText points = findViewById(R.id.qr_detail_general_qrtext_points);
-            String qr_le_str = String.valueOf(qr_le);
+            // insert(change) for score calcualtion
+            int score= qr_le;
+
+
+            String qr_le_str = String.valueOf(score);
             points.setText(qr_le_str);
         }
         if(mode.equals("new")){
