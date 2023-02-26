@@ -87,8 +87,15 @@ public class DrawerBase extends AppCompatActivity implements NavigationView.OnNa
                 overridePendingTransition(0,0);
                 break;
             case R.id.nav_scan:
-                // remember change ScanCode.clas
-                startActivity(new Intent(this, QRDetailActivity.class));
+                //new/modified/viewer
+                // remember change ScanCode.class
+                Intent scanIntent = new Intent(this, QRDetailActivity.class);
+                scanIntent.putExtra("user","example");
+                scanIntent.putExtra("mode","new");
+//                scanIntent.putExtra("mode","modify");
+
+                // lunch
+                startActivity(scanIntent);
                 overridePendingTransition(0,0);
                 break;
 

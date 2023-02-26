@@ -11,6 +11,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import com.example.sufferqr.R;
 import com.google.android.material.textfield.TextInputEditText;
@@ -18,6 +19,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -40,23 +42,25 @@ public class QRDetailGeneralFragment extends Fragment{
 
     TextView textView;
     Date madeDate;
-    String myDate;
+    String myDate,mode;
 
     public QRDetailGeneralFragment(Bundle gbundle) {
         myGeneralBudle = gbundle;
+        mode = myGeneralBudle.getString("mode");
+        if (mode.length()<1){
+            mode="new";
+        }
     }
 
     public interface OnFragmentInteractionListener{
         void onGeneralUpdate(String QRcodename,String today);
+
+        void onGeneralUpdate(Boolean delreq);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-
-        }
-
     }
 
     @Override
@@ -77,13 +81,20 @@ public class QRDetailGeneralFragment extends Fragment{
 
         name = view.findViewById(R.id.qr_detail_general_qrtext_name);
         textView = view.findViewById(R.id.qr_detail_general_qrtext_date);
-        madeDate = new Date();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd ");
-        myDate = dateFormat.format(madeDate);
-        textView.setText(myDate);
+        Button del_button = view.findViewById(R.id.qr_detail_general_elevatedButton);
 
-        listener.onGeneralUpdate(" ",myDate);
+        if (Objects.equals(mode, "new")){
+            madeDate = new Date();
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd ");
+            myDate = dateFormat.format(madeDate);
+            textView.setText(myDate);
 
+            listener.onGeneralUpdate(" ",myDate);
+
+            name.setEnabled(true);
+        } else {
+            name.setEnabled(false);
+        }
         name.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -97,9 +108,19 @@ public class QRDetailGeneralFragment extends Fragment{
 
             @Override
             public void afterTextChanged(Editable s) {
-                listener.onGeneralUpdate(s.toString(),myDate);
+                if (Objects.equals(mode, "new")){
+                    listener.onGeneralUpdate(s.toString(),myDate);
+                }else {}
             }
         });
+
+        del_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onGeneralUpdate(true);
+            }
+        });
+
         // Inflate the layout for this fragment
         return view;
     }

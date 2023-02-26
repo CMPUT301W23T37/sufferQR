@@ -140,16 +140,17 @@ public class QRDetailLocationFragment extends Fragment {
 
     public interface OnFragmentInteractionListener{
         void onLocationUpdate(Boolean btOn,Double longitude,Double latitude,String name,String address);
+
+        void onLocationUpdate(Boolean btOn);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        this.mode = mymapBundle.getString("mode");
-//        if (this.mode==null){this.mode="new";}
-//        this.NS = mymapBundle.getDouble("NS");
-//        this.EA = mymapBundle.getDouble("EA");
-//
+        mode = mymapBundle.getString("mode");
+        if (mode.length()<1){
+            mode="new";
+        }
 
 
     }
@@ -178,7 +179,10 @@ public class QRDetailLocationFragment extends Fragment {
         map_card=view.findViewById(R.id.qr_detail_location_map_cardview);
         poi_card=view.findViewById(R.id.qr_detail_location_poi_cardview);
 
-        listener.onLocationUpdate(false,0.0,0.0,"","");
+        if (Objects.equals(mode, "new")){
+            listener.onLocationUpdate(false,0.0,0.0,"","");
+        }
+
         // init with mapwill to university of alberta ccis
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
@@ -208,7 +212,7 @@ public class QRDetailLocationFragment extends Fragment {
             }
         });
 
-        if (mode=="visitor"){
+        if (Objects.equals(mode, "visitor")){
             locEnable.setEnabled(false);
             privacy_text.setText("following information provided by mapbox");
 
@@ -221,10 +225,8 @@ public class QRDetailLocationFragment extends Fragment {
                             poi_card.setVisibility(View.VISIBLE);
                             map_card.setVisibility(View.VISIBLE);
                             listener.onLocationUpdate(locEnable.isChecked(),localLongtiude,localLatiude,localName,localAdress);
-                        }  else if (mode.equals("modify")) {
-
-                        } else {
-
+                        }  else {
+                            listener.onLocationUpdate(locEnable.isChecked());
                         }
                     }else {
                         if (mode.equals("new")){
@@ -232,115 +234,121 @@ public class QRDetailLocationFragment extends Fragment {
                             map_card.setVisibility(View.INVISIBLE);
                             listener.onLocationUpdate(locEnable.isChecked(),0.0,0.0,"","");
 
-                        } else if (mode.equals("modify")) {
-
-                        } else {
-
+                        }  else {
+                            listener.onLocationUpdate(locEnable.isChecked());
                         }
                     }
                 }
             });
+            if (!Objects.equals(mode, "new")){
+                locEnable.setEnabled(false);
+                poi_card.setVisibility(View.INVISIBLE);
+                map_card.setVisibility(View.INVISIBLE);
+            }
         }
 
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
-        settingsClient=LocationServices.getSettingsClient(requireActivity());
-        locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(@NonNull LocationResult locationResult) {
-                locationCurrent = locationResult.getLastLocation();
-                double latiude = locationCurrent.getLatitude();
-                double longtiude = locationCurrent.getLongitude();
 
-                mapView.getMapAsync(new OnMapReadyCallback() {
-                    @Override
-                    public void onMapReady(@NonNull MapboxMap mapboxMap) {
-                        mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
 
-                            @Override
-                            public void onStyleLoaded(@NonNull Style style) {
-                                style.addImage("red-pin-icon-id", BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_red_dot)));
-                                style.addLayer(new SymbolLayer("icon-layer-id","icon-source-id").withProperties(
-                                        iconImage("red-pin-icon-id"),
-                                        iconIgnorePlacement(true),
-                                        iconAllowOverlap(true),
-                                        iconOffset(new Float[]{0f,-0f})
-                                ));
-                                GeoJsonSource iconGeoJsonSource = new GeoJsonSource("icon-source-id", Feature.fromGeometry(Point.fromLngLat(longtiude,latiude)));
-                                style.addSource(iconGeoJsonSource);
-                            }
-                        });
-
-                        CameraPosition position = new CameraPosition.Builder()
-                                .target(new LatLng(latiude, longtiude))
-                                .zoom(15)
-                                .tilt(20)
-                                .build();
-                        mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), null);
-                        mapboxMapGlobal = mapboxMap;
-
-                    }
-                });
-
-                stopLocationUpdate();
-                LocExist=true;
-                MapboxGeocoding mapboxGeocoding =MapboxGeocoding.builder()
-                        .accessToken(getResources().getString(R.string.mapbox_access_token))
-                        .query(Point.fromLngLat(longtiude,latiude))
-                        .geocodingTypes(GeocodingCriteria.TYPE_LOCALITY,GeocodingCriteria.TYPE_ADDRESS,
-                                GeocodingCriteria.TYPE_POSTCODE,GeocodingCriteria.TYPE_POI_LANDMARK)
-                        .build();
-                mapboxGeocoding.enqueueCall(new Callback<GeocodingResponse>() {
-                    @Override
-                    public void onResponse(Call<GeocodingResponse> call, Response<GeocodingResponse> response) {
-
-                        List<CarmenFeature> results = response.body().features();
-
-                        if (results.size() > 0) {
-                            TextView textView_name=view.findViewById(R.id.qr_detail_loacation_name);
-                            textView_name.setText(results.get(0).text());
-                            localName=results.get(0).text();
-                            TextView textView_address=view.findViewById(R.id.qr_detail_loacation_address);
-                            textView_address.setText(results.get(0).placeName());
-                            localAdress=results.get(0).placeName();
-                            textView_address.setVisibility(View.VISIBLE);
-                            TextView textView_longtiude=view.findViewById(R.id.qr_detail_loacation_longtiude);
-                            textView_longtiude.setText("longtiude:"+longtiude);
-                            localLongtiude=longtiude;
-                            textView_longtiude.setVisibility(View.VISIBLE);
-                            TextView textView_latitude=view.findViewById(R.id.qr_detail_loacation_latitude);
-                            textView_latitude.setText("latitude:"+latiude);
-                            localLatiude=latiude;
-                            textView_latitude.setVisibility(View.VISIBLE);
-
-                            listener.onLocationUpdate(locEnable.isChecked(),longtiude,latiude,results.get(0).text(),results.get(0).placeName());
-                        } else {
-                            // No result for your request were found.
-                            Log.d(TAG, "onResponse: No result found");
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<GeocodingResponse> call, Throwable throwable) {
-                        throwable.printStackTrace();
-                    }
-                });
-            }
-        };
-
-        locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY,UPDATE_INTERVAL)
-                .setWaitForAccurateLocation(false)
-                .setMinUpdateDistanceMeters(FAST_UPDATE_IN_ML)
-                .setMaxUpdateDelayMillis(10000)
-                .build();
-
-        LocationSettingsRequest.Builder builder1 = new LocationSettingsRequest.Builder();
-        builder1.addLocationRequest(locationRequest);
-        locationSettingsRequest = builder1.build();
-
-        // when a at adding mode will get location
 
         if (mode.equals("new")){
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
+            settingsClient=LocationServices.getSettingsClient(requireActivity());
+            locationCallback = new LocationCallback() {
+                @Override
+                public void onLocationResult(@NonNull LocationResult locationResult) {
+                    locationCurrent = locationResult.getLastLocation();
+                    double latiude = locationCurrent.getLatitude();
+                    double longtiude = locationCurrent.getLongitude();
+
+                    mapView.getMapAsync(new OnMapReadyCallback() {
+                        @Override
+                        public void onMapReady(@NonNull MapboxMap mapboxMap) {
+                            mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
+
+                                @Override
+                                public void onStyleLoaded(@NonNull Style style) {
+                                    style.addImage("red-pin-icon-id", BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_red_dot)));
+                                    style.addLayer(new SymbolLayer("icon-layer-id","icon-source-id").withProperties(
+                                            iconImage("red-pin-icon-id"),
+                                            iconIgnorePlacement(true),
+                                            iconAllowOverlap(true),
+                                            iconOffset(new Float[]{0f,-0f})
+                                    ));
+                                    GeoJsonSource iconGeoJsonSource = new GeoJsonSource("icon-source-id", Feature.fromGeometry(Point.fromLngLat(longtiude,latiude)));
+                                    style.addSource(iconGeoJsonSource);
+                                }
+                            });
+
+                            CameraPosition position = new CameraPosition.Builder()
+                                    .target(new LatLng(latiude, longtiude))
+                                    .zoom(15)
+                                    .tilt(20)
+                                    .build();
+                            mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), null);
+                            mapboxMapGlobal = mapboxMap;
+
+                        }
+                    });
+
+                    stopLocationUpdate();
+                    LocExist=true;
+                    MapboxGeocoding mapboxGeocoding =MapboxGeocoding.builder()
+                            .accessToken(getResources().getString(R.string.mapbox_access_token))
+                            .query(Point.fromLngLat(longtiude,latiude))
+                            .geocodingTypes(GeocodingCriteria.TYPE_LOCALITY,GeocodingCriteria.TYPE_ADDRESS,
+                                    GeocodingCriteria.TYPE_POSTCODE,GeocodingCriteria.TYPE_POI_LANDMARK)
+                            .build();
+                    mapboxGeocoding.enqueueCall(new Callback<GeocodingResponse>() {
+                        @Override
+                        public void onResponse(Call<GeocodingResponse> call, Response<GeocodingResponse> response) {
+
+                            List<CarmenFeature> results = response.body().features();
+
+                            if (results.size() > 0) {
+                                TextView textView_name=view.findViewById(R.id.qr_detail_loacation_name);
+                                textView_name.setText(results.get(0).text());
+                                localName=results.get(0).text();
+                                TextView textView_address=view.findViewById(R.id.qr_detail_loacation_address);
+                                textView_address.setText(results.get(0).placeName());
+                                localAdress=results.get(0).placeName();
+                                textView_address.setVisibility(View.VISIBLE);
+                                TextView textView_longtiude=view.findViewById(R.id.qr_detail_loacation_longtiude);
+                                textView_longtiude.setText("longtiude:"+longtiude);
+                                localLongtiude=longtiude;
+                                textView_longtiude.setVisibility(View.VISIBLE);
+                                TextView textView_latitude=view.findViewById(R.id.qr_detail_loacation_latitude);
+                                textView_latitude.setText("latitude:"+latiude);
+                                localLatiude=latiude;
+                                textView_latitude.setVisibility(View.VISIBLE);
+
+                                listener.onLocationUpdate(locEnable.isChecked(),longtiude,latiude,results.get(0).text(),results.get(0).placeName());
+                            } else {
+                                // No result for your request were found.
+                                Log.d(TAG, "onResponse: No result found");
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<GeocodingResponse> call, Throwable throwable) {
+                            throwable.printStackTrace();
+                        }
+                    });
+                }
+            };
+
+            locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY,UPDATE_INTERVAL)
+                    .setWaitForAccurateLocation(false)
+                    .setMinUpdateDistanceMeters(FAST_UPDATE_IN_ML)
+                    .setMaxUpdateDelayMillis(10000)
+                    .build();
+
+            LocationSettingsRequest.Builder builder1 = new LocationSettingsRequest.Builder();
+            builder1.addLocationRequest(locationRequest);
+            locationSettingsRequest = builder1.build();
+
+            // when a at adding mode will get location
+
             switchLocUpdate();
         }
 
