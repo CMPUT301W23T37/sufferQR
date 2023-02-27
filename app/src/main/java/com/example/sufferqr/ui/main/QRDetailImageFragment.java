@@ -14,7 +14,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.camera.core.ImageCapture;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
@@ -28,6 +33,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.sufferqr.MainActivity;
 import com.example.sufferqr.R;
@@ -172,18 +178,19 @@ public class QRDetailImageFragment extends Fragment {
         }
 
 
+
         qrbt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 // Create the camera_intent ACTION_IMAGE_CAPTURE
                 // it will open the camera for capture the image
-                Intent camera_intent
-                        = new Intent(MediaStore
-                        .ACTION_IMAGE_CAPTURE);
+                Intent camera_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
                 // Start the activity with camera_intent,
                 // and request pic id
-                startActivityForResult(camera_intent, 123);
+                //startActivityForResult(camera_intent, 123); \\ deprecated
+
 
 
             }
@@ -195,34 +202,27 @@ public class QRDetailImageFragment extends Fragment {
         return view;
     }
 
-    // This method will help to retrieve the image
-    public void onActivityResult(int requestCode,
-                                 int resultCode,
-                                 Intent data) {
-
-        // Match the request 'pic id with requestCode
-        if (requestCode == 123) {
-
-            // BitMap is data structure of image file
-            // which stor the image in memory
-            Bitmap photo = (Bitmap) data.getExtras()
-                    .get("data");
-
-            // Set the image in imageview for display
-            Drawable d = new BitmapDrawable(getResources(), photo);
-            qrbt.setBackground(d);
-            ImageFindQR(photo);
-        }
-    }
 
 
 
-    private void ImageFindQR(Bitmap photo){
+
+
+
+
+
+
+    private void ImageFindQR(Uri photo){
 
         // get instances of image
-        Drawable de = qrbt.getBackground();
 
-        InputImage image = InputImage.fromBitmap(photo,0);
+        InputImage image=null;
+        try {
+            image = InputImage.fromFilePath(requireContext(), photo);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+//        InputImage image = InputImage.fromBitmap(photo,0);
 
         // setup barcode dector
         BarcodeScannerOptions options =
