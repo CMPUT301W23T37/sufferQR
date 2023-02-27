@@ -56,6 +56,7 @@ public class QRDetailGeneralFragment extends Fragment{
         void onGeneralUpdate(String QRcodename,String today);
 
         void onGeneralUpdate(Boolean delreq);
+
     }
 
     @Override

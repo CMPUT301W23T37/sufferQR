@@ -72,7 +72,8 @@ import java.util.Objects;
 import java.util.Set;
 
 public class QRDetailActivity extends AppCompatActivity implements QRDetailLocationFragment.OnFragmentInteractionListener,
-        QRDetailImageFragment.OnFragmentInteractionListener, QRDetailGeneralFragment.OnFragmentInteractionListener {
+        QRDetailImageFragment.OnFragmentInteractionListener, QRDetailGeneralFragment.OnFragmentInteractionListener
+          {
 
     private ActivityQrdetailBinding binding;
 
@@ -459,7 +460,15 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         }
     }
 
+    public void onSendingUpdate(String details, Boolean success) {
+        if (success){
+            finish();
+        }else {
+            Toast toast = Toast.makeText(getApplicationContext(), details, Toast.LENGTH_SHORT);
+            toast.show();
+        }
 
+    }
 
 
 }

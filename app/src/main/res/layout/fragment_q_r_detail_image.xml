@@ -134,10 +134,11 @@
             app:cardCornerRadius="10sp">
 
             <ImageButton
+                android:id="@+id/qr_detail_image_qrimage_button"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_qr_code_example"
+                android:background="@drawable/ic_qr_code_example"
                 />
 
         </androidx.cardview.widget.CardView>
