@@ -1,6 +1,7 @@
 package com.example.sufferqr;
 
 import static android.app.PendingIntent.getActivity;
+import static androidx.core.content.ContentProviderCompat.requireContext;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
@@ -10,13 +11,23 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Point;
+import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,6 +61,11 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.mlkit.vision.barcode.BarcodeScanner;
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
+import com.google.mlkit.vision.barcode.BarcodeScanning;
+import com.google.mlkit.vision.barcode.common.Barcode;
+import com.google.mlkit.vision.common.InputImage;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.mapboxsdk.Mapbox;
@@ -65,6 +81,9 @@ import com.mapbox.mapboxsdk.maps.SupportMapFragment;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.utils.BitmapUtils;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -183,6 +202,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                     GameQrRecordDB DBconnect = new GameQrRecordDB();
                     DBconnect.ChangeQrInfo(QRname,data);
                     finish();
+
                 }
 
 
@@ -284,7 +304,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                         CardView mapc2= findViewById(R.id.qr_detail_location_map_cardview);
                         TextView mapt1= findViewById(R.id.qr_detail_location_privacy_text);
 
-                        if (LocE!=true){
+                        if (Boolean.FALSE.equals(LocE)){
                             LocEnable.setChecked(false);
                             LocEnable.setEnabled(false);
                             mapt1.setVisibility(View.INVISIBLE);
@@ -342,8 +362,6 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                                             .build();
                                     mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), null);
                                     mapboxMapGlobal = mapboxMap;
-
-
                                 }
                             });
 
@@ -374,12 +392,13 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
     @Override
     public void onImageUpdate(String QRtext,Boolean imageOn) {
         // future representation
-        int qr_le= QRtext.length();
-        if (qr_le > 0 && mode.equals("new")) {
+        int score= QRtext.length();
+        String demoText="";
+        if (QRtext.length() > 0 && mode.equals("new")) {
             TextInputEditText visual = findViewById(R.id.qr_detail_general_visual_text);
 
             // insert here for visual demo
-            String demoText = QRtext;
+            demoText = QRtext;
 
             visual.setText(demoText);
 
@@ -387,18 +406,19 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
 
             TextInputEditText points = findViewById(R.id.qr_detail_general_qrtext_points);
             // insert(change) for score calcualtion
-            int score= qr_le;
+//            int score= score;
 
 
             String qr_le_str = String.valueOf(score);
             points.setText(qr_le_str);
         }
         if(mode.equals("new")){
-            HashMapValidate("points",qr_le);
+            HashMapValidate("points",score);
             HashMapValidate("imageExist",imageOn);
 
             if (imageOn){
                 HashMapValidate("QRtext",QRtext);
+                HashMapValidate("QVisual",demoText);
 
             } else {
                 // future visual represent
@@ -413,6 +433,11 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
     public void onImageUpdate(Boolean imageOn) {
         HashMapValidate("imageExist",imageOn);
     }
+
+      @Override
+    public void onImageUpdate(Bitmap photo) {
+          ImageFindQR(photo);
+      }
 
     @Override
     public void onLocationUpdate(Boolean btOn, Double longitude, Double latitude, String name, String address) {
@@ -457,18 +482,74 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
             GameQrRecordDB DBconnect = new GameQrRecordDB();
             DBconnect.DelteQrInfo(QRname);
             finish();
+            this.finishAffinity();
         }
     }
 
-    public void onSendingUpdate(String details, Boolean success) {
-        if (success){
-            finish();
-        }else {
-            Toast toast = Toast.makeText(getApplicationContext(), details, Toast.LENGTH_SHORT);
-            toast.show();
-        }
 
-    }
+
+    private void ImageFindQR(Bitmap photo){
+        // get instances of image
+
+
+        InputImage image = InputImage.fromBitmap(photo,0);
+
+            // setup barcode dector
+            BarcodeScannerOptions options =
+                  new BarcodeScannerOptions.Builder()
+                        .setBarcodeFormats(Barcode.FORMAT_ALL_FORMATS).build();
+
+            BarcodeScanner scanner = BarcodeScanning.getClient();
+
+            //step 4
+
+            Task<List<Barcode>> result = scanner.process(image)
+                    .addOnSuccessListener(new OnSuccessListener<List<Barcode>>() {
+                    @Override
+                    public void onSuccess(List<Barcode> barcodes) {
+                        TextInputEditText ttv = findViewById(R.id.qr_detail_image_textfield);
+                        // Task completed successfully
+                        // ...
+                        String codes="";
+                        for (Barcode barcode: barcodes) {
+                            Rect bounds = barcode.getBoundingBox();
+                            Point[] corners = barcode.getCornerPoints();
+                            String rawValue = barcode.getRawValue();
+
+                            codes=codes+rawValue;
+                            }
+                        ttv.setText(codes);
+
+                        ImageButton ib = findViewById(R.id.qr_detail_image_qrimage_button);
+
+                        Drawable d = new BitmapDrawable(getResources(), photo);
+                        ib.setBackground(d);
+
+                        ttv.setText(photo.getByteCount());
+                        //BitmapFactory
+
+//                        ByteArrayOutputStream out = new ByteArrayOutputStream();
+//                        if (android.os.Build.VERSION.SDK_INT>=30){
+//                            photo.compress(Bitmap.CompressFormat.WEBP_LOSSY,950,out);
+//                        } else {
+//                            photo.compress(Bitmap.CompressFormat.WEBP,950,out);
+//                        }
+//                        Bitmap decoded_png = BitmapFactory.decodeStream(new ByteArrayInputStream(out.toByteArray()));
+//
+//                        Drawable d1 = new BitmapDrawable(getResources(), decoded_png);
+//                        ib.setBackground(d1);
+
+                        //HashMapValidate("imageData",photo);
+                      }
+                  })
+                  .addOnFailureListener(new OnFailureListener() {
+                      @Override
+                      public void onFailure(@NonNull Exception e) {
+                          // Task failed with an exception
+                          HashMapValidate("imageData",null);
+                      }
+                  });
+      }
 
 
 }

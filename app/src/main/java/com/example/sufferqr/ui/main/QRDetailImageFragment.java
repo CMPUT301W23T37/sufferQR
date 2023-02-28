@@ -2,6 +2,7 @@ package com.example.sufferqr.ui.main;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -36,6 +37,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sufferqr.MainActivity;
+import com.example.sufferqr.QRDetailActivity;
 import com.example.sufferqr.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -51,6 +53,7 @@ import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
@@ -93,6 +96,8 @@ public class QRDetailImageFragment extends Fragment {
         void onImageUpdate(String QRtext,Boolean imageOn);
 
         void onImageUpdate(Boolean imageOn);
+
+        void onImageUpdate(Bitmap photo);
     }
 
     @Override
@@ -187,10 +192,11 @@ public class QRDetailImageFragment extends Fragment {
                 // it will open the camera for capture the image
                 Intent camera_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
+
                 // Start the activity with camera_intent,
                 // and request pic id
                 //startActivityForResult(camera_intent, 123); \\ deprecated
-
+                launcher.launch(camera_intent);
 
 
             }
@@ -202,62 +208,18 @@ public class QRDetailImageFragment extends Fragment {
         return view;
     }
 
+    private final ActivityResultLauncher<Intent> launcher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK
+                        && result.getData() != null) {
+                    Bundle extras =  result.getData().getExtras();
+                    Bitmap imageBitmap = (Bitmap) extras.get("data");
+                    listener.onImageUpdate(imageBitmap);
+                    //use photoUri here
+                }
+            }
+    );
 
 
-
-
-
-
-
-
-
-    private void ImageFindQR(Uri photo){
-
-        // get instances of image
-
-        InputImage image=null;
-        try {
-            image = InputImage.fromFilePath(requireContext(), photo);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-//        InputImage image = InputImage.fromBitmap(photo,0);
-
-        // setup barcode dector
-        BarcodeScannerOptions options =
-                new BarcodeScannerOptions.Builder()
-                        .setBarcodeFormats(
-                                Barcode.FORMAT_ALL_FORMATS)
-                        .build();
-
-        BarcodeScanner scanner = BarcodeScanning.getClient();
-
-        //step 4
-
-        Task<List<Barcode>> result = scanner.process(image)
-                .addOnSuccessListener(new OnSuccessListener<List<Barcode>>() {
-                    @Override
-                    public void onSuccess(List<Barcode> barcodes) {
-                        // Task completed successfully
-                        // ...
-                        for (Barcode barcode: barcodes) {
-                            Rect bounds = barcode.getBoundingBox();
-                            Point[] corners = barcode.getCornerPoints();
-
-                            String rawValue = barcode.getRawValue();
-
-                            qrcodeText.setText(rawValue);
-
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // Task failed with an exception
-                        // ...
-                    }
-                });
-    }
 }
