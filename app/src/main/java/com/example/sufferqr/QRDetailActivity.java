@@ -117,7 +117,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
     private Location locationCurrent;
     private boolean reqLocationUpdate = false;
     private HashMap <String,Object> data;
-    String mode,userName,QRname;
+    String mode,userName,QRname,QRstring;
 
 
     Button CancelBt,ConfirmBt;
@@ -138,16 +138,27 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         Intent myNewIntent = getIntent();
         mode = myNewIntent.getStringExtra("mode");
         userName = myNewIntent.getStringExtra("user");
+
         if (!Objects.equals(mode, "new")){
             QRname = myNewIntent.getStringExtra("qrID");
+        } else if (mode.equals("new")) {
+            QRstring = myNewIntent.getStringExtra("QRString");
         }
 
+        System.out.println(QRstring);
 
         mapBundle = new Bundle();
         imageBundle = new Bundle();
         GeneralBundle = new Bundle();
         mapBundle.putString("mode",mode);
         imageBundle.putString("mode",mode);
+
+
+        if (Objects.equals(mode, "new")){
+            imageBundle.putString("QRString",QRstring);
+
+            System.out.println(QRstring);
+        }
         GeneralBundle.putString("mode",mode);
 
         data = new HashMap<>();
@@ -370,11 +381,12 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                     } else {
                         Toast toast = Toast.makeText(getApplicationContext(), "Record does not exist", Toast.LENGTH_SHORT);
                         toast.show();
+                        finish();
                     }
                 } else {
                     Toast toast = Toast.makeText(getApplicationContext(), "Conect fail", Toast.LENGTH_SHORT);
                     toast.show();
-
+                    finish();
                 }
             }
         });
@@ -399,10 +411,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
 
             // insert here for visual demo
             demoText = QRtext;
-
             visual.setText(demoText);
-
-
 
             TextInputEditText points = findViewById(R.id.qr_detail_general_qrtext_points);
             // insert(change) for score calcualtion
@@ -433,11 +442,6 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
     public void onImageUpdate(Boolean imageOn) {
         HashMapValidate("imageExist",imageOn);
     }
-
-      @Override
-    public void onImageUpdate(Bitmap photo) {
-          ImageFindQR(photo);
-      }
 
     @Override
     public void onLocationUpdate(Boolean btOn, Double longitude, Double latitude, String name, String address) {
@@ -482,74 +486,8 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
             GameQrRecordDB DBconnect = new GameQrRecordDB();
             DBconnect.DelteQrInfo(QRname);
             finish();
-            this.finishAffinity();
         }
     }
-
-
-
-    private void ImageFindQR(Bitmap photo){
-        // get instances of image
-
-
-        InputImage image = InputImage.fromBitmap(photo,0);
-
-            // setup barcode dector
-            BarcodeScannerOptions options =
-                  new BarcodeScannerOptions.Builder()
-                        .setBarcodeFormats(Barcode.FORMAT_ALL_FORMATS).build();
-
-            BarcodeScanner scanner = BarcodeScanning.getClient();
-
-            //step 4
-
-            Task<List<Barcode>> result = scanner.process(image)
-                    .addOnSuccessListener(new OnSuccessListener<List<Barcode>>() {
-                    @Override
-                    public void onSuccess(List<Barcode> barcodes) {
-                        TextInputEditText ttv = findViewById(R.id.qr_detail_image_textfield);
-                        // Task completed successfully
-                        // ...
-                        String codes="";
-                        for (Barcode barcode: barcodes) {
-                            Rect bounds = barcode.getBoundingBox();
-                            Point[] corners = barcode.getCornerPoints();
-                            String rawValue = barcode.getRawValue();
-
-                            codes=codes+rawValue;
-                            }
-                        ttv.setText(codes);
-
-                        ImageButton ib = findViewById(R.id.qr_detail_image_qrimage_button);
-
-                        Drawable d = new BitmapDrawable(getResources(), photo);
-                        ib.setBackground(d);
-
-                        ttv.setText(photo.getByteCount());
-                        //BitmapFactory
-
-//                        ByteArrayOutputStream out = new ByteArrayOutputStream();
-//                        if (android.os.Build.VERSION.SDK_INT>=30){
-//                            photo.compress(Bitmap.CompressFormat.WEBP_LOSSY,950,out);
-//                        } else {
-//                            photo.compress(Bitmap.CompressFormat.WEBP,950,out);
-//                        }
-//                        Bitmap decoded_png = BitmapFactory.decodeStream(new ByteArrayInputStream(out.toByteArray()));
-//
-//                        Drawable d1 = new BitmapDrawable(getResources(), decoded_png);
-//                        ib.setBackground(d1);
-
-                        //HashMapValidate("imageData",photo);
-                      }
-                  })
-                  .addOnFailureListener(new OnFailureListener() {
-                      @Override
-                      public void onFailure(@NonNull Exception e) {
-                          // Task failed with an exception
-                          HashMapValidate("imageData",null);
-                      }
-                  });
-      }
 
 
 }

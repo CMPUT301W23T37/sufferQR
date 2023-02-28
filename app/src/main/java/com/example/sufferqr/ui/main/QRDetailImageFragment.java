@@ -90,6 +90,11 @@ public class QRDetailImageFragment extends Fragment {
         if (mode.length()<1){
             mode="new";
         }
+        if (mode.equals("new")){
+            localQRcontent=myImageBundle.getString("QRString");
+        }
+
+        System.out.println(localQRcontent);
     }
 
     public interface OnFragmentInteractionListener{
@@ -97,7 +102,6 @@ public class QRDetailImageFragment extends Fragment {
 
         void onImageUpdate(Boolean imageOn);
 
-        void onImageUpdate(Bitmap photo);
     }
 
     @Override
@@ -145,7 +149,7 @@ public class QRDetailImageFragment extends Fragment {
                     }
                 } else {
                     if (mode.equals("new")){
-                        listener.onImageUpdate("",imgEnable.isChecked());
+                        listener.onImageUpdate(localQRcontent,imgEnable.isChecked());
                     }else {
                         listener.onImageUpdate(imgEnable.isChecked());
                     }
@@ -174,6 +178,10 @@ public class QRDetailImageFragment extends Fragment {
                 }
             });
             qrcodeText.setEnabled(true);
+            if (localQRcontent.length()>=1){
+                qrcodeText.setText(localQRcontent);
+            }
+
         } else {
             qrcodeText.setEnabled(false);
             qr_card.setVisibility(View.INVISIBLE);
@@ -196,7 +204,7 @@ public class QRDetailImageFragment extends Fragment {
                 // Start the activity with camera_intent,
                 // and request pic id
                 //startActivityForResult(camera_intent, 123); \\ deprecated
-                launcher.launch(camera_intent);
+                //launcher.launch(camera_intent);
 
 
             }
@@ -210,13 +218,15 @@ public class QRDetailImageFragment extends Fragment {
 
     private final ActivityResultLauncher<Intent> launcher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == Activity.RESULT_OK
-                        && result.getData() != null) {
-                    Bundle extras =  result.getData().getExtras();
-                    Bitmap imageBitmap = (Bitmap) extras.get("data");
-                    listener.onImageUpdate(imageBitmap);
-                    //use photoUri here
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+//                    if (result.getResultCode() == Activity.RESULT_OK
+//                            && result.getData() != null) {
+//                        Bundle extras = result.getData().getExtras();
+//                        Bitmap imageBitmap = (Bitmap) extras.get("data");
+//                        listener.onImageUpdate(imageBitmap);
+//                    }
                 }
             }
     );

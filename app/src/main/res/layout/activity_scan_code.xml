@@ -4,6 +4,54 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ScanCode">
+    tools:context=".ScanCode"
+    android:background="@color/black"
+    >
+
+    <TextView
+        android:id="@+id/scan_code_textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="focus your camerea to a QR code"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="10sp"
+        android:textSize="12sp"
+        android:textColor="@color/white"/>
+
+    <androidx.camera.view.PreviewView
+        android:id="@+id/scan_code_camera_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="5sp"
+        android:layout_marginEnd="5sp"
+        android:layout_marginTop="35sp"
+        android:layout_marginBottom="115sp"/>
+
+    <Button
+        android:id="@+id/scan_code_go_button"
+        android:layout_width="match_parent"
+        android:layout_height="60sp"
+        android:layout_marginBottom="50sp"
+        android:layout_marginStart="5sp"
+        android:layout_marginEnd="5sp"
+        android:text="GO"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/scan_code_return_button"
+        android:backgroundTint="@color/delete_red"
+        android:layout_width="match_parent"
+        android:layout_height="40sp"
+        android:layout_marginBottom="5sp"
+        android:layout_marginStart="5sp"
+        android:layout_marginEnd="5sp"
+        android:text="Return"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

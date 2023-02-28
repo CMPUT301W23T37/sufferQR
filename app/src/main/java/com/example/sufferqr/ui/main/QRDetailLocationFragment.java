@@ -282,7 +282,7 @@ public class QRDetailLocationFragment extends Fragment {
 
                             CameraPosition position = new CameraPosition.Builder()
                                     .target(new LatLng(latiude, longtiude))
-                                    .zoom(15)
+                                    .zoom(13)
                                     .tilt(20)
                                     .build();
                             mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), null);

@@ -88,14 +88,29 @@ public class DrawerBase extends AppCompatActivity implements NavigationView.OnNa
                 break;
             case R.id.nav_scan:
                 //new/modified/viewer
-                // remember change ScanCode.class
-                Intent scanIntent = new Intent(this, QRDetailActivity.class);
-                scanIntent.putExtra("user","example");
-                scanIntent.putExtra("mode","new");
-//                scanIntent.putExtra("mode","modify");
+                // remember tochange ScanCode.class
 
-                // lunch
-                startActivity(scanIntent);
+                //normal new code start up
+//                Intent scanIntent = new Intent(DrawerBase.this, ScanCode.class);
+//                scanIntent.putExtra("user","example");
+//                scanIntent.putExtra("mode","new");
+//                startActivity(scanIntent);
+
+                // modifier
+                Intent scanIntent2 = new Intent(DrawerBase.this, QRDetailActivity.class);
+                scanIntent2.putExtra("user","example");
+                scanIntent2.putExtra("mode","modified");
+                scanIntent2.putExtra("qrID","gcc");
+                startActivity(scanIntent2);
+
+
+                // visiter
+//                Intent scanIntent3 = new Intent(DrawerBase.this, QRDetailActivity.class);
+//                scanIntent3.putExtra("user","example2");
+//                scanIntent3.putExtra("mode","modified");
+//                scanIntent3.putExtra("qrID","ppsc");
+//                startActivity(scanIntent3);
+
                 overridePendingTransition(0,0);
                 break;
 
