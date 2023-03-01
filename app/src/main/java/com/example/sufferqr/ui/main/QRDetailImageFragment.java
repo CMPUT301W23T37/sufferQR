@@ -55,6 +55,7 @@ import com.google.mlkit.vision.common.InputImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
 
@@ -80,6 +81,8 @@ public class QRDetailImageFragment extends Fragment {
     CardView text_card,qr_card;
     String mode,localQRcontent="";
 
+    Uri imageUri;
+
     ImageButton qrbt;
 
     public static File tempFile;
@@ -92,6 +95,8 @@ public class QRDetailImageFragment extends Fragment {
         }
         if (mode.equals("new")){
             localQRcontent=myImageBundle.getString("QRString");
+            String imageU = myImageBundle.getString("imageUri");
+            imageUri = Uri.parse(imageU);
         }
 
         System.out.println(localQRcontent);
@@ -190,46 +195,18 @@ public class QRDetailImageFragment extends Fragment {
             imgEnable.setEnabled(false);
         }
 
-
-
-        qrbt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                // Create the camera_intent ACTION_IMAGE_CAPTURE
-                // it will open the camera for capture the image
-                Intent camera_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-
-                // Start the activity with camera_intent,
-                // and request pic id
-                //startActivityForResult(camera_intent, 123); \\ deprecated
-                //launcher.launch(camera_intent);
-
-
+        if (Objects.equals(mode, "new")){
+            Drawable yourDrawable;
+            try {
+                InputStream inputStream = requireActivity().getContentResolver().openInputStream(imageUri);
+                yourDrawable = Drawable.createFromStream(inputStream, imageUri.toString() );
+                qrbt.setBackground(yourDrawable);
+            } catch (FileNotFoundException e) {
+                Toast toast = Toast.makeText(requireContext(), "load image error", Toast.LENGTH_SHORT);
             }
-        });
-
-//        ImageFindQR();
-
-
+        }
         return view;
     }
-
-    private final ActivityResultLauncher<Intent> launcher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-//                    if (result.getResultCode() == Activity.RESULT_OK
-//                            && result.getData() != null) {
-//                        Bundle extras = result.getData().getExtras();
-//                        Bitmap imageBitmap = (Bitmap) extras.get("data");
-//                        listener.onImageUpdate(imageBitmap);
-//                    }
-                }
-            }
-    );
 
 
 }

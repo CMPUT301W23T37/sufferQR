@@ -98,9 +98,9 @@ public class DrawerBase extends AppCompatActivity implements NavigationView.OnNa
 
                 // modifier
                 Intent scanIntent2 = new Intent(DrawerBase.this, QRDetailActivity.class);
-                scanIntent2.putExtra("user","example");
+                scanIntent2.putExtra("user","example2");
                 scanIntent2.putExtra("mode","modified");
-                scanIntent2.putExtra("qrID","gcc");
+                scanIntent2.putExtra("qrID","image1clogadvisability");
                 startActivity(scanIntent2);
 
 

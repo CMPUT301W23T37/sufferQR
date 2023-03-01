@@ -9,6 +9,7 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconOffset;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -61,12 +62,9 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.mlkit.vision.barcode.BarcodeScanner;
-import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
-import com.google.mlkit.vision.barcode.BarcodeScanning;
-import com.google.mlkit.vision.barcode.common.Barcode;
-import com.google.mlkit.vision.common.InputImage;
-import com.mapbox.android.core.permissions.PermissionsListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
@@ -83,10 +81,13 @@ import com.mapbox.mapboxsdk.utils.BitmapUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
@@ -96,12 +97,15 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
 
     private ActivityQrdetailBinding binding;
 
+
+
     // map and location settings
     private static final int REQUEST_CODE = 5678;
     private static final  int REQUEST_CHECK_SETTING = 10;
     private static  final long UPDATE_INTERVAL =10;
     private static final long FAST_UPDATE_IN_ML = 100;
     private static final String TAG = MainActivity.class.getSimpleName();
+  private FirebaseStorage storage;
     MapboxMap mapboxMapGlobal;
     MapView mapView;
     MapboxMap map;
@@ -119,6 +123,8 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
     private HashMap <String,Object> data;
     String mode,userName,QRname,QRstring;
 
+    Uri imageUri;
+
 
     Button CancelBt,ConfirmBt;
     Bundle mapBundle,imageBundle,GeneralBundle;
@@ -133,6 +139,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         // object or in the same activity which contains the mapview.
         binding = ActivityQrdetailBinding.inflate(getLayoutInflater());
         Mapbox.getInstance(getApplicationContext(), getResources().getString(R.string.mapbox_access_token));
+        storage = FirebaseStorage.getInstance();
         setContentView(binding.getRoot());
 
         Intent myNewIntent = getIntent();
@@ -143,6 +150,8 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
             QRname = myNewIntent.getStringExtra("qrID");
         } else if (mode.equals("new")) {
             QRstring = myNewIntent.getStringExtra("QRString");
+            String uriString = myNewIntent.getStringExtra("QRimageUri");
+            imageUri = Uri.parse(uriString);
         }
 
         System.out.println(QRstring);
@@ -152,14 +161,15 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         GeneralBundle = new Bundle();
         mapBundle.putString("mode",mode);
         imageBundle.putString("mode",mode);
+        GeneralBundle.putString("mode",mode);
 
 
         if (Objects.equals(mode, "new")){
             imageBundle.putString("QRString",QRstring);
+            imageBundle.putString("imageUri",imageUri.toString());
 
             System.out.println(QRstring);
         }
-        GeneralBundle.putString("mode",mode);
 
         data = new HashMap<>();
 
@@ -184,6 +194,16 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
             @Override
             public void onClick(View v) {
                 finish();
+                if (mode == "new"){
+                    try{
+                        File fdel = new File(imageUri.getPath());//create path from uri
+                        if (fdel.exists()) {
+                            fdel.delete();
+                        }
+                    } catch (Exception e){
+                        Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT);
+                    }
+                }
             }
         });
         ConfirmBt.setOnClickListener(new View.OnClickListener() {
@@ -191,18 +211,18 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
             public void onClick(View v) {
                 if (Objects.equals(mode, "new")){
                     HashMapValidate("user",userName);
-                    GameQrRecordDB DBconnect = new GameQrRecordDB();
-                    if (QRname.length()==0){
-                        DBconnect.NewQRWithRandomGeneratedWords("",data);
-                    } else {
-                        DBconnect.CheckUnique(QRname,true,data);
-                        finish();
-                    }
+                    HashMapValidate("time",new Date());
+                    imagePushFirestone();
                 } else if (mode.equals("modified")){
                     Boolean b1 = (Boolean)data.get("imageExist");
                     Boolean b2 = (Boolean)data.get("LocationExist");
+                    String s1 = (String) data.get("QRpath");
                     if (Boolean.FALSE.equals(b1)){
                         HashMapValidate("QRtext","");
+                        if (s1!=""){
+                            imageDelFirestone(s1);
+                            HashMapValidate("QRpath","");
+                        }
                     }
                     if (Boolean.FALSE.equals(b2)){
                         HashMapValidate("LocationLatitude",0.0);
@@ -245,16 +265,20 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                         name = findViewById(R.id.qr_detail_general_qrtext_name);
                         points = findViewById(R.id.qr_detail_general_qrtext_points);
                         textView = findViewById(R.id.qr_detail_general_qrtext_date);
+                        TextInputEditText visual = findViewById(R.id.qr_detail_general_visual_text);
+
                         button = findViewById(R.id.qr_detail_general_elevatedButton);
                         name.setText((String)document.get("QRname"));
                         Object pt = document.get("points");
                         points.setText(String.valueOf(pt));
                         textView.setText((String)document.get("date"));
+                        visual.setText((String)document.get("QVisual"));
 
                         HashMapValidate("QRname",document.get("QRname"));
                         HashMapValidate("points",document.get("points"));
                         HashMapValidate("date",document.get("date"));
                         HashMapValidate("user",document.get("user"));
+                        HashMapValidate("QVisual",document.get("QVisual"));
 
                         TextInputLayout ttl = findViewById(R.id.qr_detail_general_qrtext_name_layout);
                         ttl.setHelperText("");
@@ -276,7 +300,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                         CardView c2= findViewById(R.id.qr_detail_image_qrimage_cardview);
                         TextView t1= findViewById(R.id.qr_detail_image_privacy_text);
 
-                        if (imgE!= true){
+                        if (!imgE){
                             imgEnable.setChecked(false);
                             imgEnable.setEnabled(false);
 
@@ -296,10 +320,12 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                                 t1.setVisibility(View.INVISIBLE);
                             }
                             QRcontent.setText((String) document.get("QRtext"));
+                            imageFetchFirestone((String) document.get("QRpath"));
                         }
 
                         HashMapValidate("QRtext",document.get("QRtext"));
                         HashMapValidate("imageExist",document.get("imageExist"));
+                        HashMapValidate("QRpath",document.get("QRpath"));
 
                         // map
                         SwitchMaterial LocEnable;
@@ -483,11 +509,140 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         // delte request
         if (Objects.equals((String) data.get("user"), userName)){
 
+            String s1 = (String) data.get("QRpath");
+            if (!Objects.equals(s1, "")){
+                imageDelFirestone(s1);
+            }
+
             GameQrRecordDB DBconnect = new GameQrRecordDB();
             DBconnect.DelteQrInfo(QRname);
             finish();
         }
     }
 
+    private void imagePushFirestone(){
+        Bitmap bitmap =null;
+        if (imageUri!=null){
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+            } catch (IOException e) {
+                Toast toast = Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT);
+            }
+            // de;tete
+            try{
+                File fdel = new File(imageUri.getPath());//create path from uri
+                if (fdel.exists()) {
+                    fdel.delete();
+                }
+            } catch (Exception e){
+                Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT);
+            }
 
+        }
+        Boolean imgE = (Boolean) data.get("imageExist");
+        if (bitmap!=null || Boolean.TRUE.equals(imgE)){
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+            String fName = userName+"_"+timeStamp+".jpg";
+            String Path = "image/"+ fName;
+            StorageReference storageRef = storage.getReference();
+            StorageReference mountainsRef = storageRef.child(Path);
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 30, baos);
+            byte[] imageData = baos.toByteArray();
+            UploadTask uploadTask = mountainsRef.putBytes(imageData);
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle unsuccessful uploads
+                    Toast toast = Toast.makeText(getApplicationContext(),"tryagain", Toast.LENGTH_SHORT);
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                    // ...
+                    HashMapValidate("QRpath",Path);
+
+                    GameQrRecordDB DBconnect = new GameQrRecordDB();
+                    if (QRname.length()==0){
+                        DBconnect.NewQRWithRandomGeneratedWords("",data);
+                        finish();
+                    } else {
+                        DBconnect.CheckUnique(QRname,true,data);
+                        finish();
+                    }
+                }
+            });
+
+
+
+        } else {
+            // de;tete
+            try{
+                File fdel = new File(imageUri.getPath());//create path from uri
+                if (fdel.exists()) {
+                    fdel.delete();
+                }
+            } catch (Exception e){
+                Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT);
+            }
+
+            HashMapValidate("QRpath","");
+            GameQrRecordDB DBconnect = new GameQrRecordDB();
+            if (QRname.length()==0){
+                DBconnect.NewQRWithRandomGeneratedWords("",data);
+                finish();
+            } else {
+                DBconnect.CheckUnique(QRname,true,data);
+                finish();
+            }
+        }
+
+
+    }
+
+    private void imageFetchFirestone(String FilePath) {
+        StorageReference storageRef = storage.getReference();
+        final StorageReference ref = storageRef.child(FilePath);
+        final long ONE_MEGABYTE = 1024 * 1024; //1mb
+        ref.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                // Data for "images/island.jpg" is returns, use this as needed
+                Drawable image = null;
+                ByteArrayInputStream is = new ByteArrayInputStream(bytes);
+                image = Drawable.createFromStream(is, "QR code surrounding");
+                ImageButton qrbt = findViewById(R.id.qr_detail_image_qrimage_button);
+                qrbt.setBackground(image);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Toast.makeText(getApplicationContext(), exception.toString(), Toast.LENGTH_SHORT);
+                ImageButton qrbt = findViewById(R.id.qr_detail_image_qrimage_button);
+                qrbt.setBackground(null);
+            }
+        });
+    }
+
+    private void imageDelFirestone(String s1){
+        StorageReference storageRef = storage.getReference();
+
+        // Create a reference to the file to delete
+        StorageReference desertRef = storageRef.child(s1);
+
+        // Delete the file
+        desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                // File deleted successfully
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Uh-oh, an error occurred!
+            }
+        });
+        }
 }

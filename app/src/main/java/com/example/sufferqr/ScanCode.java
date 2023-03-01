@@ -15,9 +15,11 @@ import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.BitmapCompat;
 import androidx.lifecycle.LifecycleOwner;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -26,7 +28,9 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Size;
 import android.view.OrientationEventListener;
 import android.view.View;
@@ -47,9 +51,16 @@ import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 
@@ -154,8 +165,6 @@ public class ScanCode extends DrawerBase {
 
     }
 
-
-
     private void ImageFindQR(InputImage inputImage,Bitmap bitmap){
         // setup barcode dector
         BarcodeScannerOptions options =
@@ -188,6 +197,10 @@ public class ScanCode extends DrawerBase {
 //                            Bitmap bmap = Bitmap.createBitmap(inputImage.getWidth(), inputImage.getHeight(), Bitmap.Config.RGB_565);
 //                            bmap.copyPixelsFromBuffer(inputImage.getByteBuffer());
 
+                            //int bitmapByteCount=
+//                            System.out.println(BitmapCompat.getAllocationByteCount(bitmap));
+                            Uri selectedImage = saveImage(bitmap);
+
 //                            new/modified/viewer
 //                             remember change ScanCode.class
                             Intent scanIntent = new Intent(ScanCode.this, QRDetailActivity.class);
@@ -195,6 +208,8 @@ public class ScanCode extends DrawerBase {
                             scanIntent.putExtra("mode","new");
 //                            scanIntent.putExtra("bmap",bitmap); // figure out shrink size
                             scanIntent.putExtra("QRString",codes);
+                            scanIntent.putExtra("QRimageUri",selectedImage.toString());
+                            scanIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                             startActivity(scanIntent);
                             finish();
 
@@ -213,6 +228,39 @@ public class ScanCode extends DrawerBase {
                 });
     }
 
+    private Uri saveImage(Bitmap bitmap) {
+        // https://stackoverflow.com/questions/42460710/how-to-convert-a-bitmap-image-to-uri
+        Uri image = null;
+        File file = createImageFile();
+        if (file != null) {
+            FileOutputStream fout;
+            try {
+                fout = new FileOutputStream(file);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 30, fout);
+                fout.flush();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            image = Uri.fromFile(file);
+        }
+        return image;
+    }
 
+    private File createImageFile() {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File mFileTemp = null;
+        String root=this.getDir("my_sub_dir",Context.MODE_PRIVATE).getAbsolutePath();
+        File myDir = new File(root + "/Img");
+        if(!myDir.exists()){
+            myDir.mkdirs();
+        }
+        try {
+            mFileTemp=File.createTempFile(imageFileName,".jpg",myDir.getAbsoluteFile());
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        return mFileTemp;
+    }
 
 }
