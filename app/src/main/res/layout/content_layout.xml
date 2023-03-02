@@ -19,7 +19,8 @@
             android:background="@color/app_main_blue"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:titleTextColor="@color/white"
-            app:titleMarginStart="105dp">
+            app:titleMarginStart="105dp"
+            android:gravity="center">
 
         </androidx.appcompat.widget.Toolbar>
 
