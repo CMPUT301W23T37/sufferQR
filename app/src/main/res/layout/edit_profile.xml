@@ -45,12 +45,15 @@
 
 <!--    Delete account Button (Should be red, something wrong with the color ratio)    -->
     <Button
+        style="@style/Widget.Material3.Button.ElevatedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="250dp"
-        android:background="@color/delete_red"
-        android:text="Delete Account"
-        android:visibility="visible">
+        android:backgroundTint="@color/delete_red"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:text="Delete Account">
 
     </Button>
 
@@ -65,7 +68,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:text="@string/cancel_string"
-            android:background="@color/app_sub_blue">
+            android:backgroundTint="@color/app_sub_blue"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            style="@style/Widget.Material3.Button.ElevatedButton">
         </Button>
 
         <Button
@@ -73,8 +80,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:text="Apply"
-            android:layout_marginStart="60dp"
-            android:background="@color/app_sub_blue">
+            android:layout_marginStart="50dp"
+            android:backgroundTint="@color/app_sub_blue"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            style="@style/Widget.Material3.Button.ElevatedButton">
         </Button>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
