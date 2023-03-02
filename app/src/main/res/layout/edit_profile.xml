@@ -11,41 +11,7 @@
     android:layout_marginEnd="40dp"
     tools:context=".EditProfile">
 
-<!--&lt;!&ndash;    Username text     &ndash;&gt;-->
-<!--    <TextView-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Username"-->
-<!--        android:textSize="16sp">-->
-<!--    </TextView>-->
-<!--&lt;!&ndash;    Username change box (input type -> text)     &ndash;&gt;-->
-<!--    <EditText-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:textSize="20sp"-->
-<!--        android:text="James Bond"-->
-<!--        android:inputType="text">-->
-<!--    </EditText>-->
-
-<!--&lt;!&ndash;    Email text     &ndash;&gt;-->
-<!--    <TextView-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Email"-->
-<!--        android:textSize="16sp"-->
-<!--        android:layout_marginTop="20sp">-->
-<!--    </TextView>-->
-<!--&lt;!&ndash;    Email change box (input type -> Email)      &ndash;&gt;-->
-<!--    <EditText-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:textSize="20sp"-->
-<!--        android:text="jamesBond@cia.uk"-->
-<!--        android:inputType="textEmailAddress">-->
-<!--    </EditText>-->
-
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/user_name_edit_profile"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -53,6 +19,22 @@
         android:layout_marginTop="100dp">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/userName_editProfile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Email"
+        android:layout_marginTop="10dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/userEmail_editProfile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             />
@@ -61,6 +43,7 @@
 
 <!--    Delete account Button (Should be red, something wrong with the color ratio)    -->
     <Button
+        android:id="@+id/delButton_editProfile"
         style="@style/Widget.Material3.Button.ElevatedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -80,6 +63,7 @@
         android:layout_marginTop="30dp">
 
         <Button
+            android:id="@+id/cancelButton_editProfile"
             android:layout_width="140dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
@@ -92,11 +76,12 @@
         </Button>
 
         <Button
+            android:id="@+id/applyButton_editProfile"
             android:layout_width="140dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:text="Apply"
-            android:layout_marginStart="50dp"
+            android:layout_marginStart="30dp"
             android:backgroundTint="@color/app_sub_blue"
             android:textStyle="bold"
             android:textColor="@color/white"

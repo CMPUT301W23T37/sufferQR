@@ -1,5 +1,9 @@
 package com.example.sufferqr;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
+
 public class User {
     private String username;
     private String email;
@@ -9,8 +13,9 @@ public class User {
     private int highestScore;
     private int lowestScore;
     private int sumScore;
+    private List<Long> scores;
 
-    public User(String name, String email, String QRid, String Region, int QRcount, int highestScore, int lowestScore, int sumScore){
+    public User(String name, String email, String QRid, String Region, int QRcount, int highestScore, int lowestScore, int sumScore, List<Long> scores){
         this.username = name;
         this.email = email;
         this.QRid = QRid;
@@ -19,7 +24,10 @@ public class User {
         this.highestScore = highestScore;
         this.lowestScore = lowestScore;
         this.sumScore = sumScore;
+        this.scores = scores;
     }
+
+    public User(){}
 
     public String getName(){
         return username;
@@ -76,5 +84,8 @@ public class User {
     public void setSumScore(int sumScore){
         this.sumScore = sumScore;
     }
+
+    public List<Long> getScores(){return scores;}
+    public void addScores(long score){scores.add(score);}
 
 }

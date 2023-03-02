@@ -19,7 +19,11 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.checkerframework.checker.units.qual.A;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 public class RegisterPage extends AppCompatActivity {
@@ -49,7 +53,7 @@ public class RegisterPage extends AppCompatActivity {
         // User email edit text
         emailRegisterText = findViewById(R.id.email_register);
         String emailCheckAt = "@";
-        String emailCheckCom = ".com";
+        String emailCheckCom = ".";
 
         // set up qr id
         qrIdGenerated = randomString();
@@ -75,9 +79,7 @@ public class RegisterPage extends AppCompatActivity {
                     Toast.makeText(RegisterPage.this, "Please enter an email!", Toast.LENGTH_SHORT).show();
                 } else if (!emailRegisterText.getEditableText().toString().contains(emailCheckAt)){
                     Toast.makeText(RegisterPage.this, "Please enter a correct email!", Toast.LENGTH_SHORT).show();
-                } else if (!emailRegisterText.getEditableText().toString().contains(emailCheckCom)) {
-                    Toast.makeText(RegisterPage.this, "Please enter a correct email!", Toast.LENGTH_SHORT).show();
-                } else{
+                } else if (emailRegisterText.getEditableText().toString().contains(emailCheckCom)) {
 
                     // set up new user
                     String usernameEntered = usernameRegisterText.getEditableText().toString();
@@ -87,13 +89,17 @@ public class RegisterPage extends AppCompatActivity {
                     int highest = 0;
                     int lowest = 0;
                     int sum = 0;
+                    List<Long> scores = new ArrayList<Long>();
+                    scores.add(0L);
 
                     // Get AAID
                     String android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
-                    User user = new User(usernameEntered, emailEntered, qrIdGenerated, region, QRcount, highest, lowest, sum);
+                    User user = new User(usernameEntered, emailEntered, qrIdGenerated, region, QRcount, highest, lowest, sum, scores);
                     db.collection("Player").document(android_id).set(user);
                     finish();
+                } else{
+                    Toast.makeText(RegisterPage.this, "Please enter a correct email!", Toast.LENGTH_SHORT).show();
                 }
 
 
