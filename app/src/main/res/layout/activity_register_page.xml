@@ -82,10 +82,10 @@
 
 <!--        Change QR id button      -->
         <Button
+            android:id="@+id/qr_id_register"
             style="?attr/materialIconButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             app:icon="@drawable/reload"
             android:text="sndckashdflaasdfsd"/>
 
@@ -95,6 +95,7 @@
 <!--    Confirm register button     -->
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/confirm_register"
             style="@style/Widget.Material3.Button.ElevatedButton"
             android:backgroundTint="@color/lighter_blue"
             android:layout_width="match_parent"

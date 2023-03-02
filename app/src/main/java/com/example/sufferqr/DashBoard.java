@@ -25,5 +25,7 @@ public class DashBoard extends DrawerBase {
         activityDashBoardBinding = ActivityDashBoardBinding.inflate(getLayoutInflater());
         setContentView(activityDashBoardBinding.getRoot());
         allocateActivityTitle("Suffer QR");
+
+
     }
 }

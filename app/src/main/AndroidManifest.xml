@@ -2,28 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" >
 
-    <uses-sdk tools:overrideLibrary="
-      androidx.camera.camera2, androidx.camera.core,
-      androidx.camera.view, androidx.camera.lifecycle" />
-
-    <uses-permission android:name="android.permission.CAMERA"
-        android:required = "true"/>
-
-    <uses-feature android:name="android.hardware.camera.any" />
-
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-
-    <uses-permission android:name="android.permission.INTERNET"/>
-
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -36,11 +14,7 @@
         <activity
             android:name=".RegisterPage"
             android:exported="true" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".ScanHistory"
@@ -66,17 +40,16 @@
         <activity
             android:name=".DashBoard"
             android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
-            android:name=".QRDetailActivity"
-            android:exported="false"
-            android:label="@string/title_activity_qrdetail"
-            android:theme="@style/Theme.SufferQR.NoActionBar" />
-
-        <meta-data
-            android:name="com.google.android.gms.vision.DEPENDENCIES"
-            android:value="barcode" />
-
+            android:name=".MainActivity"
+            android:exported="true" />
+        <activity android:name=".EditProfile" />
     </application>
 
 </manifest>

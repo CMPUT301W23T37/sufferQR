@@ -2,46 +2,62 @@
 <!--This layout is bit different, since we padded at the top-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="100dp"
+
     android:layout_marginStart="40dp"
-    android:paddingEnd="40dp"
+    android:layout_marginEnd="40dp"
     tools:context=".EditProfile">
 
-<!--    Username text     -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Username"
-        android:textSize="16sp">
-    </TextView>
-<!--    Username change box (input type -> text)     -->
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:text="James Bond"
-        android:inputType="text">
-    </EditText>
+<!--&lt;!&ndash;    Username text     &ndash;&gt;-->
+<!--    <TextView-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Username"-->
+<!--        android:textSize="16sp">-->
+<!--    </TextView>-->
+<!--&lt;!&ndash;    Username change box (input type -> text)     &ndash;&gt;-->
+<!--    <EditText-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:textSize="20sp"-->
+<!--        android:text="James Bond"-->
+<!--        android:inputType="text">-->
+<!--    </EditText>-->
 
-<!--    Email text     -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Email"
-        android:textSize="16sp"
-        android:layout_marginTop="20sp">
-    </TextView>
-<!--    Email change box (input type -> Email)      -->
-    <EditText
+<!--&lt;!&ndash;    Email text     &ndash;&gt;-->
+<!--    <TextView-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Email"-->
+<!--        android:textSize="16sp"-->
+<!--        android:layout_marginTop="20sp">-->
+<!--    </TextView>-->
+<!--&lt;!&ndash;    Email change box (input type -> Email)      &ndash;&gt;-->
+<!--    <EditText-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:textSize="20sp"-->
+<!--        android:text="jamesBond@cia.uk"-->
+<!--        android:inputType="textEmailAddress">-->
+<!--    </EditText>-->
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/user_name_edit_profile"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:text="jamesBond@cia.uk"
-        android:inputType="textEmailAddress">
-    </EditText>
+        android:hint="Username"
+        android:layout_marginTop="100dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
 <!--    Delete account Button (Should be red, something wrong with the color ratio)    -->
     <Button
