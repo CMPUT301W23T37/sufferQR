@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <item
+            android:id="@+id/nav_user"
+            android:icon="@drawable/userhead"
+            android:title="User Name"
+            app:showAsAction="never" />
+
+        <item
+            android:id="@+id/nav_dash"
+            android:title="Dash Board"
+            android:icon="@drawable/dashboard"/>
+
+        <item
+            android:id="@+id/nav_map"
+            android:title="Map"
+            android:icon="@drawable/map"/>
+
+        <item
+            android:id="@+id/nav_scan"
+            android:title="Scan Code"
+            android:icon="@drawable/scan_30"/>
+
+        <item
+            android:id="@+id/nav_History"
+            android:title="Scan History"
+            android:icon="@drawable/bx_collection"/>
+
+        <item
+            android:id="@+id/nav_LeaderBoard"
+            android:title="Leader Board"
+            android:icon="@drawable/leaderboard"/>
+
+        <item
+            android:id="@+id/nav_search"
+            android:title="Search Player"
+            android:icon="@drawable/search"/>
+
+
+
+
+</menu>
