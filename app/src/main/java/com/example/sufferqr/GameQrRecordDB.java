@@ -46,8 +46,6 @@ public class GameQrRecordDB {
     private FirebaseFirestore db;
     private FirebaseStorage storage;
 
-//    private OnFragmentInteractionListener listener;
-
 
     public GameQrRecordDB(){
         //getRandomUniqueString();
@@ -57,10 +55,7 @@ public class GameQrRecordDB {
         db = FirebaseFirestore.getInstance();
     }
 
-//    public interface OnFragmentInteractionListener{
-//
-//        void onSendingUpdate(String details,Boolean success);
-//    }
+
 
 
 

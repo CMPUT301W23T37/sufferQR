@@ -66,27 +66,20 @@ import java.util.Objects;
  */
 public class QRDetailImageFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-
-
     private OnFragmentInteractionListener listener;
-
-    // TODO: Rename and change types of parameters
     TextInputEditText qrcodeText;
-
     SwitchMaterial imgEnable;
     Bundle myImageBundle;
     TextView pic_text;
     CardView text_card,qr_card;
     String mode,localQRcontent="";
-
     Uri imageUri;
-
     ImageButton qrbt;
-
     public static File tempFile;
 
+    /**
+     * launch
+     */
     public QRDetailImageFragment(Bundle adapterImageBundle) {
         myImageBundle = adapterImageBundle;
         mode = myImageBundle.getString("mode");
@@ -102,6 +95,9 @@ public class QRDetailImageFragment extends Fragment {
         System.out.println(localQRcontent);
     }
 
+    /**
+     * lister sync to QRdetail tab
+     */
     public interface OnFragmentInteractionListener{
         void onImageUpdate(String QRtext,Boolean imageOn);
 
@@ -109,12 +105,18 @@ public class QRDetailImageFragment extends Fragment {
 
     }
 
+    /**
+     * launch
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
     }
 
+    /**
+     * attach to listener
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -126,7 +128,9 @@ public class QRDetailImageFragment extends Fragment {
         }
     }
 
-
+    /**
+     * launch
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -143,6 +147,7 @@ public class QRDetailImageFragment extends Fragment {
             listener.onImageUpdate("", imgEnable.isChecked());
         }
 
+        // image buton listener(privict)
         imgEnable.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -162,6 +167,7 @@ public class QRDetailImageFragment extends Fragment {
             }
         });
 
+        // text change lister
         if (Objects.equals(mode, "new")){
             qrcodeText.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -195,6 +201,7 @@ public class QRDetailImageFragment extends Fragment {
             imgEnable.setEnabled(false);
         }
 
+        // load image at new mode
         if (Objects.equals(mode, "new")){
             Drawable yourDrawable;
             try {

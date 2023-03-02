@@ -28,22 +28,16 @@ import java.util.Objects;
  */
 public class QRDetailGeneralFragment extends Fragment{
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-
-
-    // TODO: Rename and change types of parameters
-
-
     private OnFragmentInteractionListener listener;
-
     Bundle myGeneralBudle;
     TextInputEditText name;
-
     TextView textView;
     Date madeDate;
     String myDate,mode;
 
+    /**
+     * launch
+     */
     public QRDetailGeneralFragment(Bundle gbundle) {
         myGeneralBudle = gbundle;
         mode = myGeneralBudle.getString("mode");
@@ -52,6 +46,9 @@ public class QRDetailGeneralFragment extends Fragment{
         }
     }
 
+    /**
+     * sync input to QRdetial class
+     */
     public interface OnFragmentInteractionListener{
         void onGeneralUpdate(String QRcodename,String today);
 
@@ -59,11 +56,17 @@ public class QRDetailGeneralFragment extends Fragment{
 
     }
 
+    /**
+     * launch
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * attach listener
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -75,6 +78,9 @@ public class QRDetailGeneralFragment extends Fragment{
         }
     }
 
+    /**
+     * creat view
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -84,6 +90,7 @@ public class QRDetailGeneralFragment extends Fragment{
         textView = view.findViewById(R.id.qr_detail_general_qrtext_date);
         Button del_button = view.findViewById(R.id.qr_detail_general_elevatedButton);
 
+        // if load information
         if (Objects.equals(mode, "new")){
             madeDate = new Date();
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd ");
@@ -96,6 +103,7 @@ public class QRDetailGeneralFragment extends Fragment{
         } else {
             name.setEnabled(false);
         }
+        // when type changes sync to mainpage
         name.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -115,6 +123,7 @@ public class QRDetailGeneralFragment extends Fragment{
             }
         });
 
+        // del button listener
         del_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

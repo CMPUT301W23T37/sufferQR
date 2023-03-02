@@ -87,29 +87,12 @@ public class DrawerBase extends AppCompatActivity implements NavigationView.OnNa
                 overridePendingTransition(0,0);
                 break;
             case R.id.nav_scan:
-                //new/modified/viewer
-                // remember tochange ScanCode.class
+                //new/modified/viewer(mode) for QR detail activity
 
-                //normal new code start up
-//                Intent scanIntent = new Intent(DrawerBase.this, ScanCode.class);
-//                scanIntent.putExtra("user","example");
-//                scanIntent.putExtra("mode","new");
-//                startActivity(scanIntent);
-
-                // modifier
-                Intent scanIntent2 = new Intent(DrawerBase.this, QRDetailActivity.class);
-                scanIntent2.putExtra("user","example2");
-                scanIntent2.putExtra("mode","modified");
-                scanIntent2.putExtra("qrID","image1clogadvisability");
-                startActivity(scanIntent2);
-
-
-                // visiter
-//                Intent scanIntent3 = new Intent(DrawerBase.this, QRDetailActivity.class);
-//                scanIntent3.putExtra("user","example2");
-//                scanIntent3.putExtra("mode","modified");
-//                scanIntent3.putExtra("qrID","ppsc");
-//                startActivity(scanIntent3);
+                Intent scanIntent = new Intent(DrawerBase.this, ScanCode.class);
+                scanIntent.putExtra("user","new_example");
+                scanIntent.putExtra("mode","new");
+                startActivity(scanIntent);
 
                 overridePendingTransition(0,0);
                 break;

@@ -23,6 +23,9 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     Bundle adapterMapBundle,adapterImageBundle,adapterGeneralBundle;
 
+    /**
+     * setup page adapter
+     */
     public SectionsPagerAdapter(Context context, FragmentManager fm,Bundle mapBundle,Bundle imageBundle,Bundle GeneralBundle) {
         super(fm);
         mContext = context;
@@ -32,6 +35,9 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     }
 
+    /**
+     * return correct fragment
+     */
     @Override
     public Fragment getItem(int position) {
         // getItem is called to instantiate the fragment for the given page.
@@ -47,12 +53,18 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         }
     }
 
+    /**
+     * return position
+     */
     @Nullable
     @Override
     public CharSequence getPageTitle(int position) {
         return mContext.getResources().getString(TAB_TITLES[position]);
     }
 
+    /**
+     * return count
+     */
     @Override
     public int getCount() {
         // Show 2 total pages.

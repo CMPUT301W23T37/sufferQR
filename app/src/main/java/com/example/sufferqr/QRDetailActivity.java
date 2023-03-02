@@ -97,40 +97,25 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
 
     private ActivityQrdetailBinding binding;
 
-
-
-    // map and location settings
-    private static final int REQUEST_CODE = 5678;
-    private static final  int REQUEST_CHECK_SETTING = 10;
-    private static  final long UPDATE_INTERVAL =10;
-    private static final long FAST_UPDATE_IN_ML = 100;
-    private static final String TAG = MainActivity.class.getSimpleName();
-  private FirebaseStorage storage;
-    MapboxMap mapboxMapGlobal;
-    MapView mapView;
-    MapboxMap map;
+    private FirebaseStorage storage;
+    MapboxMap mapboxMapGlobal; // mapbox in location
 
     private FirebaseFirestore db;
 
-    TextView s1,s2,s3;
-    private FusedLocationProviderClient fusedLocationClient;
-    private SettingsClient settingsClient;
-    private LocationRequest locationRequest;
-    private LocationSettingsRequest locationSettingsRequest;
-    private LocationCallback locationCallback;
-    private Location locationCurrent;
-    private boolean reqLocationUpdate = false;
-    private HashMap <String,Object> data;
-    String mode,userName,QRname,QRstring;
+    private HashMap <String,Object> data; // data that sent to collection
+    String mode,userName,QRname,QRstring; // remember some of the name setiings
 
-    Uri imageUri;
+    Uri imageUri; // at new mode, record local image location
+
+    Button CancelBt,ConfirmBt; // listener for bottom button
+    Bundle mapBundle,imageBundle,GeneralBundle; //tabs transit information
 
 
-    Button CancelBt,ConfirmBt;
-    Bundle mapBundle,imageBundle,GeneralBundle;
 
 
-    private PermissionsManager permissionsManager;
+  /**
+   * it start when class create detect the class from, and show different ele,emts
+   */
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -142,6 +127,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         storage = FirebaseStorage.getInstance();
         setContentView(binding.getRoot());
 
+        // intent that comefrom drawer class load it in to activity
         Intent myNewIntent = getIntent();
         mode = myNewIntent.getStringExtra("mode");
         userName = myNewIntent.getStringExtra("user");
@@ -154,8 +140,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
             imageUri = Uri.parse(uriString);
         }
 
-        System.out.println(QRstring);
-
+        // set up package to each tab
         mapBundle = new Bundle();
         imageBundle = new Bundle();
         GeneralBundle = new Bundle();
@@ -163,30 +148,26 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         imageBundle.putString("mode",mode);
         GeneralBundle.putString("mode",mode);
 
-
         if (Objects.equals(mode, "new")){
             imageBundle.putString("QRString",QRstring);
             imageBundle.putString("imageUri",imageUri.toString());
 
-            System.out.println(QRstring);
         }
 
+        // hashmap prepare uploading
         data = new HashMap<>();
 
-
+        // setup tabAdaper
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager(),mapBundle,imageBundle,GeneralBundle);
-        int limit = (sectionsPagerAdapter.getCount() > 1 ? sectionsPagerAdapter.getCount() -1 : 1);
+        int limit = (sectionsPagerAdapter.getCount() > 1 ? sectionsPagerAdapter.getCount() -1 : 1);// setuo all three tab alive,no kill
         ViewPager viewPager = binding.viewPager;
         viewPager.setAdapter(sectionsPagerAdapter);
         viewPager.setOffscreenPageLimit(limit);
         viewPager.beginFakeDrag(); // disable drag
 
-
-
         TabLayout tabs = binding.tabs;
         tabs.setupWithViewPager(viewPager);
-//        FloatingActionButton fab = binding.fab;
-
+        // link two button listener
         CancelBt = findViewById(R.id.Activity_qet_detail_cancel_button);
         ConfirmBt = findViewById(R.id.activity_qr_detail_bottom_bar_confirm_bt);
 
@@ -195,6 +176,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
             public void onClick(View v) {
                 finish();
                 if (mode == "new"){
+                    // in new mode, picture cache have to be cleared
                     try{
                         File fdel = new File(imageUri.getPath());//create path from uri
                         if (fdel.exists()) {
@@ -210,10 +192,17 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
             @Override
             public void onClick(View v) {
                 if (Objects.equals(mode, "new")){
-                    HashMapValidate("user",userName);
-                    HashMapValidate("time",new Date());
-                    imagePushFirestone();
+                    // if new push the image and then database
+                    Boolean b1=(Boolean) data.get("LocationExist");
+                    if (b1 && Objects.equals((String) data.get("LocationAddress"), "")){
+                        Toast.makeText(getApplicationContext(), "please wait for data complete fetching", Toast.LENGTH_SHORT);
+                    } else {
+                        HashMapValidate("user", userName);
+                        HashMapValidate("time", new Date());
+                        imagePushFirestone();
+                    }
                 } else if (mode.equals("modified")){
+                    // check if change,something releated also need to change
                     Boolean b1 = (Boolean)data.get("imageExist");
                     Boolean b2 = (Boolean)data.get("LocationExist");
                     String s1 = (String) data.get("QRpath");
@@ -233,13 +222,13 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                     GameQrRecordDB DBconnect = new GameQrRecordDB();
                     DBconnect.ChangeQrInfo(QRname,data);
                     finish();
-
                 }
 
 
             }
         });
 
+        // check if things exist,if not exist
         if (!Objects.equals(mode, "new")){
             if (QRname==""){
                 finish();
@@ -249,7 +238,11 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         }
     }
 
+  /**
+   * fetch content for existing
+   */
     private void getContent(){
+        // collect from ducument name
         db = FirebaseFirestore.getInstance();
         final CollectionReference collectionReferenceDest = db.collection("GameQrCode");
         // check if id is unique in the FameQr datavase
@@ -259,7 +252,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        // general
+                        // general page change load info
                         TextInputEditText name,points;
                         TextView textView;Button button;
                         name = findViewById(R.id.qr_detail_general_qrtext_name);
@@ -284,12 +277,12 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                         ttl.setHelperText("");
                         ttl.setCounterEnabled(false);
 
-//
+                        // if not the creator disble change option
                         if (Objects.equals((String) document.get("user"), userName)){
                             button.setEnabled(true);
                         }
 
-                        // image
+                        // image page chage load info
                         TextInputEditText QRcontent;
                         SwitchMaterial imgEnable;
                         QRcontent = findViewById(R.id.qr_detail_image_textfield);
@@ -301,6 +294,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                         TextView t1= findViewById(R.id.qr_detail_image_privacy_text);
 
                         if (!imgE){
+                            // if not the creator disble change option
                             imgEnable.setChecked(false);
                             imgEnable.setEnabled(false);
 
@@ -308,7 +302,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                             c1.setVisibility(View.INVISIBLE);
                             c2.setVisibility(View.INVISIBLE);
                         } else {
-
+                            // since image exist load content
                             c1.setVisibility(View.VISIBLE);
                             c2.setVisibility(View.VISIBLE);
                             imgEnable.setChecked(true);
@@ -320,6 +314,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                                 t1.setVisibility(View.INVISIBLE);
                             }
                             QRcontent.setText((String) document.get("QRtext"));
+                            // conect firebase storage
                             imageFetchFirestone((String) document.get("QRpath"));
                         }
 
@@ -327,7 +322,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                         HashMapValidate("imageExist",document.get("imageExist"));
                         HashMapValidate("QRpath",document.get("QRpath"));
 
-                        // map
+                        // map page chage load info
                         SwitchMaterial LocEnable;
                         LocEnable = findViewById(R.id.qr_detail_location_enable_switch);
                         Boolean LocE = (Boolean)document.get("LocationExist");
@@ -342,12 +337,14 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                         TextView mapt1= findViewById(R.id.qr_detail_location_privacy_text);
 
                         if (Boolean.FALSE.equals(LocE)){
+                            // if not the creator disble change option
                             LocEnable.setChecked(false);
                             LocEnable.setEnabled(false);
                             mapt1.setVisibility(View.INVISIBLE);
                             mapc1.setVisibility(View.INVISIBLE);
                             mapc2.setVisibility(View.INVISIBLE);
                         } else {
+                            //load info
                             LocEnable.setChecked(true);
                             if (Objects.equals((String) document.get("user"), userName)){
                                 LocEnable.setEnabled(true);
@@ -376,6 +373,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                             address.setText((String) document.get("LocationAddress"));
 
                             MapView mapView=findViewById(R.id.qr_detail_location_content_map_view);
+                            // draw map
                             mapView.getMapAsync(new OnMapReadyCallback() {
                                 @Override
                                 public void onMapReady(@NonNull MapboxMap mapboxMap) {
@@ -401,15 +399,15 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                                     mapboxMapGlobal = mapboxMap;
                                 }
                             });
-
                         }
-
                     } else {
+                        // record not exost exit
                         Toast toast = Toast.makeText(getApplicationContext(), "Record does not exist", Toast.LENGTH_SHORT);
                         toast.show();
                         finish();
                     }
                 } else {
+                    // fail to connect
                     Toast toast = Toast.makeText(getApplicationContext(), "Conect fail", Toast.LENGTH_SHORT);
                     toast.show();
                     finish();
@@ -418,6 +416,9 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         });
     }
 
+  /**
+   * if a key exist override,if not delete
+   */
     private void HashMapValidate(String id,Object ob){
         if (data.containsKey(id)) {
             data.replace(id,ob);
@@ -426,12 +427,15 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         }
     }
 
-
+  /**
+   * sync input from the user in image tab at new mode
+   */
     @Override
     public void onImageUpdate(String QRtext,Boolean imageOn) {
         // future representation
         int score= QRtext.length();
         String demoText="";
+        // make changes om visual and points
         if (QRtext.length() > 0 && mode.equals("new")) {
             TextInputEditText visual = findViewById(R.id.qr_detail_general_visual_text);
 
@@ -447,6 +451,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
             String qr_le_str = String.valueOf(score);
             points.setText(qr_le_str);
         }
+        // save info
         if(mode.equals("new")){
             HashMapValidate("points",score);
             HashMapValidate("imageExist",imageOn);
@@ -464,11 +469,17 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         }
     }
 
+  /**
+   * sync input from the user in image tab at other mode
+   */
     @Override
     public void onImageUpdate(Boolean imageOn) {
         HashMapValidate("imageExist",imageOn);
     }
 
+  /**
+   * sync input from the user in location tab at new mode
+   */
     @Override
     public void onLocationUpdate(Boolean btOn, Double longitude, Double latitude, String name, String address) {
         if(mode.equals("new")){
@@ -492,11 +503,17 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
 
     }
 
+  /**
+   * sync input from the user in location tab at other mode
+   */
     @Override
     public void onLocationUpdate(Boolean btOn) {
         HashMapValidate("LocationExist",btOn);
     }
 
+  /**
+   * sync input from the user in general tab at new mode
+   */
     @Override
     public void onGeneralUpdate(String QRcodename,String today) {
         HashMapValidate("QRname",QRcodename);
@@ -504,6 +521,9 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         QRname=QRcodename;
     }
 
+  /**
+   * delete request in general tab at modifier mode
+   */
     @Override
     public void onGeneralUpdate(Boolean delreq) {
         // delte request
@@ -520,6 +540,9 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         }
     }
 
+  /**
+   * new iamge push to firestone
+   */
     private void imagePushFirestone(){
         Bitmap bitmap =null;
         if (imageUri!=null){
@@ -540,7 +563,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
 
         }
         Boolean imgE = (Boolean) data.get("imageExist");
-        if (bitmap!=null || Boolean.TRUE.equals(imgE)){
+        if (bitmap!=null && Boolean.TRUE.equals(imgE)){
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
             String fName = userName+"_"+timeStamp+".jpg";
             String Path = "image/"+ fName;
@@ -602,6 +625,9 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
 
     }
 
+  /**
+   * petching existing image
+   */
     private void imageFetchFirestone(String FilePath) {
         StorageReference storageRef = storage.getReference();
         final StorageReference ref = storageRef.child(FilePath);
@@ -626,6 +652,9 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         });
     }
 
+  /**
+   * delete a image in firestone
+   */
     private void imageDelFirestone(String s1){
         StorageReference storageRef = storage.getReference();
 

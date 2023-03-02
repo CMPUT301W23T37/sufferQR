@@ -74,8 +74,13 @@ public class ScanCode extends DrawerBase {
     ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
     TextView textView;
 
+    String userName;
+
     Button Go,Back;
 
+    /**
+     * create view
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         activityScanCodeBinding = ActivityScanCodeBinding.inflate(getLayoutInflater());
@@ -88,7 +93,10 @@ public class ScanCode extends DrawerBase {
         Go = findViewById(R.id.scan_code_go_button);
         Back = findViewById(R.id.scan_code_return_button);
 
+        Intent myNewIntent = getIntent();
+        userName = myNewIntent.getStringExtra("user");
 
+        // check if camera allowed
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             cameraProviderFuture = ProcessCameraProvider.getInstance(this);
             cameraProviderFuture.addListener(new Runnable() {
@@ -99,6 +107,7 @@ public class ScanCode extends DrawerBase {
                         bindImageAnalysis(cameraProvider);
                     } catch (ExecutionException | InterruptedException e) {
                         e.printStackTrace();
+                        textView.setText("please reenter to lunch camera");
                     }
                 }
             }, ContextCompat.getMainExecutor(this));
@@ -107,6 +116,7 @@ public class ScanCode extends DrawerBase {
             ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.CAMERA}, 17300);
         }
 
+        // if user cancel go to dashboard
         Back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -123,6 +133,9 @@ public class ScanCode extends DrawerBase {
 
     }
 
+    /**
+     * qr analysis
+     */
     private void bindImageAnalysis(@NonNull ProcessCameraProvider cameraProvider) {
         ImageAnalysis imageAnalysis =
                 new ImageAnalysis.Builder().setTargetResolution(new Size(500,500))
@@ -130,11 +143,12 @@ public class ScanCode extends DrawerBase {
         imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(this), new ImageAnalysis.Analyzer() {
             @Override
             public void analyze(@NonNull ImageProxy image) {
-                @SuppressLint("UnsafeOptInUsageError") Image mediaImage = image.getImage();
-                if (mediaImage != null) {
-
-                    //ImageFindQR(inputImage);
-                }
+                //Image mediaImage = image.getImage();
+//                if (mediaImage != null) {
+//                // Bitmap bitmap = previewView.getBitmap();
+//                // InputImage image2 = InputImage.fromBitmap(bitmap, 0);
+//                // ImageFindQR(image2,bitmap);
+//                }
                 image.close();
             }
         });
@@ -151,6 +165,7 @@ public class ScanCode extends DrawerBase {
         preview.setSurfaceProvider(previewView.getSurfaceProvider());
         cameraProvider.bindToLifecycle((LifecycleOwner)this, cameraSelector,
                 imageAnalysis, preview);
+        // check qrcode
         Go.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -165,6 +180,10 @@ public class ScanCode extends DrawerBase {
 
     }
 
+
+    /**
+     * sync with ml to validate such qr exist
+     */
     private void ImageFindQR(InputImage inputImage,Bitmap bitmap){
         // setup barcode dector
         BarcodeScannerOptions options =
@@ -173,7 +192,7 @@ public class ScanCode extends DrawerBase {
 
         BarcodeScanner scanner = BarcodeScanning.getClient();
 
-        //step 4
+        //step 4 lucnch analysis
 
         Task<List<Barcode>> result = scanner.process(inputImage)
                 .addOnSuccessListener(new OnSuccessListener<List<Barcode>>() {
@@ -194,19 +213,13 @@ public class ScanCode extends DrawerBase {
                         }
 
                         if (Counts>=1){
-//                            Bitmap bmap = Bitmap.createBitmap(inputImage.getWidth(), inputImage.getHeight(), Bitmap.Config.RGB_565);
-//                            bmap.copyPixelsFromBuffer(inputImage.getByteBuffer());
-
-                            //int bitmapByteCount=
-//                            System.out.println(BitmapCompat.getAllocationByteCount(bitmap));
+//                          save umage in uri
                             Uri selectedImage = saveImage(bitmap);
-
 //                            new/modified/viewer
 //                             remember change ScanCode.class
                             Intent scanIntent = new Intent(ScanCode.this, QRDetailActivity.class);
-                            scanIntent.putExtra("user","example");
+                            scanIntent.putExtra("user",userName);
                             scanIntent.putExtra("mode","new");
-//                            scanIntent.putExtra("bmap",bitmap); // figure out shrink size
                             scanIntent.putExtra("QRString",codes);
                             scanIntent.putExtra("QRimageUri",selectedImage.toString());
                             scanIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
@@ -228,6 +241,9 @@ public class ScanCode extends DrawerBase {
                 });
     }
 
+    /**
+     * create image file
+     */
     private Uri saveImage(Bitmap bitmap) {
         // https://stackoverflow.com/questions/42460710/how-to-convert-a-bitmap-image-to-uri
         Uri image = null;
@@ -246,6 +262,10 @@ public class ScanCode extends DrawerBase {
         return image;
     }
 
+
+    /**
+     * save image file
+     */
     private File createImageFile() {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
@@ -262,5 +282,6 @@ public class ScanCode extends DrawerBase {
         }
         return mFileTemp;
     }
+
 
 }

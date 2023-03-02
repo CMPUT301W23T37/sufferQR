@@ -121,8 +121,6 @@ public class QRDetailLocationFragment extends Fragment {
     // new/visitor/modify
     String mode= "new",localName,localAdress;
 
-    // TODO: Rename and change types of parameters
-
     Bundle mymapBundle,sIState;
     String POI,token="";
     Double localLongtiude,localLatiude;
@@ -132,18 +130,25 @@ public class QRDetailLocationFragment extends Fragment {
     CardView poi_card,map_card;
     Boolean LocExist=false;
 
-
+    /**
+     * launch
+     */
     public QRDetailLocationFragment(Bundle mapBundle) {
         mymapBundle=mapBundle;
     }
 
-
+    /**
+     * launch listener
+     */
     public interface OnFragmentInteractionListener{
         void onLocationUpdate(Boolean btOn,Double longitude,Double latitude,String name,String address);
 
         void onLocationUpdate(Boolean btOn);
     }
 
+    /**
+     * launch
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -155,6 +160,9 @@ public class QRDetailLocationFragment extends Fragment {
 
     }
 
+    /**
+     * attach the listener
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -166,7 +174,9 @@ public class QRDetailLocationFragment extends Fragment {
         }
     }
 
-
+    /**
+     * launch view
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -180,7 +190,7 @@ public class QRDetailLocationFragment extends Fragment {
         poi_card=view.findViewById(R.id.qr_detail_location_poi_cardview);
 
         if (Objects.equals(mode, "new")){
-            listener.onLocationUpdate(false,0.0,0.0,"","");
+            listener.onLocationUpdate(true,0.0,0.0,"","");
         }
 
         // init with mapwill to university of alberta ccis
@@ -217,6 +227,7 @@ public class QRDetailLocationFragment extends Fragment {
             privacy_text.setText("following information provided by mapbox");
 
         } else {
+            // button listener,send changes information
             locEnable.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -250,7 +261,7 @@ public class QRDetailLocationFragment extends Fragment {
 
 
 
-
+        // if mode -- new get geolocation
         if (mode.equals("new")){
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
             settingsClient=LocationServices.getSettingsClient(requireActivity());
@@ -260,10 +271,11 @@ public class QRDetailLocationFragment extends Fragment {
                     locationCurrent = locationResult.getLastLocation();
                     double latiude = locationCurrent.getLatitude();
                     double longtiude = locationCurrent.getLongitude();
-
+                    // set up data callback listener show content
                     mapView.getMapAsync(new OnMapReadyCallback() {
                         @Override
                         public void onMapReady(@NonNull MapboxMap mapboxMap) {
+                            // show map
                             mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
 
                                 @Override
@@ -292,6 +304,7 @@ public class QRDetailLocationFragment extends Fragment {
                     });
 
                     stopLocationUpdate();
+                    // show poi information
                     LocExist=true;
                     MapboxGeocoding mapboxGeocoding =MapboxGeocoding.builder()
                             .accessToken(getResources().getString(R.string.mapbox_access_token))
@@ -304,7 +317,7 @@ public class QRDetailLocationFragment extends Fragment {
                         public void onResponse(Call<GeocodingResponse> call, Response<GeocodingResponse> response) {
 
                             List<CarmenFeature> results = response.body().features();
-
+                            // write information back to textVIew
                             if (results.size() > 0) {
                                 TextView textView_name=view.findViewById(R.id.qr_detail_loacation_name);
                                 textView_name.setText(results.get(0).text());
@@ -356,7 +369,11 @@ public class QRDetailLocationFragment extends Fragment {
         return view;
     }
 
+    /**
+     * get location runner
+     */
     private void switchLocUpdate(){
+        // listener runner,and check if permission exist
         Dexter.withContext(requireActivity())
                 .withPermission(Manifest.permission.ACCESS_FINE_LOCATION )
                 .withListener(new PermissionListener() {
@@ -378,6 +395,9 @@ public class QRDetailLocationFragment extends Fragment {
                 }).check();
     }
 
+    /**
+     * settings setup
+     */
     private void openSettings(){
         Intent intent = new Intent();
         intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
@@ -387,6 +407,9 @@ public class QRDetailLocationFragment extends Fragment {
         startActivity(intent);
     }
 
+    /**
+     * load location,let user chose if permission access
+     */
     private void startLocationUpdate(){
         settingsClient.checkLocationSettings(locationSettingsRequest)
                 .addOnSuccessListener(requireActivity() , new OnSuccessListener<LocationSettingsResponse>() {
@@ -419,15 +442,25 @@ public class QRDetailLocationFragment extends Fragment {
                     }
                 });
     }
+
+    /**
+     * stop location update
+     */
     private void stopLocationUpdate(){
         fusedLocationClient.removeLocationUpdates(locationCallback).addOnCompleteListener(requireActivity(),task -> Log.d(TAG,"LocationSTops"));
     }
 
+    /**
+     * check permission
+     */
     private boolean checkPremmissions(){
         int permissionState= ContextCompat.checkSelfPermission(requireContext(),android.Manifest.permission.ACCESS_FINE_LOCATION);
         return   (permissionState== PackageManager.PERMISSION_GRANTED);
     }
 
+    /**
+     * resume
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -436,6 +469,9 @@ public class QRDetailLocationFragment extends Fragment {
         }
     }
 
+    /**
+     * pause
+     */
     @Override
     public void onPause() {
         super.onPause();
