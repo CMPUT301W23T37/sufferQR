@@ -13,7 +13,7 @@
         android:theme="@style/Theme.SufferQR.AppBarOverlay">
 
         <TextView
-            android:id="@+id/title"
+            android:id="@+id/qrdetail_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -24,7 +24,7 @@
             android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title" />
 
         <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabs"
+            android:id="@+id/qrdetail_tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </com.google.android.material.appbar.AppBarLayout>
@@ -45,7 +45,7 @@
             android:orientation="vertical">
 
             <androidx.viewpager.widget.ViewPager
-                android:id="@+id/view_pager"
+                android:id="@+id/qrdetail_view_pager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
 
@@ -99,14 +99,5 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-<!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
-<!--        android:id="@+id/fab"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_gravity="bottom|end"-->
-<!--        android:layout_marginEnd="@dimen/fab_margin"-->
-<!--        android:layout_marginBottom="66dp"-->
-<!--        app:srcCompat="@android:drawable/ic_dialog_email" />-->
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

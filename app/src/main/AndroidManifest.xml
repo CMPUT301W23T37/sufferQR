@@ -35,9 +35,11 @@
         <activity
             android:name=".RegisterPage"
 
+
             android:exported="true" >
 
         </activity>
+
 
         <activity
             android:name=".ScanHistory"

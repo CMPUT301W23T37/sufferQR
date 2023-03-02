@@ -161,12 +161,12 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         // setup tabAdaper
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager(),mapBundle,imageBundle,GeneralBundle);
         int limit = (sectionsPagerAdapter.getCount() > 1 ? sectionsPagerAdapter.getCount() -1 : 1);// setuo all three tab alive,no kill
-        ViewPager viewPager = binding.viewPager;
+        ViewPager viewPager = findViewById(R.id.qrdetail_view_pager); // binding.qrdetail_viewPager;
         viewPager.setAdapter(sectionsPagerAdapter);
         viewPager.setOffscreenPageLimit(limit);
         viewPager.beginFakeDrag(); // disable drag
 
-        TabLayout tabs = binding.tabs;
+        TabLayout tabs = findViewById(R.id.qrdetail_tabs); //   binding.qrdetail_tabs;
         tabs.setupWithViewPager(viewPager);
         // link two button listener
         CancelBt = findViewById(R.id.Activity_qet_detail_cancel_button);

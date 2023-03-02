@@ -11,4 +11,5 @@
     <color name="delete_red">#AC2317</color>
     <color name="grey">#CDCDCD</color>
     <color name="lighter_blue">#74B3CE</color>
+    <color name="list_lighter_white">#FAFAFA</color>
 </resources>
