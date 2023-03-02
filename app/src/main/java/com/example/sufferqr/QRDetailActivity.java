@@ -105,12 +105,12 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
     private HashMap <String,Object> data; // data that sent to collection
     String mode,userName,QRname,QRstring; // remember some of the name setiings
 
-    Uri imageUri; // at new mode, record local image location
+    Uri imageUri,surroundsUri; // at new mode, record local image location
 
     Button CancelBt,ConfirmBt; // listener for bottom button
     Bundle mapBundle,imageBundle,GeneralBundle; //tabs transit information
 
-
+    Boolean nearbyImg;
 
 
   /**
@@ -136,9 +136,10 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
             QRname = myNewIntent.getStringExtra("qrID");
         } else if (mode.equals("new")) {
             QRstring = myNewIntent.getStringExtra("QRString");
-            String uriString = myNewIntent.getStringExtra("QRimageUri");
+            String uriString = myNewIntent.getStringExtra("imageUri");
             imageUri = Uri.parse(uriString);
         }
+
 
         // set up package to each tab
         mapBundle = new Bundle();
@@ -151,8 +152,8 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         if (Objects.equals(mode, "new")){
             imageBundle.putString("QRString",QRstring);
             imageBundle.putString("imageUri",imageUri.toString());
-
         }
+
 
         // hashmap prepare uploading
         data = new HashMap<>();

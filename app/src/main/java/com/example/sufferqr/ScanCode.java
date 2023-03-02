@@ -74,9 +74,11 @@ public class ScanCode extends DrawerBase {
     ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
     TextView textView;
 
-    String userName;
+    String userName,QRstring;
 
     Button Go,Back;
+
+    Boolean foundQR;
 
     /**
      * create view
@@ -95,6 +97,7 @@ public class ScanCode extends DrawerBase {
 
         Intent myNewIntent = getIntent();
         userName = myNewIntent.getStringExtra("user");
+        foundQR=false;
 
         // check if camera allowed
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
@@ -120,11 +123,12 @@ public class ScanCode extends DrawerBase {
         Back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent scanIntent = new Intent(ScanCode.this, DashBoard.class);
-                scanIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                startActivity(scanIntent);
-                finish();
-
+                if (!foundQR){
+                    Intent scanIntent = new Intent(ScanCode.this, DashBoard.class);
+                    scanIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                    startActivity(scanIntent);
+                    finish();
+                }
             }
         });
 
@@ -143,20 +147,12 @@ public class ScanCode extends DrawerBase {
         imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(this), new ImageAnalysis.Analyzer() {
             @Override
             public void analyze(@NonNull ImageProxy image) {
-                //Image mediaImage = image.getImage();
-//                if (mediaImage != null) {
-//                // Bitmap bitmap = previewView.getBitmap();
-//                // InputImage image2 = InputImage.fromBitmap(bitmap, 0);
-//                // ImageFindQR(image2,bitmap);
-//                }
                 image.close();
             }
         });
         OrientationEventListener orientationEventListener = new OrientationEventListener(this) {
             @Override
-            public void onOrientationChanged(int orientation) {
-                textView.setText(Integer.toString(orientation));
-            }
+            public void onOrientationChanged(int orientation) {            }
         };
         orientationEventListener.enable();
         Preview preview = new Preview.Builder().build();
@@ -170,9 +166,21 @@ public class ScanCode extends DrawerBase {
             @Override
             public void onClick(View v) {
                 Bitmap bitmap = previewView.getBitmap();
-                if(bitmap != null) {
-                    InputImage image = InputImage.fromBitmap(bitmap, 0);
-                    ImageFindQR(image,bitmap);
+                if (!foundQR){
+                    if(bitmap != null) {
+                        InputImage image = InputImage.fromBitmap(bitmap, 0);
+                        ImageFindQR(image,bitmap);
+                    }
+                } else {
+                    Uri surrounds = saveImage(bitmap);
+                    Intent scanIntent = new Intent(ScanCode.this, QRDetailActivity.class);
+                    scanIntent.putExtra("user",userName);
+                    scanIntent.putExtra("mode","new");
+                    scanIntent.putExtra("QRString",QRstring);
+                    scanIntent.putExtra("imageUri",surrounds.toString());
+                    scanIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                    startActivity(scanIntent);
+                    finish();
                 }
             }
         });
@@ -196,6 +204,7 @@ public class ScanCode extends DrawerBase {
 
         Task<List<Barcode>> result = scanner.process(inputImage)
                 .addOnSuccessListener(new OnSuccessListener<List<Barcode>>() {
+                    @SuppressLint("ResourceAsColor")
                     @Override
                     public void onSuccess(List<Barcode> barcodes) {
                         TextInputEditText ttv = findViewById(R.id.qr_detail_image_textfield);
@@ -214,17 +223,12 @@ public class ScanCode extends DrawerBase {
 
                         if (Counts>=1){
 //                          save umage in uri
-                            Uri selectedImage = saveImage(bitmap);
+                            QRstring = codes;
 //                            new/modified/viewer
 //                             remember change ScanCode.class
-                            Intent scanIntent = new Intent(ScanCode.this, QRDetailActivity.class);
-                            scanIntent.putExtra("user",userName);
-                            scanIntent.putExtra("mode","new");
-                            scanIntent.putExtra("QRString",codes);
-                            scanIntent.putExtra("QRimageUri",selectedImage.toString());
-                            scanIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                            startActivity(scanIntent);
-                            finish();
+                            foundQR=true;
+                            Go.setText("take picture of Surroundings");
+                            textView.setText("if you do not want to take surrounds,you can change it at next page");
 
                         }
 

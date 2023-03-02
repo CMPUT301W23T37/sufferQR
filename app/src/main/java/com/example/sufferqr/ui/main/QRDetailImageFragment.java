@@ -73,8 +73,9 @@ public class QRDetailImageFragment extends Fragment {
     TextView pic_text;
     CardView text_card,qr_card;
     String mode,localQRcontent="";
-    Uri imageUri;
-    ImageButton qrbt;
+    Uri imageUri,surroundsingUri;
+    Boolean surroundsExist;
+    ImageButton qrbt,surrbt;
     public static File tempFile;
 
     /**
@@ -90,6 +91,7 @@ public class QRDetailImageFragment extends Fragment {
             localQRcontent=myImageBundle.getString("QRString");
             String imageU = myImageBundle.getString("imageUri");
             imageUri = Uri.parse(imageU);
+
         }
 
         System.out.println(localQRcontent);
@@ -212,6 +214,7 @@ public class QRDetailImageFragment extends Fragment {
                 Toast toast = Toast.makeText(requireContext(), "load image error", Toast.LENGTH_SHORT);
             }
         }
+
         return view;
     }
 
