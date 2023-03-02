@@ -2,6 +2,8 @@ package com.example.sufferqr;
 
 import static com.google.gson.internal.$Gson$Types.arrayOf;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraSelector;
@@ -99,6 +101,7 @@ public class ScanCode extends DrawerBase {
         userName = myNewIntent.getStringExtra("user");
         foundQR=false;
 
+
         // check if camera allowed
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             cameraProviderFuture = ProcessCameraProvider.getInstance(this);
@@ -117,6 +120,7 @@ public class ScanCode extends DrawerBase {
 
         } else {
             ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.CAMERA}, 17300);
+
         }
 
         // if user cancel go to dashboard
@@ -287,5 +291,34 @@ public class ScanCode extends DrawerBase {
         return mFileTemp;
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case 17300:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        Intent intent = getIntent();
+                        finish();
+                        startActivity(intent);
+                    // Permission is granted. Continue the action or workflow
+                    // in your app.
+                }  else {
+                    // Explain to the user that the feature is unavailable because
+                    // the feature requires a permission that the user has denied.
+                    // At the same time, respect the user's decision. Don't link to
+                    // system settings in an effort to convince the user to change
+                    // their decision.
+                    Intent scanIntent = new Intent(ScanCode.this, DashBoard.class);
+                    scanIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                    startActivity(scanIntent);
+                    finish();
+                }
+                return;
+        }
+        // Other 'case' lines to check for other
+        // permissions this app might request.
+    }
 
 }
