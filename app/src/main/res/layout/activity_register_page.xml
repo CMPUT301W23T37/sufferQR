@@ -28,39 +28,40 @@
 
 <!--        Input container for username (input type -> text)     -->
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/user_name_register"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Username"
             android:background="@color/white"
+            android:maxLength="20"
             app:endIconMode="clear_text"
             app:counterEnabled="true"
             app:counterMaxLength="20"
-            app:errorEnabled="true"
-            app:boxBackgroundColor="@color/white">
+            app:errorEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/user_name_register"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="text"
                 />
 
         </com.google.android.material.textfield.TextInputLayout>
 
 <!--        Input container for Email (input type -> Email)-->
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/email_register"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Email"
             android:background="@color/white"
             app:endIconMode="clear_text"
             app:errorEnabled="true"
-            app:boxBackgroundColor="@color/white">
+            android:hint="Email"
+            android:layout_marginTop="10sp">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/email_register"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                />
+                android:inputType="textEmailAddress" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -82,12 +83,12 @@
 
 <!--        Change QR id button      -->
         <Button
+            android:id="@+id/qr_id_register"
             style="?attr/materialIconButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             app:icon="@drawable/reload"
-            android:text="sndckashdflaasdfsd"/>
+            android:text="sndckashdfla"/>
 
 
     </LinearLayout>
@@ -95,6 +96,7 @@
 <!--    Confirm register button     -->
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/confirm_register"
             style="@style/Widget.Material3.Button.ElevatedButton"
             android:backgroundTint="@color/lighter_blue"
             android:layout_width="match_parent"
