@@ -8,6 +8,7 @@
     android:orientation="vertical">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/changeToEditProfile_UserProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/editor_profile"
@@ -16,13 +17,15 @@
         android:layout_gravity="end"/>
 
     <ImageView
+        android:id="@+id/userQRImage_UserProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/qr_code_profile"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="5dp"/>
+        android:layout_marginTop="5sp"/>
 
     <TextView
+        android:id="@+id/userName_UserProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="James Bond"
@@ -33,25 +36,25 @@
         android:layout_marginTop="15sp"/>
 
     <TextView
+        android:id="@+id/userEmail_UserProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="jamesbond@cia.uk"
-
         android:textStyle="bold"
         android:textSize="12sp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="5sp"/>
+        android:layout_marginTop="15sp"/>
 
     <TextView
+        android:id="@+id/userQRid_UserProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="qweqweqweqweqweqwe"
-
+        android:text="qweqweqweqwe"
         android:textStyle="bold"
         android:textSize="14sp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="10sp"
-        android:layout_marginBottom="40dp"/>
+        android:layout_marginTop="15sp"
+        android:layout_marginBottom="60sp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -63,7 +66,7 @@
             android:layout_height="wrap_content"
             android:weightSum="2"
             android:focusable="true"
-            android:layout_marginStart="15dp"
+            android:layout_marginStart="7.5sp"
             app:strokeColor="@color/black"
             app:strokeWidth="1dp">
 
@@ -80,6 +83,7 @@
                     app:layout_constraintGuide_begin="180dp" />
 
                 <TextView
+                    android:id="@+id/highestScore_UserProfile_Text"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -88,10 +92,20 @@
                     android:textAppearance="?attr/textAppearanceBodyMedium"
                     android:textSize="14sp"
                     android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/highestScore_UserProfile"
                     app:layout_constraintEnd_toStartOf="@+id/guideline3"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/highestScore_UserProfile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/highestScore_UserProfile_Text" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -120,6 +134,7 @@
                     app:layout_constraintGuide_begin="180dp" />
 
                 <TextView
+                    android:id="@+id/lowestScore_UserProfile_text"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -128,10 +143,20 @@
                     android:textAppearance="?attr/textAppearanceBodyMedium"
                     android:textSize="14sp"
                     android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/lowestScore_UserProfile"
                     app:layout_constraintEnd_toStartOf="@+id/guideline4"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/lowestScore_UserProfile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/lowestScore_UserProfile_text" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -150,7 +175,7 @@
             android:layout_height="wrap_content"
             android:weightSum="2"
             android:focusable="true"
-            android:layout_marginStart="15dp"
+            android:layout_marginStart="7.5sp"
             app:strokeColor="@color/black"
             app:strokeWidth="1dp">
 
@@ -167,6 +192,7 @@
                     app:layout_constraintGuide_begin="180dp" />
 
                 <TextView
+                    android:id="@+id/sumScore_UserProfile_text"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -175,10 +201,20 @@
                     android:textAppearance="?attr/textAppearanceBodyMedium"
                     android:textSize="14sp"
                     android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/sumScore_UserProfile"
                     app:layout_constraintEnd_toStartOf="@+id/guideline5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/sumScore_UserProfile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/sumScore_UserProfile_text" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -206,6 +242,7 @@
                     app:layout_constraintGuide_begin="180dp" />
 
                 <TextView
+                    android:id="@+id/totalQR_UserProfile_text"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -214,10 +251,20 @@
                     android:textAppearance="?attr/textAppearanceBodyMedium"
                     android:textSize="14sp"
                     android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/totalQR_UserProfile"
                     app:layout_constraintEnd_toStartOf="@+id/guideline6"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/totalQR_UserProfile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/temp_0"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/totalQR_UserProfile_text" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
