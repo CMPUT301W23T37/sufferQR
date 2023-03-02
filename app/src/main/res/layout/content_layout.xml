@@ -12,16 +12,14 @@
         app:layout_constraintTop_toTopOf="parent">
 
 <!--        Toolbar layout     -->
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolBar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/app_main_blue"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:titleTextColor="@color/white"
-            app:titleMarginStart="105dp">
-
-        </androidx.appcompat.widget.Toolbar>
+            app:titleCentered="true"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 
