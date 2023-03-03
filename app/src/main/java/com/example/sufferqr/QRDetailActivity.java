@@ -208,6 +208,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                         HashMapValidate("user", userName);
                         HashMapValidate("time", new Date());
                         imagePushFirestone();
+                        UpdateProfileAdd();
                     }
                 } else if (mode.equals("modified")){
                     // check if change,something releated also need to change
@@ -692,4 +693,11 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
             }
         });
         }
+    private void UpdateProfileAdd(){
+
+    }
+
+    private void UpdateProfileDel(){
+
+    }
 }
