@@ -42,7 +42,7 @@ public class QRDetailGeneralFragment extends Fragment{
     TextInputEditText name;
     TextView textView;
     Date madeDate;
-    String myDate,mode;
+    String myDate,mode,oldName;
 
     private FirebaseFirestore db;
 
@@ -56,6 +56,9 @@ public class QRDetailGeneralFragment extends Fragment{
         if (mode.length()<1){
             mode="new";
         }
+        if (mode.equals("modified")){
+            oldName=myGeneralBudle.getString("qrID");
+        }
     }
 
     /**
@@ -65,6 +68,8 @@ public class QRDetailGeneralFragment extends Fragment{
         void onGeneralUpdate(String QRcodename,String today);
 
         void onGeneralUpdate(Boolean delreq);
+
+        void onGeneralUpdate(String Newname);
 
     }
 
@@ -102,6 +107,7 @@ public class QRDetailGeneralFragment extends Fragment{
         textView = view.findViewById(R.id.qr_detail_general_qrtext_date);
         Button del_button = view.findViewById(R.id.qr_detail_general_elevatedButton);
         TIL =view.findViewById(R.id.qr_detail_general_qrtext_name_layout);
+        TIL.setError("");
 
         // if load information
         if (Objects.equals(mode, "new")){
@@ -115,8 +121,8 @@ public class QRDetailGeneralFragment extends Fragment{
             name.setEnabled(true);
         } else if (Objects.equals(mode, "modified")) {
             name.setEnabled(true);
-        }
-        {
+            name.setText(oldName);
+        } else {
             name.setEnabled(false);
         }
         // when type changes sync to mainpage
@@ -133,8 +139,12 @@ public class QRDetailGeneralFragment extends Fragment{
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (Objects.equals(mode, "new")){
-                    listener.onGeneralUpdate(s.toString(),myDate);
+                if (Objects.equals(mode, "new" )|| mode.equals("modified")){
+                    if (Objects.equals(mode, "new" )){
+                        listener.onGeneralUpdate(s.toString(),myDate);
+                    } else {
+                        listener.onGeneralUpdate(s.toString());
+                    }
 
                     if (s.length()>0){
                         db = FirebaseFirestore.getInstance();
@@ -147,8 +157,15 @@ public class QRDetailGeneralFragment extends Fragment{
                                     DocumentSnapshot document = task.getResult();
                                     // if result exist
                                     if (document.exists()) {
-                                        TIL.setErrorEnabled(true);
-                                        TIL.setError("ID exist");
+                                        String ms = s.toString();
+                                        if (mode.equals("modified") && (ms.equals(oldName))){
+                                            TIL.setErrorEnabled(false);
+                                            TIL.setError("");
+                                            TIL.setHelperText("ID looks good");
+                                        }else {
+                                            TIL.setErrorEnabled(true);
+                                            TIL.setError("ID exist");
+                                        }
                                     } else {
                                         TIL.setErrorEnabled(false);
                                         TIL.setError("");

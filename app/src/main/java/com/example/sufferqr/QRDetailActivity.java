@@ -112,6 +112,8 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
 
     Boolean nearbyImg;
 
+    TextInputLayout ttl;
+
 
   /**
    * it start when class create detect the class from, and show different ele,emts
@@ -152,7 +154,12 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         if (Objects.equals(mode, "new")){
             imageBundle.putString("QRString",QRstring);
             imageBundle.putString("imageUri",imageUri.toString());
+
+        } else if (Objects.equals(mode, "modified")) {
+            GeneralBundle.putString("qrID",QRname);
+            OrginalName="";
         }
+
 
 
         // hashmap prepare uploading
@@ -175,8 +182,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         CancelBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
-                if (mode == "new"){
+                if (Objects.equals(mode, "new")){
                     // in new mode, picture cache have to be cleared
                     try{
                         File fdel = new File(imageUri.getPath());//create path from uri
@@ -187,17 +193,18 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                         Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT);
                     }
                 }
+                finish();
             }
         });
         ConfirmBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Objects.equals(mode, "new")){
+                if (Objects.equals(mode, "new")) {
                     // if new push the image and then database
-                    Boolean b1=(Boolean) data.get("LocationExist");
-                    if (b1 && Objects.equals((String) data.get("LocationAddress"), "")){
-                        Toast.makeText(getApplicationContext(), "please wait for data complete fetching", Toast.LENGTH_SHORT);
-                    } else {
+                    Boolean b1 = (Boolean) data.get("LocationExist");
+                    if (b1 && Objects.equals((String) data.get("LocationAddress"), "")) {
+                        Toast.makeText(getBaseContext(), "please wait for data complete fetching", Toast.LENGTH_SHORT).show();
+                    }  else {
                         HashMapValidate("user", userName);
                         HashMapValidate("time", new Date());
                         imagePushFirestone();
@@ -221,8 +228,14 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                         HashMapValidate("LocationAddress","");
                     }
                     GameQrRecordDB DBconnect = new GameQrRecordDB();
-                    DBconnect.ChangeQrInfo(QRname,data);
+                    if (!Objects.equals(QRname, OrginalName)){
+                        DBconnect.DelteQrInfo(OrginalName);
+                        DBconnect.CheckUnique(QRname,true,data);
+                    } else {
+                        DBconnect.ChangeQrInfo(QRname,data);
+                    }
                     finish();
+
                 }
 
 
@@ -231,7 +244,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
 
         // check if things exist,if not exist
         if (!Objects.equals(mode, "new")){
-            if (QRname==""){
+            if (Objects.equals(QRname, "")){
                 finish();
             }else{
                 getContent();
@@ -253,7 +266,12 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
+                        data = (HashMap<String, Object>) document.getData();
+
+
                         // general page change load info
+
+
                         TextInputEditText name,points;
                         TextView textView;Button button;
                         name = findViewById(R.id.qr_detail_general_qrtext_name);
@@ -268,16 +286,17 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                         points.setText(String.valueOf(pt));
                         textView.setText((String)document.get("date"));
                         visual.setText((String)document.get("QVisual"));
-
-                        HashMapValidate("QRname",document.get("QRname"));
-                        HashMapValidate("points",document.get("points"));
-                        HashMapValidate("date",document.get("date"));
-                        HashMapValidate("user",document.get("user"));
-                        HashMapValidate("QVisual",document.get("QVisual"));
-
                         TextInputLayout ttl = findViewById(R.id.qr_detail_general_qrtext_name_layout);
-                        ttl.setHelperText("");
-                        ttl.setCounterEnabled(false);
+
+                        if (Objects.equals((String) document.get("user"), userName)){
+                            ttl.setEnabled(true);
+                            name.setEnabled(true);
+                        } else {
+                            ttl.setHelperText("");
+                            ttl.setCounterEnabled(false);
+                            ttl.setEnabled(false);
+                            name.setEnabled(false);
+                        }
 
                         // if not the creator disble change option
                         if (Objects.equals((String) document.get("user"), userName)){
@@ -320,19 +339,10 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                             imageFetchFirestone((String) document.get("QRpath"));
                         }
 
-                        HashMapValidate("QRtext",document.get("QRtext"));
-                        HashMapValidate("imageExist",document.get("imageExist"));
-                        HashMapValidate("QRpath",document.get("QRpath"));
-
                         // map page chage load info
                         SwitchMaterial LocEnable;
                         LocEnable = findViewById(R.id.qr_detail_location_enable_switch);
                         Boolean LocE = (Boolean)document.get("LocationExist");
-
-                        HashMapValidate("LocationName",document.get("LocationName"));
-                        HashMapValidate("LocationLatitude",document.get("LocationLatitude"));
-                        HashMapValidate("LocationLongitude",document.get("LocationLongitude"));
-                        HashMapValidate("LocationAddress",document.get("LocationAddress"));
 
                         CardView mapc1= findViewById(R.id.qr_detail_location_poi_cardview);
                         CardView mapc2= findViewById(R.id.qr_detail_location_map_cardview);
@@ -542,7 +552,13 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         }
     }
 
-  /**
+      @Override
+      public void onGeneralUpdate(String Newname) {
+          HashMapValidate("QRname",Newname);
+          QRname=Newname;
+      }
+
+              /**
    * new iamge push to firestone
    */
     private void imagePushFirestone(){
