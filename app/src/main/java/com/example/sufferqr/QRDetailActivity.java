@@ -103,7 +103,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
     private FirebaseFirestore db;
 
     private HashMap <String,Object> data; // data that sent to collection
-    String mode,userName,QRname,QRstring; // remember some of the name setiings
+    String mode,userName,QRname,QRstring,OrginalName; // remember some of the name setiings
 
     Uri imageUri,surroundsUri; // at new mode, record local image location
 
@@ -263,6 +263,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
 
                         button = findViewById(R.id.qr_detail_general_elevatedButton);
                         name.setText((String)document.get("QRname"));
+                        OrginalName=(String)document.get("QRname");
                         Object pt = document.get("points");
                         points.setText(String.valueOf(pt));
                         textView.setText((String)document.get("date"));

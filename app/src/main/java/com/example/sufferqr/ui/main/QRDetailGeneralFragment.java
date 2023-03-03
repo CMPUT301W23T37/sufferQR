@@ -113,7 +113,10 @@ public class QRDetailGeneralFragment extends Fragment{
             listener.onGeneralUpdate(" ",myDate);
 
             name.setEnabled(true);
-        } else {
+        } else if (Objects.equals(mode, "modified")) {
+            name.setEnabled(true);
+        }
+        {
             name.setEnabled(false);
         }
         // when type changes sync to mainpage
