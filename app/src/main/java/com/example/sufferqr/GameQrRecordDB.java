@@ -2,7 +2,13 @@ package com.example.sufferqr;
 
 import static android.app.PendingIntent.getActivity;
 
+import static com.mapbox.mapboxsdk.Mapbox.getApplicationContext;
+
+import android.content.ContentResolver;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
@@ -25,16 +31,21 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.google.firestore.v1.WriteResult;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicMarkableReference;
@@ -46,16 +57,15 @@ public class GameQrRecordDB {
     private FirebaseFirestore db;
     private FirebaseStorage storage;
 
-
+    private HashMap<String,Object> data;
     public GameQrRecordDB(){
         //getRandomUniqueString();
         // do not enable unless necessory
         // https://blog.csdn.net/u011435933/article/details/117419082
         //UpdateRandomWord("/data/data/com.example.sufferqr/cache/wordlist.txt",50);
         db = FirebaseFirestore.getInstance();
+        storage = FirebaseStorage.getInstance();
     }
-
-
 
 
 
@@ -255,6 +265,118 @@ public class GameQrRecordDB {
                 } else {
 //                    listener.onSendingUpdate("delete failed",false);
                 }
+            }
+        });
+    }
+
+    /**
+     * new iamge push to firestone
+     */
+    public void imagePushFirestone(HashMap<String,Object> ns,Uri imageUri, String userName, String QRname, ContentResolver cr){
+        data = ns;
+        Bitmap bitmap =null;
+        if (imageUri!=null){
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(cr, imageUri);
+            } catch (IOException e) {
+                Toast toast = Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT);
+            }
+            // de;tete
+            try{
+                File fdel = new File(imageUri.getPath());//create path from uri
+                if (fdel.exists()) {
+                    fdel.delete();
+                }
+            } catch (Exception e){
+                Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT);
+            }
+
+        }
+        Boolean imgE = (Boolean) data.get("imageExist");
+        if (bitmap!=null && Boolean.TRUE.equals(imgE)){
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+            String fName = userName+"_"+timeStamp+".jpg";
+            String Path = "image/"+ fName;
+
+            //StorageReference storageRef = storage.getReference();
+            StorageReference mountainsRef = storage.getReference().child(Path);
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 30, baos);
+            byte[] imageData = baos.toByteArray();
+            UploadTask uploadTask = mountainsRef.putBytes(imageData);
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle unsuccessful uploads
+                    Toast toast = Toast.makeText(getApplicationContext(),"tryagain", Toast.LENGTH_SHORT);
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                    // ...
+                    HashMapValidate("QRpath",Path);
+
+                    if (QRname.length()==0){
+                        NewQRWithRandomGeneratedWords("",data);
+
+                    } else {
+                       CheckUnique(QRname,true,data);
+                    }
+                }
+            });
+
+
+
+        } else {
+            // de;tete
+            try{
+                File fdel = new File(imageUri.getPath());//create path from uri
+                if (fdel.exists()) {
+                    fdel.delete();
+                }
+            } catch (Exception e){
+                Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT);
+            }
+
+            HashMapValidate("QRpath","");
+            if (QRname.length()==0){
+                NewQRWithRandomGeneratedWords("",data);
+            } else {
+                CheckUnique(QRname,true,data);
+            }
+        }
+
+    }
+
+    private void HashMapValidate(String id,Object ob){
+        if (data.containsKey(id)) {
+            data.replace(id,ob);
+        } else {
+            data.put(id,ob);
+        }
+    }
+
+    /**
+     * delete a image in firestone
+     */
+    public void imageDelFirestone(String s1){
+        StorageReference storageRef = storage.getReference();
+
+        // Create a reference to the file to delete
+        StorageReference desertRef = storageRef.child(s1);
+
+        // Delete the file
+        desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                // File deleted successfully
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Uh-oh, an error occurred!
             }
         });
     }

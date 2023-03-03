@@ -207,10 +207,13 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                     }  else {
                         HashMapValidate("user", userName);
                         HashMapValidate("time", new Date());
-                        imagePushFirestone();
+                        GameQrRecordDB DBconnect = new GameQrRecordDB();
+                        DBconnect.imagePushFirestone(data,imageUri,userName,QRname,getContentResolver());
                         UpdateProfileAdd();
+                        finish();
                     }
                 } else if (mode.equals("modified")){
+                    GameQrRecordDB DBconnect = new GameQrRecordDB();
                     // check if change,something releated also need to change
                     Boolean b1 = (Boolean)data.get("imageExist");
                     Boolean b2 = (Boolean)data.get("LocationExist");
@@ -218,7 +221,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                     if (Boolean.FALSE.equals(b1)){
                         HashMapValidate("QRtext","");
                         if (s1!=""){
-                            imageDelFirestone(s1);
+                            DBconnect.imageDelFirestone(s1);
                             HashMapValidate("QRpath","");
                         }
                     }
@@ -228,7 +231,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                         HashMapValidate("LocationName","");
                         HashMapValidate("LocationAddress","");
                     }
-                    GameQrRecordDB DBconnect = new GameQrRecordDB();
+
                     if (!Objects.equals(QRname, OrginalName)){
                         DBconnect.DelteQrInfo(OrginalName);
                         DBconnect.CheckUnique(QRname,true,data);
@@ -541,13 +544,11 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
     public void onGeneralUpdate(Boolean delreq) {
         // delte request
         if (Objects.equals((String) data.get("user"), userName)){
-
+            GameQrRecordDB DBconnect = new GameQrRecordDB();
             String s1 = (String) data.get("QRpath");
             if (!Objects.equals(s1, "")){
-                imageDelFirestone(s1);
+                DBconnect.imageDelFirestone(s1);
             }
-
-            GameQrRecordDB DBconnect = new GameQrRecordDB();
             DBconnect.DelteQrInfo(QRname);
             finish();
         }
@@ -559,90 +560,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
           QRname=Newname;
       }
 
-              /**
-   * new iamge push to firestone
-   */
-    private void imagePushFirestone(){
-        Bitmap bitmap =null;
-        if (imageUri!=null){
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
-            } catch (IOException e) {
-                Toast toast = Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT);
-            }
-            // de;tete
-            try{
-                File fdel = new File(imageUri.getPath());//create path from uri
-                if (fdel.exists()) {
-                    fdel.delete();
-                }
-            } catch (Exception e){
-                Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT);
-            }
 
-        }
-        Boolean imgE = (Boolean) data.get("imageExist");
-        if (bitmap!=null && Boolean.TRUE.equals(imgE)){
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
-            String fName = userName+"_"+timeStamp+".jpg";
-            String Path = "image/"+ fName;
-            StorageReference storageRef = storage.getReference();
-            StorageReference mountainsRef = storageRef.child(Path);
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 30, baos);
-            byte[] imageData = baos.toByteArray();
-            UploadTask uploadTask = mountainsRef.putBytes(imageData);
-            uploadTask.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle unsuccessful uploads
-                    Toast toast = Toast.makeText(getApplicationContext(),"tryagain", Toast.LENGTH_SHORT);
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-                    // ...
-                    HashMapValidate("QRpath",Path);
-
-                    GameQrRecordDB DBconnect = new GameQrRecordDB();
-                    if (QRname.length()==0){
-                        DBconnect.NewQRWithRandomGeneratedWords("",data);
-                        finish();
-                    } else {
-                        DBconnect.CheckUnique(QRname,true,data);
-                        finish();
-                    }
-                }
-            });
-
-
-
-        } else {
-            // de;tete
-            try{
-                File fdel = new File(imageUri.getPath());//create path from uri
-                if (fdel.exists()) {
-                    fdel.delete();
-                }
-            } catch (Exception e){
-                Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT);
-            }
-
-            HashMapValidate("QRpath","");
-            GameQrRecordDB DBconnect = new GameQrRecordDB();
-            if (QRname.length()==0){
-                DBconnect.NewQRWithRandomGeneratedWords("",data);
-                finish();
-            } else {
-                DBconnect.CheckUnique(QRname,true,data);
-                finish();
-            }
-        }
-
-
-    }
 
   /**
    * petching existing image
@@ -671,28 +589,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         });
     }
 
-  /**
-   * delete a image in firestone
-   */
-    private void imageDelFirestone(String s1){
-        StorageReference storageRef = storage.getReference();
 
-        // Create a reference to the file to delete
-        StorageReference desertRef = storageRef.child(s1);
-
-        // Delete the file
-        desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                // File deleted successfully
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Uh-oh, an error occurred!
-            }
-        });
-        }
     private void UpdateProfileAdd(){
 
     }
