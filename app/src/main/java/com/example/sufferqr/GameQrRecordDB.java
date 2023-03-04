@@ -14,10 +14,12 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.sufferqr.ui.main.QRDetailGeneralFragment;
 import com.example.sufferqr.ui.main.QRDetailLocationFragment;
+import com.example.sufferqr.ui.main.ScanHistoryQRRecord;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -25,7 +27,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FileDownloadTask;
@@ -78,6 +83,7 @@ public class GameQrRecordDB {
     public void CheckUnique(String name,boolean RetryIfFail,HashMap<String, Object> data) {
         db = FirebaseFirestore.getInstance();
         final CollectionReference collectionReferenceDest = db.collection("GameQrCode");
+        final String UserName = (String) data.get("user");
         // check if id is unique in the FameQr datavase
         collectionReferenceDest.document(name).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -100,7 +106,7 @@ public class GameQrRecordDB {
                                     @Override
                                     public void onSuccess(Void aVoid) {
                                         // These are a method which gets executed when the task is succeeded
-                                        //listener.onSendingUpdate("Data has been added successfully!",true);
+                                        PlayerProfileUpdate(UserName);
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override
@@ -195,9 +201,10 @@ public class GameQrRecordDB {
      * @return
      * null
      */
-    public void DelteQrInfo(String ID){
+    public void DelteQrInfo(String ID,HashMap<String,Object> myData){
         db = FirebaseFirestore.getInstance();
         final CollectionReference collectionReferenceDest = db.collection("GameQrCode");
+        final String UserName = (String) myData.get("user");
         // check if id is unique in the FameQr datavase
         collectionReferenceDest.document(ID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -211,6 +218,7 @@ public class GameQrRecordDB {
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()){
 //                                    listener.onSendingUpdate("delete sucess",true);
+                                    PlayerProfileUpdate(UserName);
                                 } else {
 //                                    listener.onSendingUpdate("delete failed",false);
                                 }
@@ -234,6 +242,7 @@ public class GameQrRecordDB {
      */
     public void ChangeQrInfo(String ID,HashMap<String, Object> data){
         db = FirebaseFirestore.getInstance();
+        final String UserName = (String) data.get("user");
         final CollectionReference collectionReferenceDest = db.collection("GameQrCode");
         // check if id is unique in the FameQr datavase
         collectionReferenceDest.document(ID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -251,6 +260,7 @@ public class GameQrRecordDB {
                                 if (task.isSuccessful()){
                                     System.out.println("update sucessfull");
 //                                    listener.onSendingUpdate("update sucessfull",true);
+                                    PlayerProfileUpdate(UserName);
                                 }else {
 //                                    listener.onSendingUpdate("try again",false);
                                 }
@@ -381,4 +391,103 @@ public class GameQrRecordDB {
         });
     }
 
+    public void PlayerProfileUpdate(String userName){
+        final CollectionReference collectionReference = db.collection("Player");
+        final Query qrCodeQuery= db.collection("GameQrCode").whereEqualTo("user",userName);
+
+        // fetching original player profile
+        collectionReference.document(userName).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()){
+                        final String docName = task.getResult().getId();
+                        final HashMap<String,Object> userData = (HashMap<String, Object>) task.getResult().getData();
+                        // illiterate through each QR record.
+                        qrCodeQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                int HighestScore=0,LowestScore=0,TotalScore=0,CountQR=0;
+                                String HighestQRName="",LowesrQRName="";
+                                ArrayList<Integer> scores =  new ArrayList<>();
+
+                                if (task.isSuccessful() ){
+                                    for (DocumentSnapshot doc:task.getResult()){
+                                        Object points = doc.get("points");
+                                        String point_str = String.valueOf(points);
+                                        String name = (String) doc.get("QRname");
+                                        if (points != null) {
+                                            int point = Integer.parseInt(point_str);
+                                            if (HighestScore==0 || (HighestScore < point)){
+                                                HighestScore = point;
+                                                HighestQRName = name;
+                                            }
+                                            if (LowestScore==0 || (LowestScore > point)){
+                                                LowestScore = point;
+                                                LowesrQRName = name;
+                                            }
+                                            TotalScore = TotalScore + point;
+                                            CountQR++;
+                                            scores.add(point);
+                                        }
+
+                                    }
+                                    data = userData;
+                                    HashMapValidate("highestScore",HighestScore);
+                                    HashMapValidate("lowestScore",LowestScore);
+                                    HashMapValidate("qrcount",CountQR);
+                                    HashMapValidate("sumScore",TotalScore);
+                                    HashMapValidate("highestQRName",HighestQRName);
+                                    HashMapValidate("LowestQRName",LowesrQRName);
+                                    HashMapValidate("scores",scores);
+
+                                    // update player profile
+                                    final CollectionReference collectionReference = db.collection("Player");
+                                    collectionReference.document(docName).update(data).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+
+                                            Toast.makeText(getApplicationContext(),"Update Success",Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+
+                                }else{
+                                    // fail 2
+                                }
+                            }
+                        });
+                }else{
+                    // fail
+                }
+            }
+        });
+
+    }
+
+    public void UserNameChange(String oldName,String newName){
+        final CollectionReference collectionReference = db.collection("GameQrCode");
+        final Query query= collectionReference.whereEqualTo("user",oldName);
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful() ){
+                    for (DocumentSnapshot doc:task.getResult()){
+                        data = (HashMap<String, Object>) doc.getData();
+                        HashMapValidate("user",newName);
+                        collectionReference.document(doc.getId()).update(data).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()){
+                                    // success
+                                } else {
+                                    //fail
+                                }
+                            }
+                        });
+
+                    }
+                }
+            }
+
+        });
+    }
 }

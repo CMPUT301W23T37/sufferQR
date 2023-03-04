@@ -233,7 +233,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                     }
 
                     if (!Objects.equals(QRname, OrginalName)){
-                        DBconnect.DelteQrInfo(OrginalName);
+                        DBconnect.DelteQrInfo(OrginalName,data);
                         DBconnect.CheckUnique(QRname,true,data);
                     } else {
                         DBconnect.ChangeQrInfo(QRname,data);
@@ -549,7 +549,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
             if (!Objects.equals(s1, "")){
                 DBconnect.imageDelFirestone(s1);
             }
-            DBconnect.DelteQrInfo(QRname);
+            DBconnect.DelteQrInfo(QRname,data);
             finish();
         }
     }
