@@ -5,6 +5,7 @@
     <string name="nav_close">NavClose</string>
     <string name="cancel_string">Cancel</string>
 
+
     <string name="title_activity_qrdetail">QRDetailActivity</string>
     <string name="tab_text_1">General</string>
     <string name="tab_text_2">Image</string>
@@ -18,5 +19,13 @@
     <string name="qr_detail_image_title">save image content</string>
     <string name="qr_detail_general_visual_text_startup_msg">Available once you scan qr code\n\n\n\n\n To add QR code,go to image page\n and tag the lower botton to scan</string>
     <string name="qr_detail_general_visual_text_tittle">visual representation of yout QRcode</string>
+    <string name="qrdetail_image_sign">QRCode content</string>
+    <string name="temp_0">0</string>
+
+
+    <string name="total_points_string">Total Points:</string>
+    <string name="total_qr_string">Total QR Scanned:</string>
+    <string name="highest_string">Highest Score</string>
+    <string name="last_scan_string">Last Scan</string>
 
 </resources>

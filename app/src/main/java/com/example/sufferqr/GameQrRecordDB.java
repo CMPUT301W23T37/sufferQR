@@ -2,12 +2,16 @@ package com.example.sufferqr;
 
 import static android.app.PendingIntent.getActivity;
 
+import android.content.Context;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
+import com.example.sufferqr.ui.main.QRDetailGeneralFragment;
+import com.example.sufferqr.ui.main.QRDetailLocationFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -43,13 +47,17 @@ public class GameQrRecordDB {
     private FirebaseStorage storage;
 
 
-    public GameQrRecordDB() {
+    public GameQrRecordDB(){
         //getRandomUniqueString();
         // do not enable unless necessory
         // https://blog.csdn.net/u011435933/article/details/117419082
         //UpdateRandomWord("/data/data/com.example.sufferqr/cache/wordlist.txt",50);
         db = FirebaseFirestore.getInstance();
     }
+
+
+
+
 
 
     /**
@@ -72,7 +80,7 @@ public class GameQrRecordDB {
                             NewQRWithRandomGeneratedWords(name,data);
                         }else {
                             // put a toast message
-                            System.out.println("repeat exist");
+                            //listener.onSendingUpdate("user name exist",false);
                         }
                     } else {
                         //  put success staff here.
@@ -82,19 +90,19 @@ public class GameQrRecordDB {
                                     @Override
                                     public void onSuccess(Void aVoid) {
                                         // These are a method which gets executed when the task is succeeded
-                                        Log.d(TAG, "Data has been added successfully!");
+                                        //listener.onSendingUpdate("Data has been added successfully!",true);
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
                                         // These are a method which gets executed if there’s any problem
-                                        Log.d(TAG, "Data could not be added!" + e.toString());
+                                        //listener.onSendingUpdate("Data could not be added!",false);
                                     }
                                 });
                     }
                    // when sucess exit
                 } else {
-                    System.out.println("fail to connect");
+                    //listener.onSendingUpdate("delete failed",false);
                 }
             }
         });
@@ -146,10 +154,11 @@ public class GameQrRecordDB {
 
                     }
                 } catch (FileNotFoundException e){
-                    e.printStackTrace();
-                    System.out.println("file open fail");
+                    //e.printStackTrace();
+                    //listener.onSendingUpdate("file open fail",false);
                 } catch (IOException e){
-                    System.out.println(e.toString());
+                    //System.out.println(e.toString());
+                    //listener.onSendingUpdate("file open fail",false);
                 }
                 String MyName2 = name;
                 Random rand = new Random();
@@ -166,7 +175,7 @@ public class GameQrRecordDB {
             @Override
             public void onFailure(@NonNull Exception exception) {
                 // Handle any errors
-                System.out.println("fetch fail");
+                //listener.onSendingUpdate("delete failed",false);
             }
         });
     }
@@ -191,18 +200,18 @@ public class GameQrRecordDB {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()){
-                                    System.out.println("delete sucess");
+//                                    listener.onSendingUpdate("delete sucess",true);
                                 } else {
-                                    System.out.println("delete fail");
+//                                    listener.onSendingUpdate("delete failed",false);
                                 }
                             }
                         });
                     } else {
                         //  switch to add id
-                        System.out.println("id not found");
+//                        listener.onSendingUpdate("id not found",false);
                     }
                 } else {
-                    System.out.println("fail to connect");
+//                    listener.onSendingUpdate("unable connect to server",false);
                 }
             }
         });
@@ -231,8 +240,9 @@ public class GameQrRecordDB {
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()){
                                     System.out.println("update sucessfull");
+//                                    listener.onSendingUpdate("update sucessfull",true);
                                 }else {
-                                    System.out.println("try again");
+//                                    listener.onSendingUpdate("try again",false);
                                 }
 
                             }
@@ -243,7 +253,7 @@ public class GameQrRecordDB {
                         CheckUnique(ID, false, data);
                     }
                 } else {
-                    System.out.println("fail to connect");
+//                    listener.onSendingUpdate("delete failed",false);
                 }
             }
         });

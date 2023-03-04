@@ -1,17 +1,14 @@
 package com.example.sufferqr;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.ActionBarContainer;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -87,14 +84,10 @@ public class DrawerBase extends AppCompatActivity implements NavigationView.OnNa
                 overridePendingTransition(0,0);
                 break;
             case R.id.nav_scan:
-                //new/modified/viewer
-                // remember change ScanCode.class
-                Intent scanIntent = new Intent(this, QRDetailActivity.class);
+                //new/modified/viewer(mode) for QR detail activity
+                Intent scanIntent = new Intent(DrawerBase.this, ScanCode.class);
                 scanIntent.putExtra("user","example");
                 scanIntent.putExtra("mode","new");
-//                scanIntent.putExtra("mode","modify");
-
-                // lunch
                 startActivity(scanIntent);
                 overridePendingTransition(0,0);
                 break;
@@ -105,7 +98,10 @@ public class DrawerBase extends AppCompatActivity implements NavigationView.OnNa
                 break;
 
             case R.id.nav_History:
-                startActivity(new Intent(this, ScanHistory.class));
+                //new/modified/viewer(mode) for QR detail activity
+                Intent HistIntent = new Intent(this, ScanHistory.class);
+                HistIntent.putExtra("user","example");
+                startActivity(HistIntent);
                 overridePendingTransition(0,0);
                 break;
 
