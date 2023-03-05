@@ -9,6 +9,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.provider.Settings;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -63,6 +64,8 @@ public class DrawerBase extends AppCompatActivity implements NavigationView.OnNa
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         drawerLayout.closeDrawer(GravityCompat.START);
 
+        String android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+
         switch (item.getItemId()){
             case R.id.nav_user:
                 startActivity(new Intent(this, UserProfile.class));
@@ -86,7 +89,7 @@ public class DrawerBase extends AppCompatActivity implements NavigationView.OnNa
             case R.id.nav_scan:
                 //new/modified/viewer(mode) for QR detail activity
                 Intent scanIntent = new Intent(DrawerBase.this, ScanCode.class);
-                scanIntent.putExtra("user","example");
+                scanIntent.putExtra("user",android_id);
                 scanIntent.putExtra("mode","new");
                 startActivity(scanIntent);
                 overridePendingTransition(0,0);
@@ -100,7 +103,7 @@ public class DrawerBase extends AppCompatActivity implements NavigationView.OnNa
             case R.id.nav_History:
                 //new/modified/viewer(mode) for QR detail activity
                 Intent HistIntent = new Intent(this, ScanHistory.class);
-                HistIntent.putExtra("user","example");
+                HistIntent.putExtra("user",android_id);
                 startActivity(HistIntent);
                 overridePendingTransition(0,0);
                 break;
