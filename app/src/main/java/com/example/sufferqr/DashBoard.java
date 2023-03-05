@@ -3,8 +3,6 @@ package com.example.sufferqr;
 import static android.content.ContentValues.TAG;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,7 +10,6 @@ import android.os.Bundle;
 import com.example.sufferqr.databinding.ActivityDashBoardBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -20,6 +17,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import android.provider.Settings;
 import android.provider.Settings.Secure;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class is the dash board of the application
@@ -36,14 +40,58 @@ public class DashBoard extends DrawerBase {
     final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityDashBoardBinding = ActivityDashBoardBinding.inflate(getLayoutInflater());
         setContentView(activityDashBoardBinding.getRoot());
         allocateActivityTitle("Suffer QR");
+
+        // click qr code icon to scan code
+        ImageView qrScan = findViewById(R.id.qr_image);
+        qrScan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(DashBoard.this, ScanCode.class));
+            }
+        });
+        // click the top left rectangle to see details
+        TextView topRec = findViewById(R.id.blue_rec);
+        topRec.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(DashBoard.this, UserProfile.class));
+            }
+        });
+        // click rank to see leader board
+        TextView rank = findViewById(R.id.blue_rec_t);
+        rank.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(DashBoard.this, LeaderBoard.class));
+            }
+        });
+        // click highest score to see user profile
+        TextView hScore = findViewById(R.id.blue_rec_m);
+        hScore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(DashBoard.this, UserProfile.class));
+            }
+        });
+        // click last scan to see scan history
+        TextView lastS = findViewById(R.id.blue_rec_b);
+        lastS.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(DashBoard.this, ScanHistory.class));
+            }
+        });
+
+        TextView totalQR = findViewById(R.id.total_qr_number);
+        TextView totalPoint = findViewById(R.id.total_point_number);
+        TextView highestScore = findViewById(R.id.highest_score_number);
+        TextView lastScan = findViewById(R.id.last_scan_number);
 
         // Get AAID
         String android_id = Settings.Secure.getString(getContentResolver(), Secure.ANDROID_ID);
@@ -53,6 +101,33 @@ public class DashBoard extends DrawerBase {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()){
                     DocumentSnapshot userInfo = task.getResult();
+                    // get the score list
+                    List<Long> scoresList = (List<Long>) userInfo.get("scores");
+                    int length = scoresList.size();
+
+                    // last scan
+                    lastScan.setText(getString(R.string.last_scan_number, String.valueOf(scoresList.get(length - 1))));
+                    // sort the score list in reverse order
+                    List<Long> scoresSorted = scoresList.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
+
+                    // total qr code scanned
+                    if (length == 1 && scoresSorted.get(0) == 0){
+                        totalQR.setText(String.valueOf(0));
+                    }
+                    else {
+                        totalQR.setText(String.valueOf(length));
+                    }
+
+                    // total points
+                    long sumScores = 0;
+                    for (int i = 0; i < length; i++) {
+                        sumScores += scoresList.get(i);
+                    }
+                    totalPoint.setText(String.valueOf(sumScores));
+
+                    // highest score
+                    highestScore.setText(String.valueOf(scoresSorted.get(0)));
+
                     if(!userInfo.exists()){
                         Intent i = new Intent(DashBoard.this, RegisterPage.class);
                         startActivity(i);
@@ -64,4 +139,6 @@ public class DashBoard extends DrawerBase {
         });
 
     }
+
+
 }

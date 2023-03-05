@@ -6,6 +6,9 @@
         android:bottomLeftRadius="30dp">
     </corners>
 
-    <solid
-        android:color="@color/app_sub_blue" />
+    <gradient
+        android:angle="90"
+        android:endColor="@color/lighter_blue"
+        android:startColor="@color/white"
+        android:type="linear" />
 </shape>
