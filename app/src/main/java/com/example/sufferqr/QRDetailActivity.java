@@ -103,7 +103,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
     private FirebaseFirestore db;
 
     private HashMap <String,Object> data; // data that sent to collection
-    String mode,userName,QRname,QRstring; // remember some of the name setiings
+    String mode,userName,QRname,QRstring,OrginalName; // remember some of the name setiings
 
     Uri imageUri,surroundsUri; // at new mode, record local image location
 
@@ -111,6 +111,8 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
     Bundle mapBundle,imageBundle,GeneralBundle; //tabs transit information
 
     Boolean nearbyImg;
+
+    TextInputLayout ttl;
 
 
   /**
@@ -152,7 +154,12 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         if (Objects.equals(mode, "new")){
             imageBundle.putString("QRString",QRstring);
             imageBundle.putString("imageUri",imageUri.toString());
+
+        } else if (Objects.equals(mode, "modified")) {
+            GeneralBundle.putString("qrID",QRname);
+            OrginalName="";
         }
+
 
 
         // hashmap prepare uploading
@@ -175,8 +182,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         CancelBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
-                if (mode == "new"){
+                if (Objects.equals(mode, "new")){
                     // in new mode, picture cache have to be cleared
                     try{
                         File fdel = new File(imageUri.getPath());//create path from uri
@@ -187,22 +193,27 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                         Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT);
                     }
                 }
+                finish();
             }
         });
         ConfirmBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Objects.equals(mode, "new")){
+                if (Objects.equals(mode, "new")) {
                     // if new push the image and then database
-                    Boolean b1=(Boolean) data.get("LocationExist");
-                    if (b1 && Objects.equals((String) data.get("LocationAddress"), "")){
-                        Toast.makeText(getApplicationContext(), "please wait for data complete fetching", Toast.LENGTH_SHORT);
-                    } else {
+                    Boolean b1 = (Boolean) data.get("LocationExist");
+                    if (b1 && Objects.equals((String) data.get("LocationAddress"), "")) {
+                        Toast.makeText(getBaseContext(), "please wait for data complete fetching", Toast.LENGTH_SHORT).show();
+                    }  else {
                         HashMapValidate("user", userName);
                         HashMapValidate("time", new Date());
-                        imagePushFirestone();
+                        GameQrRecordDB DBconnect = new GameQrRecordDB();
+                        DBconnect.imagePushFirestone(data,imageUri,userName,QRname,getContentResolver());
+                        UpdateProfileAdd();
+                        finish();
                     }
                 } else if (mode.equals("modified")){
+                    GameQrRecordDB DBconnect = new GameQrRecordDB();
                     // check if change,something releated also need to change
                     Boolean b1 = (Boolean)data.get("imageExist");
                     Boolean b2 = (Boolean)data.get("LocationExist");
@@ -210,7 +221,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                     if (Boolean.FALSE.equals(b1)){
                         HashMapValidate("QRtext","");
                         if (s1!=""){
-                            imageDelFirestone(s1);
+                            DBconnect.imageDelFirestone(s1);
                             HashMapValidate("QRpath","");
                         }
                     }
@@ -220,9 +231,15 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                         HashMapValidate("LocationName","");
                         HashMapValidate("LocationAddress","");
                     }
-                    GameQrRecordDB DBconnect = new GameQrRecordDB();
-                    DBconnect.ChangeQrInfo(QRname,data);
+
+                    if (!Objects.equals(QRname, OrginalName)){
+                        DBconnect.DelteQrInfo(OrginalName,data);
+                        DBconnect.CheckUnique(QRname,true,data);
+                    } else {
+                        DBconnect.ChangeQrInfo(QRname,data);
+                    }
                     finish();
+
                 }
 
 
@@ -231,7 +248,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
 
         // check if things exist,if not exist
         if (!Objects.equals(mode, "new")){
-            if (QRname==""){
+            if (Objects.equals(QRname, "")){
                 finish();
             }else{
                 getContent();
@@ -253,7 +270,12 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
+                        data = (HashMap<String, Object>) document.getData();
+
+
                         // general page change load info
+
+
                         TextInputEditText name,points;
                         TextView textView;Button button;
                         name = findViewById(R.id.qr_detail_general_qrtext_name);
@@ -263,20 +285,22 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
 
                         button = findViewById(R.id.qr_detail_general_elevatedButton);
                         name.setText((String)document.get("QRname"));
+                        OrginalName=(String)document.get("QRname");
                         Object pt = document.get("points");
                         points.setText(String.valueOf(pt));
                         textView.setText((String)document.get("date"));
                         visual.setText((String)document.get("QVisual"));
-
-                        HashMapValidate("QRname",document.get("QRname"));
-                        HashMapValidate("points",document.get("points"));
-                        HashMapValidate("date",document.get("date"));
-                        HashMapValidate("user",document.get("user"));
-                        HashMapValidate("QVisual",document.get("QVisual"));
-
                         TextInputLayout ttl = findViewById(R.id.qr_detail_general_qrtext_name_layout);
-                        ttl.setHelperText("");
-                        ttl.setCounterEnabled(false);
+
+                        if (Objects.equals((String) document.get("user"), userName)){
+                            ttl.setEnabled(true);
+                            name.setEnabled(true);
+                        } else {
+                            ttl.setHelperText("");
+                            ttl.setCounterEnabled(false);
+                            ttl.setEnabled(false);
+                            name.setEnabled(false);
+                        }
 
                         // if not the creator disble change option
                         if (Objects.equals((String) document.get("user"), userName)){
@@ -319,19 +343,10 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                             imageFetchFirestone((String) document.get("QRpath"));
                         }
 
-                        HashMapValidate("QRtext",document.get("QRtext"));
-                        HashMapValidate("imageExist",document.get("imageExist"));
-                        HashMapValidate("QRpath",document.get("QRpath"));
-
                         // map page chage load info
                         SwitchMaterial LocEnable;
                         LocEnable = findViewById(R.id.qr_detail_location_enable_switch);
                         Boolean LocE = (Boolean)document.get("LocationExist");
-
-                        HashMapValidate("LocationName",document.get("LocationName"));
-                        HashMapValidate("LocationLatitude",document.get("LocationLatitude"));
-                        HashMapValidate("LocationLongitude",document.get("LocationLongitude"));
-                        HashMapValidate("LocationAddress",document.get("LocationAddress"));
 
                         CardView mapc1= findViewById(R.id.qr_detail_location_poi_cardview);
                         CardView mapc2= findViewById(R.id.qr_detail_location_map_cardview);
@@ -529,102 +544,23 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
     public void onGeneralUpdate(Boolean delreq) {
         // delte request
         if (Objects.equals((String) data.get("user"), userName)){
-
+            GameQrRecordDB DBconnect = new GameQrRecordDB();
             String s1 = (String) data.get("QRpath");
             if (!Objects.equals(s1, "")){
-                imageDelFirestone(s1);
+                DBconnect.imageDelFirestone(s1);
             }
-
-            GameQrRecordDB DBconnect = new GameQrRecordDB();
-            DBconnect.DelteQrInfo(QRname);
+            DBconnect.DelteQrInfo(QRname,data);
             finish();
         }
     }
 
-  /**
-   * new iamge push to firestone
-   */
-    private void imagePushFirestone(){
-        Bitmap bitmap =null;
-        if (imageUri!=null){
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
-            } catch (IOException e) {
-                Toast toast = Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT);
-            }
-            // de;tete
-            try{
-                File fdel = new File(imageUri.getPath());//create path from uri
-                if (fdel.exists()) {
-                    fdel.delete();
-                }
-            } catch (Exception e){
-                Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT);
-            }
-
-        }
-        Boolean imgE = (Boolean) data.get("imageExist");
-        if (bitmap!=null && Boolean.TRUE.equals(imgE)){
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
-            String fName = userName+"_"+timeStamp+".jpg";
-            String Path = "image/"+ fName;
-            StorageReference storageRef = storage.getReference();
-            StorageReference mountainsRef = storageRef.child(Path);
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 30, baos);
-            byte[] imageData = baos.toByteArray();
-            UploadTask uploadTask = mountainsRef.putBytes(imageData);
-            uploadTask.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle unsuccessful uploads
-                    Toast toast = Toast.makeText(getApplicationContext(),"tryagain", Toast.LENGTH_SHORT);
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-                    // ...
-                    HashMapValidate("QRpath",Path);
-
-                    GameQrRecordDB DBconnect = new GameQrRecordDB();
-                    if (QRname.length()==0){
-                        DBconnect.NewQRWithRandomGeneratedWords("",data);
-                        finish();
-                    } else {
-                        DBconnect.CheckUnique(QRname,true,data);
-                        finish();
-                    }
-                }
-            });
+      @Override
+      public void onGeneralUpdate(String Newname) {
+          HashMapValidate("QRname",Newname);
+          QRname=Newname;
+      }
 
 
-
-        } else {
-            // de;tete
-            try{
-                File fdel = new File(imageUri.getPath());//create path from uri
-                if (fdel.exists()) {
-                    fdel.delete();
-                }
-            } catch (Exception e){
-                Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT);
-            }
-
-            HashMapValidate("QRpath","");
-            GameQrRecordDB DBconnect = new GameQrRecordDB();
-            if (QRname.length()==0){
-                DBconnect.NewQRWithRandomGeneratedWords("",data);
-                finish();
-            } else {
-                DBconnect.CheckUnique(QRname,true,data);
-                finish();
-            }
-        }
-
-
-    }
 
   /**
    * petching existing image
@@ -653,26 +589,12 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         });
     }
 
-  /**
-   * delete a image in firestone
-   */
-    private void imageDelFirestone(String s1){
-        StorageReference storageRef = storage.getReference();
 
-        // Create a reference to the file to delete
-        StorageReference desertRef = storageRef.child(s1);
+    private void UpdateProfileAdd(){
 
-        // Delete the file
-        desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                // File deleted successfully
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Uh-oh, an error occurred!
-            }
-        });
-        }
+    }
+
+    private void UpdateProfileDel(){
+
+    }
 }

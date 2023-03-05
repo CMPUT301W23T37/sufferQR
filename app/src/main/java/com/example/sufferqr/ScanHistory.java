@@ -65,7 +65,7 @@ public class ScanHistory extends DrawerBase {
                 ScanHistoryQRRecord hsq = (ScanHistoryQRRecord) adapterView.getItemAtPosition(position);
                 //new/modified/viewer(mode) for QR detail activity
                 Intent scanIntent = new Intent(getApplicationContext(),QRDetailActivity.class);
-                scanIntent.putExtra("user","example");
+                scanIntent.putExtra("user",UserName);
                 scanIntent.putExtra("qrID",hsq.getName());
                 scanIntent.putExtra("mode","modified");
                 startActivity(scanIntent);
@@ -91,7 +91,7 @@ public class ScanHistory extends DrawerBase {
 
     private void update(){
         final CollectionReference collectionReference = db.collection("GameQrCode");
-        final Query query= collectionReference.whereEqualTo("user",UserName).orderBy("time");
+        final Query query= collectionReference.whereEqualTo("user",UserName).orderBy("time",Query.Direction.DESCENDING);
         
         query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
