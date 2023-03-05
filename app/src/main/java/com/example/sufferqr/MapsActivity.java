@@ -22,6 +22,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -118,6 +119,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         ArrayList<Double> latitudeList = new ArrayList<>();
         ArrayList<Double> longitudeList = new ArrayList<>();
         ArrayList<String> ids = new ArrayList<>();
+        // arraylist of scores
+        ArrayList<Long> scores = new ArrayList<>();
+
+
+
+
         collectionRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -126,17 +133,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         Double latitude = document.getDouble("LocationLatitude");
                         Double longitude = document.getDouble("LocationLongitude");
                         String id = document.getId();
-                        if (latitude != null && longitude != null && id != null) {
+                        Long score = document.getLong("points");
+
+                        if (latitude != null && longitude != null) {
                             latitudeList.add(latitude);
                             longitudeList.add(longitude);
                             ids.add(id);
+                            scores.add(score);
+
                         }
                     }
                     // add markers if they are within 1km of the current location
                     for (int i = 0; i < latitudeList.size(); i++) {
                         LatLng latLng = new LatLng(latitudeList.get(i), longitudeList.get(i));
                         if (isWithinOneKilometer(currentLocation, latLng)) {
-                            mMap.addMarker(new MarkerOptions().position(latLng).title(ids.get(i)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                            Marker m = mMap.addMarker(new MarkerOptions().position(latLng).title(ids.get(i)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)).snippet("Points: " + scores.get(i).toString() + ""));
+
                         }
                     }
                 } else {
@@ -145,16 +157,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-//        // if the user long clicks on a marker, open the details activity
-//        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-//            @Override
-//            public boolean onMarkerClick(Marker marker) {
-//                Intent intent = new Intent(MapsActivity.this, QRDetailActivity.class);
-//                intent.putExtra("id", marker.getTitle());
-//                startActivity(intent);
-//                return false;
-//            }
-//        });
+        // Set up the info window click listener
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                // Handle info window click event
+                if (marker.getTitle() != null && !marker.getTitle().isEmpty()) {
+                    Toast.makeText(MapsActivity.this, "Marker Title Clicked", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+
+
 
     }
 
