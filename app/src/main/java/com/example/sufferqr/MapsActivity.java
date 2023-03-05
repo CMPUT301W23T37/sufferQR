@@ -1,5 +1,7 @@
 package com.example.sufferqr;
 
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.GeoPoint;
@@ -14,6 +16,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -129,10 +132,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             ids.add(id);
                         }
                     }
-                    // add markers
+                    // add markers if they are within 1km of the current location
                     for (int i = 0; i < latitudeList.size(); i++) {
                         LatLng latLng = new LatLng(latitudeList.get(i), longitudeList.get(i));
-                        mMap.addMarker(new MarkerOptions().position(latLng).title(ids.get(i)));
+                        if (isWithinOneKilometer(currentLocation, latLng)) {
+                            mMap.addMarker(new MarkerOptions().position(latLng).title(ids.get(i)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                        }
                     }
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
@@ -140,22 +145,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-
-
-
-
-
-
-        //marker in New York
-        LatLng newyork = new LatLng(40.730610, -73.935242);
-        mMap.addMarker(new MarkerOptions().position(newyork).title("Marker in New York"));
-
-
-
-
-
+//        // if the user long clicks on a marker, open the details activity
+//        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+//            @Override
+//            public boolean onMarkerClick(Marker marker) {
+//                Intent intent = new Intent(MapsActivity.this, QRDetailActivity.class);
+//                intent.putExtra("id", marker.getTitle());
+//                startActivity(intent);
+//                return false;
+//            }
+//        });
 
     }
+
+    public boolean isWithinOneKilometer(LatLng location1, LatLng location2) {
+        final int R = 6371; // Radius of the earth in km
+        double latDistance = Math.toRadians(location2.latitude - location1.latitude);
+        double lonDistance = Math.toRadians(location2.longitude - location1.longitude);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(location1.latitude)) * Math.cos(Math.toRadians(location2.latitude))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double distance = R * c * 1000; // convert to meters
+        return distance <= 1000; // return true if distance is less than or equal to 1km
+    }
+
 }
 
 
