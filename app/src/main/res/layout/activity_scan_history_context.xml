@@ -4,11 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="90sp"
-    android:padding="8sp">
+    >
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:cardElevation="5sp"
+        app:cardMaxElevation="10sp"
+        app:cardCornerRadius="10sp"
+        android:layout_marginBottom="8sp"
+        android:layout_marginTop="8sp"
+        android:layout_marginStart="8sp"
+        android:layout_marginEnd="8sp"
         >
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -21,8 +28,9 @@
                 android:layout_height="30sp"
                 android:text="QRID name=1234567890"
                 android:textSize="20sp"
+                android:gravity="center_vertical"
                 android:layout_marginStart="10sp"
-                android:layout_marginBottom="3sp"
+                android:layout_marginBottom="5sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
