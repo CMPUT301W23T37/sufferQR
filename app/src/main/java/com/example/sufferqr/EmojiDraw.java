@@ -1,35 +1,158 @@
 package com.example.sufferqr;
+import java.util.HashMap;
 
-
-/**
- * This class will take in a QR code as an  in the form of a dictionary and return a visual representation of the
- * QR code.
- * @version 1.0
- */
 public class EmojiDraw {
-    /**
-     * We will first have a template of a cirle for the emoji
-     */
-    public static void drawCircleTemplate() {
-        int radius = 5; // Set the radius of the circle
-        int centerX = 5; // Set the X coordinate of the center of the circle
-        int centerY = 5; // Set the Y coordinate of the center of the circle
+    private static final int SHAPE_BIT_LENGTH = 1;
+    private static final int EYEBROW_BIT_LENGTH = 2;
+    private static final int EYE_BIT_LENGTH = 2;
+    private static final int NOSE_BIT_LENGTH = 2;
+    private static final int EAR_BIT_LENGTH = 2;
+    private static final int MUSTACHE_BIT_LENGTH = 2;
+    private static final int MOUTH_BIT_LENGTH = 2;
+    private static final int BEARD_BIT_LENGTH = 1;
 
-        // Loop through each row and column to draw the circle
-        for (int y = 0; y <= 10; y++) {
-            for (int x = 0; x <= 10; x++) {
-                double distance = Math.sqrt((x - centerX) * (x - centerX) + (y - centerY) * (y - centerY));
-                if (Math.abs(distance - radius) < 0.5) {
-                    System.out.print("*");
-                } else {
-                    System.out.print(" ");
-                }
-            }
-            System.out.println("");
-        }
+    private static final String[] SHAPE_OPTIONS = {"square", "triangle"};
+    private static final String[] EYEBROW_OPTIONS = {
+            "=====          =====",
+            "          \\          //          ",
+            "~~~~~          ~~~~~",
+            "︵︵︵︵        ︵︵︵︵"
+    };
+    private static final String[] EYE_OPTIONS = {
+            "        >            <    ",
+            "        ^            ^    ",
+            "        3             3    ",
+            "        0             0    "
+    };
+    private static final String[] NOSE_OPTIONS = {
+            "              \\ /                ",
+            "               O                 ",
+            "               •                 ",
+            "               []                  "
+    };
+    private static final String[] EAR_OPTIONS = {
+            "\\  ",
+            "@",
+            "8",
+            "%",
+            "$",
+            "/",
+            " /"
+    };
+    private static final String[] MUSTACHE_OPTIONS = {
+            "            VVVVVVVV       ",
+            "            ########         ",
+            "",
+            "            -----------            "
+    };
+    private static final String[] MOUTH_OPTIONS = {
+            "              [=====]       ",
+            "              (┬─┬)            ",
+            "              {┻━┻)              ",
+            "              |+++++|        "
+    };
+    private static final String[] BEARD_OPTIONS = {
+            "                    V                   ",
+            ""
+    };
+
+    private static final HashMap<String, Integer> BIT_LENGTH_MAP = new HashMap<>();
+    static {
+        BIT_LENGTH_MAP.put("shape", SHAPE_BIT_LENGTH);
+        BIT_LENGTH_MAP.put("eyebrow", EYEBROW_BIT_LENGTH);
+        BIT_LENGTH_MAP.put("eye", EYE_BIT_LENGTH);
+        BIT_LENGTH_MAP.put("nose", NOSE_BIT_LENGTH);
+        BIT_LENGTH_MAP.put("ear", EAR_BIT_LENGTH);
+        BIT_LENGTH_MAP.put("mustache", MUSTACHE_BIT_LENGTH);
+        BIT_LENGTH_MAP.put("mouth", MOUTH_BIT_LENGTH);
+        BIT_LENGTH_MAP.put("beard", BEARD_BIT_LENGTH);
+    }
+
+    private String qrCodeHashValue;
+
+    public EmojiDraw(String qrCodeHashValue) {
+        this.qrCodeHashValue = qrCodeHashValue;
+    }
+
+    public void draw() {
+        System.out.println("Length of input hash: " + qrCodeHashValue.length());
+        int[] bits = getBitsFromHash(qrCodeHashValue);
+        int currentBitIndex = 0;
+
+        String shapeOption = SHAPE_OPTIONS[bits[currentBitIndex]];
+        currentBitIndex += SHAPE_BIT_LENGTH;
+
+        String eyebrowOption = EYEBROW_OPTIONS[bits[currentBitIndex]];
+        currentBitIndex += EYEBROW_BIT_LENGTH;
+
+        String eyeOption = EYE_OPTIONS[bits[currentBitIndex]];
+        currentBitIndex += EYE_BIT_LENGTH;
+
+        String noseOption = NOSE_OPTIONS[bits[currentBitIndex]];
+        currentBitIndex += NOSE_BIT_LENGTH;
+
+        String earOption = EAR_OPTIONS[bits[currentBitIndex]];
+        currentBitIndex += EAR_BIT_LENGTH;
+
+        String mustacheOption = MUSTACHE_OPTIONS[bits[currentBitIndex]];
+        currentBitIndex += MUSTACHE_BIT_LENGTH;
+
+        String mouthOption = MOUTH_OPTIONS[bits[currentBitIndex]];
+        currentBitIndex += MOUTH_BIT_LENGTH;
+
+        String beardOption = BEARD_OPTIONS[bits[currentBitIndex]];
+        currentBitIndex += BEARD_BIT_LENGTH;
+
+        // Build emoji face
+        String emoji = shapeOption + "\n"
+                + eyebrowOption + "\n"
+                + earOption + eyeOption + noseOption + eyeOption + earOption + "\n"
+                + mustacheOption + "\n"
+                + mouthOption + "\n"
+                + beardOption + "\n";
+
+        // Print emoji face
+        System.out.println(emoji);
     }
 
 
+    private int[] getBitsFromHash(String hash) {
+        int expectedLength = SHAPE_BIT_LENGTH + EYEBROW_BIT_LENGTH + EYE_BIT_LENGTH
+                + NOSE_BIT_LENGTH + EAR_BIT_LENGTH + MUSTACHE_BIT_LENGTH
+                + MOUTH_BIT_LENGTH + BEARD_BIT_LENGTH;
 
+        if (hash.length() < expectedLength) {
+            throw new IllegalArgumentException("Input hash is too short");
+        }
 
+        int[] bits = new int[expectedLength];
+
+        int bitIndex = 0;
+
+        for (char c : hash.toCharArray()) {
+            int decimal;
+            try {
+                decimal = Integer.parseInt(String.valueOf(c), 16);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Invalid hexadecimal character in input hash: " + c);
+            }
+            String binary = Integer.toBinaryString(decimal);
+
+            while (binary.length() < 4) {
+                binary = "0" + binary;
+            }
+
+            for (char b : binary.toCharArray()) {
+                bits[bitIndex] = Character.getNumericValue(b);
+                bitIndex++;
+            }
+        }
+        return bits;
+    }
+
+    public static void main(String[] args) {
+        String qrCodeHashValue = "8af44c49b08733e61ca2e90e9f0a93c6c6c6c6c";
+        EmojiDraw emojiDraw = new EmojiDraw(qrCodeHashValue);
+        emojiDraw.draw();
+    }
 }
