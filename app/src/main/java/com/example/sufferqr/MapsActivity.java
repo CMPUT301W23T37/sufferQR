@@ -127,9 +127,7 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback {
 
                         }
                     }
-                    //check scores arraylist
-                    Log.d("scores", scores.toString());
-
+            
                     // add markers if they are within 1km of the current location
                     for (int i = 0; i < latitudeList.size(); i++) {
                         LatLng latLng = new LatLng(latitudeList.get(i), longitudeList.get(i));
