@@ -78,7 +78,7 @@ public class ScanCode extends DrawerBase {
 
     String userName,QRstring;
 
-    Button Go,Back;
+    Button Go,Back,other;
 
     Boolean foundQR;
 
@@ -96,6 +96,7 @@ public class ScanCode extends DrawerBase {
         textView = findViewById(R.id.scan_code_textView2);
         Go = findViewById(R.id.scan_code_go_button);
         Back = findViewById(R.id.scan_code_return_button);
+        other = findViewById(R.id.scan_code_lib_button);
 
         Intent myNewIntent = getIntent();
         userName = myNewIntent.getStringExtra("user");
@@ -231,8 +232,9 @@ public class ScanCode extends DrawerBase {
 //                            new/modified/viewer
 //                             remember change ScanCode.class
                             foundQR=true;
-                            Go.setText("take picture of Surroundings");
-                            textView.setText("if you do not want to take surrounds,you can change it at next page");
+                            Go.setText("take picture");
+                            other.setText("No Surrounds");
+                            textView.setText("take a picture of surrounds");
 
                         }
 
