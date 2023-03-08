@@ -12,11 +12,14 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.app.ListActivity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -104,7 +107,7 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback {
         ArrayList<Double> longitudeList = new ArrayList<>();
         ArrayList<String> ids = new ArrayList<>();
         // arraylist of scores
-        ArrayList<Long> scores = new ArrayList<>();
+        ArrayList<String> scores = new ArrayList<>();
 
 
 
@@ -117,13 +120,14 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback {
                         Double latitude = document.getDouble("LocationLatitude");
                         Double longitude = document.getDouble("LocationLongitude");
                         String id = document.getId();
-                        Long score = document.getLong("points");
+                        String points = (String) document.getData().get("points").toString();
+
 
                         if (latitude != null && longitude != null) {
                             latitudeList.add(latitude);
                             longitudeList.add(longitude);
                             ids.add(id);
-                            scores.add(score);
+                            scores.add(points);
 
                         }
                     }
@@ -134,11 +138,8 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback {
                         if (isWithinOneKilometer(currentLocation, latLng)) {
                             //if score is not null, add marker
                             if (scores.get(i) != null) {
-                                mMap.addMarker(new MarkerOptions().position(latLng).title(ids.get(i)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)).snippet("Points: " + scores.get(i).toString() + ""));
-                            }else {
-                            //if score is null, add marker
-                            mMap.addMarker(new MarkerOptions().position(latLng).title(ids.get(i)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)).snippet("Points: ???"));
-                        }}
+                                mMap.addMarker(new MarkerOptions().position(latLng).title(ids.get(i)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)).snippet("Points: " + scores.get(i) + ""));
+                            }}
                     }
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
@@ -157,6 +158,15 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback {
             }
         });
 
+
+        // if list of nearby QR clicked, change to list activity
+        binding.nearbylist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MapsActivity.this, ListActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
 
