@@ -27,9 +27,12 @@ import androidx.fragment.app.Fragment;
 import android.os.Looper;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -280,7 +283,7 @@ public class QRDetailLocationFragment extends Fragment {
 
                                 @Override
                                 public void onStyleLoaded(@NonNull Style style) {
-                                    style.addImage("red-pin-icon-id", BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_red_dot)));
+                                    style.addImage("red-pin-icon-id", BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_qr_code_mylocatiom)));
                                     style.addLayer(new SymbolLayer("icon-layer-id","icon-source-id").withProperties(
                                             iconImage("red-pin-icon-id"),
                                             iconIgnorePlacement(true),
@@ -289,9 +292,29 @@ public class QRDetailLocationFragment extends Fragment {
                                     ));
                                     GeoJsonSource iconGeoJsonSource = new GeoJsonSource("icon-source-id", Feature.fromGeometry(Point.fromLngLat(longtiude,latiude)));
                                     style.addSource(iconGeoJsonSource);
+
+
+                                    // Add a marker on the map's center/"target" for the place picker UI
+                                    ImageView hoveringMarker = new ImageView(requireContext());
+                                    hoveringMarker.setImageResource(R.drawable.ic_red_dot);
+                                    FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                                            ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
+                                    hoveringMarker.setLayoutParams(params);
+                                    mapView.addView(hoveringMarker);
+
                                 }
                             });
-
+                            mapboxMap.addOnCameraIdleListener(new MapboxMap.OnCameraIdleListener() {
+                                @Override
+                                public void onCameraIdle() {
+                                    if (mapboxMap != null) {
+                                        double newLongtiude = mapboxMap.getCameraPosition().target.getLongitude();
+                                        double newLatitude = mapboxMap.getCameraPosition().target.getLatitude();
+                                        updatePOI(view,newLongtiude,newLatitude);
+                                    }
+                                }
+                            });
                             CameraPosition position = new CameraPosition.Builder()
                                     .target(new LatLng(latiude, longtiude))
                                     .zoom(13)
@@ -299,54 +322,16 @@ public class QRDetailLocationFragment extends Fragment {
                                     .build();
                             mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), null);
                             mapboxMapGlobal = mapboxMap;
-
+                            updatePOI(view,longtiude,latiude);
                         }
+
+
                     });
 
                     stopLocationUpdate();
                     // show poi information
                     LocExist=true;
-                    MapboxGeocoding mapboxGeocoding =MapboxGeocoding.builder()
-                            .accessToken(getResources().getString(R.string.mapbox_access_token))
-                            .query(Point.fromLngLat(longtiude,latiude))
-                            .geocodingTypes(GeocodingCriteria.TYPE_LOCALITY,GeocodingCriteria.TYPE_ADDRESS,
-                                    GeocodingCriteria.TYPE_POSTCODE,GeocodingCriteria.TYPE_POI_LANDMARK)
-                            .build();
-                    mapboxGeocoding.enqueueCall(new Callback<GeocodingResponse>() {
-                        @Override
-                        public void onResponse(Call<GeocodingResponse> call, Response<GeocodingResponse> response) {
 
-                            List<CarmenFeature> results = response.body().features();
-                            // write information back to textVIew
-                            if (results.size() > 0) {
-                                TextView textView_name=view.findViewById(R.id.qr_detail_loacation_name);
-                                textView_name.setText(results.get(0).text());
-                                localName=results.get(0).text();
-                                TextView textView_address=view.findViewById(R.id.qr_detail_loacation_address);
-                                textView_address.setText(results.get(0).placeName());
-                                localAdress=results.get(0).placeName();
-                                textView_address.setVisibility(View.VISIBLE);
-                                TextView textView_longtiude=view.findViewById(R.id.qr_detail_loacation_longtiude);
-                                textView_longtiude.setText("longtiude:"+longtiude);
-                                localLongtiude=longtiude;
-                                textView_longtiude.setVisibility(View.VISIBLE);
-                                TextView textView_latitude=view.findViewById(R.id.qr_detail_loacation_latitude);
-                                textView_latitude.setText("latitude:"+latiude);
-                                localLatiude=latiude;
-                                textView_latitude.setVisibility(View.VISIBLE);
-
-                                listener.onLocationUpdate(locEnable.isChecked(),longtiude,latiude,results.get(0).text(),results.get(0).placeName());
-                            } else {
-                                // No result for your request were found.
-                                Log.d(TAG, "onResponse: No result found");
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<GeocodingResponse> call, Throwable throwable) {
-                            throwable.printStackTrace();
-                        }
-                    });
                 }
             };
 
@@ -368,6 +353,56 @@ public class QRDetailLocationFragment extends Fragment {
         // Inflate the layout for this fragment
         return view;
     }
+
+    /**
+     * update geolocation poi
+     */
+    private void updatePOI(View view,double locMyLongtiude,double locMyLatiude){
+        MapboxGeocoding mapboxGeocoding =MapboxGeocoding.builder()
+                .accessToken(getResources().getString(R.string.mapbox_access_token))
+                .query(Point.fromLngLat(locMyLongtiude,locMyLatiude))
+                .geocodingTypes(GeocodingCriteria.TYPE_LOCALITY,GeocodingCriteria.TYPE_ADDRESS,
+                        GeocodingCriteria.TYPE_POSTCODE,GeocodingCriteria.TYPE_POI_LANDMARK)
+                .build();
+        mapboxGeocoding.enqueueCall(new Callback<GeocodingResponse>() {
+            @Override
+            public void onResponse(Call<GeocodingResponse> call, Response<GeocodingResponse> response) {
+
+                List<CarmenFeature> results = response.body().features();
+                // write information back to textVIew
+                if (results.size() > 0) {
+                    TextView textView_name=view.findViewById(R.id.qr_detail_loacation_name);
+                    textView_name.setText(results.get(0).text());
+                    localName=results.get(0).text();
+                    TextView textView_address=view.findViewById(R.id.qr_detail_loacation_address);
+                    textView_address.setText(results.get(0).placeName());
+                    localAdress=results.get(0).placeName();
+                    textView_address.setVisibility(View.VISIBLE);
+                    TextView textView_longtiude=view.findViewById(R.id.qr_detail_loacation_longtiude);
+                    textView_longtiude.setText("longtiude:"+locMyLongtiude);
+                    localLongtiude=locMyLongtiude;
+                    textView_longtiude.setVisibility(View.VISIBLE);
+                    TextView textView_latitude=view.findViewById(R.id.qr_detail_loacation_latitude);
+                    textView_latitude.setText("latitude:"+locMyLatiude);
+                    localLatiude=locMyLatiude;
+                    textView_latitude.setVisibility(View.VISIBLE);
+
+                    listener.onLocationUpdate(locEnable.isChecked(),locMyLongtiude,locMyLatiude,results.get(0).text(),results.get(0).placeName());
+                } else {
+                    // No result for your request were found.
+                    Log.d(TAG, "onResponse: No result found");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GeocodingResponse> call, Throwable t) {
+                Toast.makeText(requireContext(),"fetch fail",Toast.LENGTH_SHORT).show();
+            }
+
+
+        });
+    }
+
 
     /**
      * get location runner
