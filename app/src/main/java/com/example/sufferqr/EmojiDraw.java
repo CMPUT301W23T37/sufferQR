@@ -5,117 +5,164 @@ import java.util.HashMap;
  * This is a class will take a qrcode as input in the form of a dictionary and create an emoji
  * composed of text with it
  */
-public class EmojiDraw {
-    private String qrcode;
-    private String[] bits;
-    private HashMap<String, String[]> dict;
+import java.util.HashMap;
+import java.util.Random;
 
-    public EmojiDraw(String qrcode) {
-        this.qrcode = qrcode;
-        this.bits = qrcodeToBits(qrcode);
-        this.dict = createDict();
+public class EmojiDraw {
+    private static final int SHAPE_BIT_LENGTH = 1;
+    private static final int EYEBROW_BIT_LENGTH = 2;
+    private static final int EYE_BIT_LENGTH = 2;
+    private static final int NOSE_BIT_LENGTH = 2;
+    private static final int EAR_BIT_LENGTH = 2;
+    private static final int MUSTACHE_BIT_LENGTH = 2;
+    private static final int MOUTH_BIT_LENGTH = 2;
+    private static final int BEARD_BIT_LENGTH = 1;
+
+    private static final String[] SHAPE_OPTIONS = {"square", "triangle"};
+    private static final String[] EYEBROW_OPTIONS = {
+            "=====          =====",
+            "          \\          //          ",
+            "~~~~~          ~~~~~",
+            "︵︵︵︵        ︵︵︵︵"
+    };
+    private static final String[] EYE_OPTIONS = {
+            "        >            <    ",
+            "        ^            ^    ",
+            "        3             3    ",
+            "        0             0    "
+    };
+    private static final String[] NOSE_OPTIONS = {
+            "              \\ /                ",
+            "               O                 ",
+            "               •                 ",
+            "               []                  "
+    };
+    private static final String[] EAR_OPTIONS = {
+            "\\  ",
+            "@",
+            "8",
+            "%",
+            "$",
+            "/",
+            " /"
+    };
+    private static final String[] MUSTACHE_OPTIONS = {
+            "            VVVVVVVV       ",
+            "            ########         ",
+            "",
+            "            -----------            "
+    };
+    private static final String[] MOUTH_OPTIONS = {
+            "              [=====]       ",
+            "              (┬─┬)            ",
+            "              {┻━┻)              ",
+            "              |+++++|        "
+    };
+    private static final String[] BEARD_OPTIONS = {
+            "                    V                   ",
+            ""
+    };
+
+    private static final HashMap<String, Integer> BIT_LENGTH_MAP = new HashMap<>();
+    static {
+        BIT_LENGTH_MAP.put("shape", SHAPE_BIT_LENGTH);
+        BIT_LENGTH_MAP.put("eyebrow", EYEBROW_BIT_LENGTH);
+        BIT_LENGTH_MAP.put("eye", EYE_BIT_LENGTH);
+        BIT_LENGTH_MAP.put("nose", NOSE_BIT_LENGTH);
+        BIT_LENGTH_MAP.put("ear", EAR_BIT_LENGTH);
+        BIT_LENGTH_MAP.put("mustache", MUSTACHE_BIT_LENGTH);
+        BIT_LENGTH_MAP.put("mouth", MOUTH_BIT_LENGTH);
+        BIT_LENGTH_MAP.put("beard", BEARD_BIT_LENGTH);
+    }
+
+    private String qrCodeHashValue;
+
+    public EmojiDraw(String qrCodeHashValue) {
+        this.qrCodeHashValue = qrCodeHashValue;
     }
 
     public void draw() {
-        String head = dict.get("head")[Integer.parseInt(bits[0], 2)];
-        String eyebrows = dict.get("eyebrows")[Integer.parseInt(bits[1], 2)];
-        String eyes = dict.get("eyes")[Integer.parseInt(bits[2], 2)];
-        String nose = dict.get("nose")[Integer.parseInt(bits[3], 2)];
-        String facialHair = dict.get("facialHair")[Integer.parseInt(bits[4], 2)];
-        String mouth = dict.get("mouth")[Integer.parseInt(bits[5], 2)];
-        String ears = dict.get("ears")[Integer.parseInt(bits[6], 2)];
-        String[] headLines = head.split("\n");
-        int headWidth = headLines[0].length();
-        int headHeight = headLines.length;
-        int centerX = headWidth / 2;
-        int centerY = headHeight / 2;
-        int startX = centerX - (ears.length() > 6 ? 2 : 1);
-        int endX = centerX + (ears.length() > 6 ? 2 : 1);
-        for (int y = 0; y < headHeight; y++) {
-            for (int x = 0; x < headWidth; x++) {
-                if ((x >= startX && x <= endX) && (y == 0 || y == headHeight - 1)) {
-                    System.out.print(ears.charAt(x - startX));
-                } else if (x > 0 && x < headWidth - 1 && y > 0 && y < headHeight - 1) {
-                    if (y == 1 && x > 1 && x < headWidth - 2) {
-                        System.out.print(eyebrows.charAt(x - 2));
-                    } else if (y == centerY - 1 && x == centerX - 1) {
-                        System.out.print(eyes.charAt(0));
-                    } else if (y == centerY - 1 && x == centerX) {
-                        System.out.print(eyes.charAt(1));
-                    } else if (y == centerY - 1 && x == centerX + 1) {
-                        System.out.print(eyes.charAt(2));
-                    } else if (y == centerY && x == centerX - 1) {
-                        System.out.print(nose.charAt(0));
-                    } else if (y == centerY && x == centerX) {
-                        System.out.print(facialHair.charAt(0));
-                    } else if (y == centerY && x == centerX + 1) {
-                        System.out.print(nose.charAt(1));
-                    } else if (y == centerY + 1 && x == centerX) {
-                        System.out.print(mouth);
-                    } else {
-                        System.out.print(headLines[y].charAt(x));
-                    }
-                } else {
-                    System.out.print(headLines[y].charAt(x));
-                }
-            }
-            System.out.println();
-        }
+        System.out.println("Length of input hash: " + qrCodeHashValue.length());
+        int[] bits = getBitsFromHash(qrCodeHashValue);
+        int currentBitIndex = 0;
+
+        String shapeOption = SHAPE_OPTIONS[bits[currentBitIndex]];
+        currentBitIndex += SHAPE_BIT_LENGTH;
+
+        String eyebrowOption = EYEBROW_OPTIONS[bits[currentBitIndex]];
+        currentBitIndex += EYEBROW_BIT_LENGTH;
+
+        String eyeOption = EYE_OPTIONS[bits[currentBitIndex]];
+        currentBitIndex += EYE_BIT_LENGTH;
+
+        String noseOption = NOSE_OPTIONS[bits[currentBitIndex]];
+        currentBitIndex += NOSE_BIT_LENGTH;
+
+        String earOption = EAR_OPTIONS[bits[currentBitIndex]];
+        currentBitIndex += EAR_BIT_LENGTH;
+
+        String mustacheOption = MUSTACHE_OPTIONS[bits[currentBitIndex]];
+        currentBitIndex += MUSTACHE_BIT_LENGTH;
+
+        String mouthOption = MOUTH_OPTIONS[bits[currentBitIndex]];
+        currentBitIndex += MOUTH_BIT_LENGTH;
+
+        String beardOption = BEARD_OPTIONS[bits[currentBitIndex]];
+        currentBitIndex += BEARD_BIT_LENGTH;
+
+        // Build emoji face
+        String emoji = shapeOption + "\n"
+                + eyebrowOption + "\n"
+                + earOption + eyeOption + noseOption + eyeOption + earOption + "\n"
+                + mustacheOption + "\n"
+                + mouthOption + "\n"
+                + beardOption + "\n";
+
+        // Print emoji face
+        System.out.println(emoji);
     }
 
-    private String[] qrcodeToBits(String qrcode) {
-        // Split qrcode into 7-bit chunks
-        String[] chunks = qrcode.split("(?<=\\G.{7})");
-        // Convert each chunk to binary string
-        String[] bits = new String[chunks.length];
-        for   (int i = 0; i < chunks.length; i++) {
-            bits[i] = Integer.toBinaryString(Integer.parseInt(chunks[i], 16));
-            // Add leading zeros if necessary
-            bits[i] = "0".concat(bits[i]);
-            while (bits[i].length() < 8) {
-                bits[i] = "0".concat(bits[i]);
+
+    private int[] getBitsFromHash(String hash) {
+        int expectedLength = SHAPE_BIT_LENGTH + EYEBROW_BIT_LENGTH + EYE_BIT_LENGTH
+                + NOSE_BIT_LENGTH + EAR_BIT_LENGTH + MUSTACHE_BIT_LENGTH
+                + MOUTH_BIT_LENGTH + BEARD_BIT_LENGTH;
+
+        if (hash.length() < expectedLength) {
+            throw new IllegalArgumentException("Input hash is too short");
+        }
+
+        int[] bits = new int[expectedLength];
+
+        int bitIndex = 0;
+
+        for (char c : hash.toCharArray()) {
+            int decimal;
+            try {
+                decimal = Integer.parseInt(String.valueOf(c), 16);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Invalid hexadecimal character in input hash: " + c);
+            }
+            String binary = Integer.toBinaryString(decimal);
+
+            while (binary.length() < 4) {
+                binary = "0" + binary;
+            }
+
+            for (char b : binary.toCharArray()) {
+                bits[bitIndex] = Character.getNumericValue(b);
+                bitIndex++;
             }
         }
         return bits;
     }
 
-    private HashMap<String, String[]> createDict() {
-        HashMap<String, String[]> dict = new HashMap<>();
-        dict.put("head", new String[] {
-                "  /\\  \n" +
-                        " /  \\ \n" +
-                        "/____\\",
-                "  ___ \n" +
-                        " / _ \\\n" +
-                        "( (_) )\n" +
-                        " \\___/",
-                "   /\\  \n" +
-                        "  /  \\ \n" +
-                        " /____\\"
-        });
-        dict.put("eyebrows", new String[] {
-                "\\   /", "---   ---", "### ###"
-        });
-        dict.put("eyes", new String[] {
-                "X     X", "0     0", "3     3"
-        });
-        dict.put("nose", new String[] {
-                "W", "O", "\\/"
-        });
-        dict.put("facialHair", new String[] {
-                "", "=======", "VVVVVVV"
-        });
-        dict.put("mouth", new String[] {
-                "*", ":P"
-        });
-        dict.put("ears", new String[] {
-                "**  **", "()  ()", ""
-        });
-        return dict;
+    public static void main(String[] args) {
+        String qrCodeHashValue = "8af44c49b08733e61ca2e90e9f0a93c6c6c6c6c";
+        EmojiDraw emojiDraw = new EmojiDraw(qrCodeHashValue);
+        emojiDraw.draw();
     }
 }
-
-
 
 
 
