@@ -108,14 +108,16 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
     Uri imageUri,surroundsUri; // at new mode, record local image location
 
     Button CancelBt,ConfirmBt; // listener for bottom button
-    Bundle mapBundle,imageBundle,GeneralBundle; //tabs transit information
+    Bundle infoBundle; //tabs transit information
 
     Boolean nearbyImg;
 
     TextInputLayout ttl;
 
+    SectionsPagerAdapter sectionsPagerAdapter;
 
-  /**
+
+              /**
    * it start when class create detect the class from, and show different ele,emts
    */
 
@@ -144,19 +146,16 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
 
 
         // set up package to each tab
-        mapBundle = new Bundle();
-        imageBundle = new Bundle();
-        GeneralBundle = new Bundle();
-        mapBundle.putString("mode",mode);
-        imageBundle.putString("mode",mode);
-        GeneralBundle.putString("mode",mode);
+        infoBundle = new Bundle();
+        infoBundle.putString("mode",mode);
 
         if (Objects.equals(mode, "new")){
-            imageBundle.putString("QRString",QRstring);
-            imageBundle.putString("imageUri",imageUri.toString());
+            infoBundle.putString("QRString",QRstring);
+            infoBundle.putString("user",userName);
+            infoBundle.putString("imageUri",imageUri.toString());
 
         } else if (Objects.equals(mode, "modified")) {
-            GeneralBundle.putString("qrID",QRname);
+            infoBundle.putString("qrID",QRname);
             OrginalName="";
         }
 
@@ -166,7 +165,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         data = new HashMap<>();
 
         // setup tabAdaper
-        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager(),mapBundle,imageBundle,GeneralBundle);
+        sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager(),infoBundle);
         int limit = (sectionsPagerAdapter.getCount() > 1 ? sectionsPagerAdapter.getCount() -1 : 1);// setuo all three tab alive,no kill
         ViewPager viewPager = findViewById(R.id.qrdetail_view_pager); // binding.qrdetail_viewPager;
         viewPager.setAdapter(sectionsPagerAdapter);
@@ -204,12 +203,17 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                     Boolean b1 = (Boolean) data.get("LocationExist");
                     if (b1 && Objects.equals((String) data.get("LocationAddress"), "")) {
                         Toast.makeText(getBaseContext(), "please wait for data complete fetching", Toast.LENGTH_SHORT).show();
+                    } else if (!b1) {
+                        // future visual represent
+                        HashMapValidate("LocationLatitude",0.0);
+                        HashMapValidate("LocationLongitude",0.0);
+                        HashMapValidate("LocationName","");
+                        HashMapValidate("LocationAddress","");
                     }  else {
                         HashMapValidate("user", userName);
                         HashMapValidate("time", new Date());
                         GameQrRecordDB DBconnect = new GameQrRecordDB();
                         DBconnect.imagePushFirestone(data,imageUri,userName,QRname,getContentResolver());
-                        UpdateProfileAdd();
                         finish();
                     }
                 } else if (mode.equals("modified")){
@@ -220,7 +224,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                     String s1 = (String) data.get("QRpath");
                     if (Boolean.FALSE.equals(b1)){
                         HashMapValidate("QRtext","");
-                        if (s1!=""){
+                        if (!Objects.equals(s1, "")){
                             DBconnect.imageDelFirestone(s1);
                             HashMapValidate("QRpath","");
                         }
@@ -271,7 +275,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         data = (HashMap<String, Object>) document.getData();
-
+                        sectionsPagerAdapter.infoCallBack(userName, data);
 
                         // general page change load info
 
@@ -341,80 +345,6 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                             QRcontent.setText((String) document.get("QRtext"));
                             // conect firebase storage
                             imageFetchFirestone((String) document.get("QRpath"));
-                        }
-
-                        // map page chage load info
-                        SwitchMaterial LocEnable;
-                        LocEnable = findViewById(R.id.qr_detail_location_enable_switch);
-                        Boolean LocE = (Boolean)document.get("LocationExist");
-
-                        CardView mapc1= findViewById(R.id.qr_detail_location_poi_cardview);
-                        CardView mapc2= findViewById(R.id.qr_detail_location_map_cardview);
-                        TextView mapt1= findViewById(R.id.qr_detail_location_privacy_text);
-
-                        if (Boolean.FALSE.equals(LocE)){
-                            // if not the creator disble change option
-                            LocEnable.setChecked(false);
-                            LocEnable.setEnabled(false);
-                            mapt1.setVisibility(View.INVISIBLE);
-                            mapc1.setVisibility(View.INVISIBLE);
-                            mapc2.setVisibility(View.INVISIBLE);
-                        } else {
-                            //load info
-                            LocEnable.setChecked(true);
-                            if (Objects.equals((String) document.get("user"), userName)){
-                                LocEnable.setEnabled(true);
-                                mapt1.setVisibility(View.VISIBLE);
-                            } else {
-                                LocEnable.setEnabled(false);
-                                mapt1.setVisibility(View.INVISIBLE);
-                            }
-                            TextView LocationName,address,latitude,longitude;
-                            mapc1.setVisibility(View.VISIBLE);
-                            mapc2.setVisibility(View.VISIBLE);
-
-
-                            Double lat=(Double) document.get("LocationLatitude");
-                            Double longit= (Double) document.get("LocationLongitude");
-                            LocationName=findViewById(R.id.qr_detail_loacation_name);
-                            address=findViewById(R.id.qr_detail_loacation_address);
-                            address.setVisibility(View.VISIBLE);
-                            latitude=findViewById(R.id.qr_detail_loacation_latitude);
-                            latitude.setVisibility(View.VISIBLE);
-                            longitude=findViewById(R.id.qr_detail_loacation_longtiude);
-                            longitude.setVisibility(View.VISIBLE);
-                            LocationName.setText((String) document.get("LocationName"));
-                            latitude.setText("Latitude"+lat);
-                            longitude.setText("Longitude"+longit);
-                            address.setText((String) document.get("LocationAddress"));
-
-                            MapView mapView=findViewById(R.id.qr_detail_location_content_map_view);
-                            // draw map
-                            mapView.getMapAsync(new OnMapReadyCallback() {
-                                @Override
-                                public void onMapReady(@NonNull MapboxMap mapboxMap) {
-                                    mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
-                                        @Override
-                                        public void onStyleLoaded(@NonNull Style style) {
-                                            style.addImage("red-pin", BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_red_dot)));
-                                            style.addLayer(new SymbolLayer("icon-layer-id","icon-source-id").withProperties(
-                                                    iconImage("red-pin"),
-                                                    iconIgnorePlacement(true),
-                                                    iconAllowOverlap(true),
-                                                    iconOffset(new Float[]{0f,-0f})
-                                            ));
-                                        }
-                                    });
-                                    // ccis
-                                    CameraPosition position = new CameraPosition.Builder()
-                                            .target(new LatLng(lat, longit))
-                                            .zoom(15)
-                                            .tilt(20)
-                                            .build();
-                                    mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), null);
-                                    mapboxMapGlobal = mapboxMap;
-                                }
-                            });
                         }
                     } else {
                         // record not exost exit
@@ -497,7 +427,8 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
    * sync input from the user in location tab at new mode
    */
     @Override
-    public void onLocationUpdate(Boolean btOn, Double longitude, Double latitude, String name, String address) {
+    public void onLocationUpdate(MapboxMap mapboxMap,Boolean btOn, Double longitude, Double latitude, String name, String address) {
+        mapboxMapGlobal = mapboxMap;
         if(mode.equals("new")){
             HashMapValidate("LocationExist",btOn);
 
@@ -506,26 +437,12 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                 HashMapValidate("LocationLongitude",longitude);
                 HashMapValidate("LocationName",name);
                 HashMapValidate("LocationAddress",address);
-            } else {
-                // future visual represent
-                HashMapValidate("LocationLatitude",0.0);
-                HashMapValidate("LocationLongitude",0.0);
-                HashMapValidate("LocationName","");
-                HashMapValidate("LocationAddress","");
             }
         }else{
-
+            HashMapValidate("LocationExist",btOn);
         }
-
     }
 
-  /**
-   * sync input from the user in location tab at other mode
-   */
-    @Override
-    public void onLocationUpdate(Boolean btOn) {
-        HashMapValidate("LocationExist",btOn);
-    }
 
   /**
    * sync input from the user in general tab at new mode
@@ -589,12 +506,4 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         });
     }
 
-
-    private void UpdateProfileAdd(){
-
-    }
-
-    private void UpdateProfileDel(){
-
-    }
 }

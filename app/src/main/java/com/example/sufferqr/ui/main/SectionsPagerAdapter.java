@@ -11,6 +11,8 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.example.sufferqr.R;
 
+import java.util.HashMap;
+
 /**
  * A [FragmentPagerAdapter] that returns a fragment corresponding to
  * one of the sections/tabs/pages.
@@ -21,17 +23,19 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     private static final int[] TAB_TITLES = new int[]{R.string.tab_text_1, R.string.tab_text_2,R.string.tab_text_3};
     private final Context mContext;
 
-    Bundle adapterMapBundle,adapterImageBundle,adapterGeneralBundle;
+    Bundle myHereBundle;
+
+    QRDetailGeneralFragment qrDetailGeneralFragment;
+    QRDetailImageFragment qrDetailImageFragment;
+    QRDetailLocationFragment qrDetailLocationFragmentq;
 
     /**
      * setup page adapter
      */
-    public SectionsPagerAdapter(Context context, FragmentManager fm,Bundle mapBundle,Bundle imageBundle,Bundle GeneralBundle) {
+    public SectionsPagerAdapter(Context context, FragmentManager fm,Bundle myBundle) {
         super(fm);
         mContext = context;
-        adapterMapBundle = mapBundle;
-        adapterImageBundle =imageBundle;
-        adapterGeneralBundle = GeneralBundle;
+        myHereBundle = myBundle;
 
     }
 
@@ -42,12 +46,17 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         // getItem is called to instantiate the fragment for the given page.
         // Return a PlaceholderFragment (defined as a static inner class below).
+        qrDetailGeneralFragment = new QRDetailGeneralFragment(myHereBundle);
+        qrDetailImageFragment = new QRDetailImageFragment(myHereBundle);
+        qrDetailLocationFragmentq = new QRDetailLocationFragment(myHereBundle);
+
+
         if(position == 0) {
-            return new QRDetailGeneralFragment(adapterGeneralBundle);
+            return qrDetailGeneralFragment;
         } else if (position==1){
-            return new QRDetailImageFragment(adapterImageBundle);
+            return qrDetailImageFragment;
         } else if (position==2) {
-            return new QRDetailLocationFragment(adapterMapBundle);
+            return qrDetailLocationFragmentq;
         } else {
             return null;
         }
@@ -69,6 +78,11 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     public int getCount() {
         // Show 2 total pages.
         return 3;
+    }
+
+    public void infoCallBack(String userName,HashMap<String, Object> data){
+
+        qrDetailLocationFragmentq.ActivityCallBack(userName,data);
     }
 
 }
