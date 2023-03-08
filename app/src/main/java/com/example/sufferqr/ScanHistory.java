@@ -105,7 +105,8 @@ public class ScanHistory extends DrawerBase {
                         String qrName = String.valueOf(doc.getData().get("QRname"));
                         String points = String.valueOf(doc.getData().get("points"));
                         String sDate = String.valueOf(doc.getData().get("date"));
-                        qrDataList.add(new ScanHistoryQRRecord(qrName, points,sDate)); // Adding the cities and provinces from FireStore
+                        String sAddress = String.valueOf(doc.getData().get("LocationName"));
+                        qrDataList.add(new ScanHistoryQRRecord(qrName, points,sDate,sAddress)); // Adding the cities and provinces from FireStore
                     }
                     qrAdapter.notifyDataSetChanged();
                 } else {
