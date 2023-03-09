@@ -25,6 +25,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -68,7 +69,7 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
         getLocation();
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        latitude = location.getLatitude();  // get current lat
+        latitude = location.getLatitude();
         longitude = location.getLongitude();
 
         db = FirebaseFirestore.getInstance();
@@ -78,13 +79,6 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
         double lat = latitude.doubleValue();
         double maxLat = lat + temp1;
         double minLat = lat - temp1;
-
-        double lon = longitude.doubleValue();
-        Double temp2 = new Double(1/(111*cos(lon)));
-        double temp3 = temp2.doubleValue();
-        double maxLon = lon + abs(temp3);
-        double minLon = lon - abs(temp3);
-
 
 
         Query query = db.collection("GameQrCode")
@@ -122,13 +116,15 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
                     String points = (String) doc.getData().get("points").toString();
                     String user = (String) doc.getData().get("user");
 
+                    double tempLat = (double) doc.getData().get("LocationLatitude");
                     double tempLon = (double) doc.getData().get("LocationLongitude");
-                    if ( tempLon <= maxLon ) {
-                        if (tempLon >= minLon) {
-                            qrCodeDataList.add(new QrCode(LocationAddress, LocationExist, LocationLatitude,
-                                    LocationLongitude, LocationName, QrName, QrText, date, imageExist, points, user)); // Adding
-                            qrCodeAdapter.notifyDataSetChanged();
-                        }
+                    boolean whetherInOneKmDis = isWithinOneKilometer(latitude, longitude, tempLat, tempLon);
+                    if ( whetherInOneKmDis == true ) {
+
+                        qrCodeDataList.add(new QrCode(LocationAddress, LocationExist, LocationLatitude,
+                                LocationLongitude, LocationName, QrName, QrText, date, imageExist, points, user)); // Adding
+                        qrCodeAdapter.notifyDataSetChanged();
+
                     }
                 }
 
@@ -166,6 +162,20 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
         longitude = location.getLongitude();  // get current lon
 
     }
+
+    public boolean isWithinOneKilometer(double userLatitude, double userLongitude, double qrLatitude, double qrLongitude) {
+        final int R = 6371; // Radius of the earth in km
+        double latDistance = Math.toRadians(userLatitude - qrLatitude);
+        double lonDistance = Math.toRadians(userLongitude - qrLongitude);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(userLatitude)) * Math.cos(Math.toRadians(qrLatitude))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double distance = R * c * 1000; // convert to meters
+        return distance <= 1000; // return true if distance is less than or equal to 1km
+    }
+
+
 
 }
 
