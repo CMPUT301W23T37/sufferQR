@@ -1,6 +1,4 @@
 package com.example.sufferqr;
-
-
 import java.util.HashMap;
 
 public class ScoreCounter {

@@ -4,9 +4,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-//Title: SHA-256 Hash in Java,Website: GeeksforGeeks,Link: https://www.geeksforgeeks.org/sha-256-hash-in-java,Author: Ankit Modi,Date Published: July 7, 2020
-//this code borrowed elements from the above sited website author and post
-
 // Java program to calculate SHA hash value
 
 class  QRHash {
@@ -23,7 +20,7 @@ class  QRHash {
 
     public static String toHexString(byte[] hash)
     {
-        // Convert byte array into sig_num representation
+        // Convert byte array into signum representation
         BigInteger number = new BigInteger(1, hash);
 
         // Convert message digest into hex value
@@ -37,7 +34,6 @@ class  QRHash {
 
         return hexString.toString();
     }
-
 
     // Driver code
     public static void main(String args[])
@@ -60,5 +56,4 @@ class  QRHash {
             System.out.println("Exception thrown for incorrect algorithm: " + e);
         }
     }
-
 }
