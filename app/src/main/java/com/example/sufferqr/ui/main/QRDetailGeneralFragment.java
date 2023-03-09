@@ -15,8 +15,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import com.example.sufferqr.R;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -27,6 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -112,7 +111,7 @@ public class QRDetailGeneralFragment extends Fragment{
         // if load information
         if (Objects.equals(mode, "new")){
             madeDate = new Date();
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd ");
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd ", Locale.CANADA);
             myDate = dateFormat.format(madeDate);
             textView.setText(myDate);
 
@@ -150,29 +149,24 @@ public class QRDetailGeneralFragment extends Fragment{
                         db = FirebaseFirestore.getInstance();
                         final CollectionReference collectionReferenceDest = db.collection("GameQrCode");
                         // check if id is unique in the FameQr datavase
-                        collectionReferenceDest.document(s.toString()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    DocumentSnapshot document = task.getResult();
-                                    // if result exist
-                                    if (document.exists()) {
-                                        String ms = s.toString();
-                                        if (mode.equals("modified") && (ms.equals(oldName))){
-                                            TIL.setErrorEnabled(false);
-                                            TIL.setError("");
-                                            TIL.setHelperText("ID looks good");
-                                        }else {
-                                            TIL.setErrorEnabled(true);
-                                            TIL.setError("ID exist");
-                                        }
-                                    } else {
+                        collectionReferenceDest.document(s.toString()).get().addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                // if result exist
+                                if (document.exists()) {
+                                    String ms = s.toString();
+                                    if (mode.equals("modified") && (ms.equals(oldName))){
                                         TIL.setErrorEnabled(false);
                                         TIL.setError("");
                                         TIL.setHelperText("ID looks good");
+                                    }else {
+                                        TIL.setErrorEnabled(true);
+                                        TIL.setError("ID exist");
                                     }
                                 } else {
-                                    //listener.onSendingUpdate("delete failed",false);
+                                    TIL.setErrorEnabled(false);
+                                    TIL.setError("");
+                                    TIL.setHelperText("ID looks good");
                                 }
                             }
                         });
@@ -184,12 +178,7 @@ public class QRDetailGeneralFragment extends Fragment{
         });
 
         // del button listener
-        del_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onGeneralUpdate(true);
-            }
-        });
+        del_button.setOnClickListener(v -> listener.onGeneralUpdate(true));
 
         // Inflate the layout for this fragment
         return view;

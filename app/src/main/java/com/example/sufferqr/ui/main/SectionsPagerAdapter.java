@@ -3,6 +3,7 @@ package com.example.sufferqr.ui.main;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
@@ -27,7 +28,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     QRDetailGeneralFragment qrDetailGeneralFragment;
     QRDetailImageFragment qrDetailImageFragment;
-    QRDetailLocationFragment qrDetailLocationFragmentq;
+    QRDetailLocationFragment qrDetailLocationFragment;
 
     /**
      * setup page adapter
@@ -42,13 +43,14 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     /**
      * return correct fragment
      */
+    @NonNull
     @Override
     public Fragment getItem(int position) {
         // getItem is called to instantiate the fragment for the given page.
         // Return a PlaceholderFragment (defined as a static inner class below).
         qrDetailGeneralFragment = new QRDetailGeneralFragment(myHereBundle);
         qrDetailImageFragment = new QRDetailImageFragment(myHereBundle);
-        qrDetailLocationFragmentq = new QRDetailLocationFragment(myHereBundle);
+        qrDetailLocationFragment = new QRDetailLocationFragment(myHereBundle);
 
 
         if(position == 0) {
@@ -56,7 +58,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         } else if (position==1){
             return qrDetailImageFragment;
         } else if (position==2) {
-            return qrDetailLocationFragmentq;
+            return qrDetailLocationFragment;
         } else {
             return null;
         }
@@ -82,7 +84,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     public void infoCallBack(String userName,HashMap<String, Object> data){
 
-        qrDetailLocationFragmentq.ActivityCallBack(userName,data);
+        qrDetailLocationFragment.ActivityCallBack(userName,data);
     }
 
 }

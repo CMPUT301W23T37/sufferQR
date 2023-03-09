@@ -1,6 +1,6 @@
 package com.example.sufferqr.ui.main;
 
-import static com.example.sufferqr.R.id.qr_detail_location_poi_cardview;
+
 import static com.mapbox.mapboxsdk.Mapbox.getApplicationContext;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
@@ -9,12 +9,12 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconOffset;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Dialog;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.location.Geocoder;
+
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,11 +33,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.sufferqr.MainActivity;
-import com.example.sufferqr.QRDetailActivity;
 import com.example.sufferqr.R;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -64,7 +62,6 @@ import com.mapbox.api.geocoding.v5.GeocodingCriteria;
 import com.mapbox.api.geocoding.v5.MapboxGeocoding;
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.api.geocoding.v5.models.GeocodingResponse;
-import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
@@ -75,19 +72,15 @@ import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
-import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.mapboxsdk.utils.BitmapUtils;
-
-import android.os.Bundle;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
+
 
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.Executor;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -102,14 +95,12 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final int REQUEST_CODE = 5678;
     private static final  int REQUEST_CHECK_SETTING = 10;
     private static  final long UPDATE_INTERVAL =10;
     private static final long FAST_UPDATE_IN_ML = 100;
     private static final String TAG = MainActivity.class.getSimpleName();
     MapboxMap mapboxMap;
     MapView mapView;
-    MapboxMap map;
 
 
     private FusedLocationProviderClient fusedLocationClient;
@@ -126,9 +117,8 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
     String mode= "new",localName,localAdress;
 
     Bundle mymapBundle,sIState;
-    String POI,token="",userName;
+    String userName;
     Double localLongtiude,localLatiude;
-    Intent intent;
     SwitchMaterial locEnable;
     TextView privacy_text;
     CardView poi_card,map_card;
@@ -156,19 +146,16 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
     @SuppressWarnings( {"MissingPermission"})
     public void onMapReady(@NonNull MapboxMap mapboxMap) {
         QRDetailLocationFragment.this.mapboxMap = mapboxMap;
-        mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
-            @Override
-            public void onStyleLoaded(@NonNull Style style) {
-                // Add a marker on the map's center/"target" for the place picker UI
-                ImageView hoveringMarker = new ImageView(requireContext());
-                hoveringMarker.setImageResource(R.drawable.ic_red_dot);
-                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
-                hoveringMarker.setLayoutParams(params);
-                mapView.addView(hoveringMarker);
+        mapboxMap.setStyle(Style.MAPBOX_STREETS, style -> {
+            // Add a marker on the map's center/"target" for the place picker UI
+            ImageView hoveringMarker = new ImageView(requireContext());
+            hoveringMarker.setImageResource(R.drawable.ic_red_dot);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
+            hoveringMarker.setLayoutParams(params);
+            mapView.addView(hoveringMarker);
 
-            }
         });
         // ccis
         CameraPosition position = new CameraPosition.Builder()
@@ -237,7 +224,7 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
 
         // init with mapwill to university of alberta ccis
         // Initialize the mapboxMap view
-        mapView= (MapView) view.findViewById(R.id.qr_detail_location_content_map_view);
+        mapView= view.findViewById(R.id.qr_detail_location_content_map_view);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
@@ -253,25 +240,17 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
 
         } else {
             // button listener,send changes information
-            locEnable.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(locEnable.isChecked()){
-                        if (mode.equals("new")){
-                            poi_card.setVisibility(View.VISIBLE);
-                            map_card.setVisibility(View.VISIBLE);
-                            listener.onLocationUpdate(mapboxMap,locEnable.isChecked(),localLongtiude,localLatiude,localName,localAdress);
-                        }  else {
-                            listener.onLocationUpdate(mapboxMap,locEnable.isChecked(),localLongtiude,localLatiude,localName,localAdress);
-                        }
-                    }else {
-                        if (mode.equals("new")){
-                            poi_card.setVisibility(View.INVISIBLE);
-                            map_card.setVisibility(View.INVISIBLE);
-                            listener.onLocationUpdate(mapboxMap,locEnable.isChecked(),localLongtiude,localLatiude,localName,localAdress);
-                        }  else {
-                            listener.onLocationUpdate(mapboxMap,locEnable.isChecked(),localLongtiude,localLatiude,localName,localAdress);
-                        }
+            locEnable.setOnClickListener(v -> {
+                listener.onLocationUpdate(mapboxMap,locEnable.isChecked(),localLongtiude,localLatiude,localName,localAdress);
+                if(locEnable.isChecked()){
+                    if (mode.equals("new")){
+                        poi_card.setVisibility(View.VISIBLE);
+                        map_card.setVisibility(View.VISIBLE);
+                    }
+                }else {
+                    if (mode.equals("new")){
+                        poi_card.setVisibility(View.INVISIBLE);
+                        map_card.setVisibility(View.INVISIBLE);
                     }
                 }
             });

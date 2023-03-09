@@ -101,6 +101,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.viewpager:viewpager:1.0.0'
+    implementation "androidx.activity:activity:1.6.1"
 
     //mapbox
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.7.0'
