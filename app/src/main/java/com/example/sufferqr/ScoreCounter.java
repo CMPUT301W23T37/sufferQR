@@ -36,7 +36,7 @@ public class ScoreCounter {
     // Driver code
     public static void main(String args[])
     {
-        ScoreCounter counter = new ScoreCounter("5B5");
+        ScoreCounter counter = new ScoreCounter("dbd28bac4c531de2a4ef1c9614cee55c37766e913a6a964751689d6f154a9d97");
         int score = counter.calculateScore();
         System.out.println(score); // Output: 106
 

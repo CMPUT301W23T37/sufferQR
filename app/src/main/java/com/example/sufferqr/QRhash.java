@@ -5,6 +5,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 // Java program to calculate SHA hash value
+//The following article was referenced heavily in the creation of this hashing class
+//Link: https://www.geeksforgeeks.org/sha-256-hash-in-java/
+//Title: SHA-256 Hash in Java
+//Author: Ayushya Gupta
 
 class  QRHash {
     public static byte[] getSHA(String input) throws NoSuchAlgorithmException
