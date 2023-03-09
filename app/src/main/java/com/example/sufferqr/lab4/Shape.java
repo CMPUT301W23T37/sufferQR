@@ -1,4 +1,4 @@
-package com.example.sufferqr;
+package com.example.sufferqr.lab4;
 
 public abstract class Shape{
     private int x;
