@@ -121,11 +121,6 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
             OrginalName="";
         }
 
-
-
-
-
-
         // setup tabAdaper
         sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager(),infoBundle);
         int limit = (sectionsPagerAdapter.getCount() > 1 ? sectionsPagerAdapter.getCount() -1 : 1);// setuo all three tab alive,no kill
