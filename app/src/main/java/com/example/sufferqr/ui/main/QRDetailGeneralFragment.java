@@ -38,10 +38,10 @@ public class QRDetailGeneralFragment extends Fragment{
     private OnFragmentInteractionListener listener;
     Bundle myGeneralBudle;
     TextInputLayout TIL;
-    TextInputEditText name;
+    TextInputEditText name,points,visual;
     TextView textView;
     Date madeDate;
-    String myDate,mode,oldName;
+    String myDate,mode,oldName,QRvisual,QRpoints;
 
     private FirebaseFirestore db;
 
@@ -55,9 +55,14 @@ public class QRDetailGeneralFragment extends Fragment{
         if (mode.length()<1){
             mode="new";
         }
+        if (mode.equals("new")){
+            QRpoints=myGeneralBudle.getString("QRScore");
+            QRvisual=myGeneralBudle.getString("QRVisual");
+        }
         if (mode.equals("modified")){
             oldName=myGeneralBudle.getString("qrID");
         }
+
     }
 
     /**
@@ -103,6 +108,8 @@ public class QRDetailGeneralFragment extends Fragment{
         View view = inflater.inflate(R.layout.fragment_q_r_detail_general, container, false);
 
         name = view.findViewById(R.id.qr_detail_general_qrtext_name);
+        points = view.findViewById(R.id.qr_detail_general_qrtext_points);
+        visual = view.findViewById(R.id.qr_detail_general_visual_text);
         textView = view.findViewById(R.id.qr_detail_general_qrtext_date);
         Button del_button = view.findViewById(R.id.qr_detail_general_elevatedButton);
         TIL =view.findViewById(R.id.qr_detail_general_qrtext_name_layout);
@@ -114,9 +121,9 @@ public class QRDetailGeneralFragment extends Fragment{
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd ", Locale.CANADA);
             myDate = dateFormat.format(madeDate);
             textView.setText(myDate);
-
+            visual.setText(QRvisual);
+            points.setText(QRpoints);
             listener.onGeneralUpdate(" ",myDate);
-
             name.setEnabled(true);
         } else if (Objects.equals(mode, "modified")) {
             name.setEnabled(true);
@@ -127,14 +134,10 @@ public class QRDetailGeneralFragment extends Fragment{
         // when type changes sync to mainpage
         name.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
             @Override
             public void afterTextChanged(Editable s) {

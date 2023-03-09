@@ -77,8 +77,6 @@ public class QRDetailImageFragment extends Fragment {
      * lister sync to QRdetail tab
      */
     public interface OnFragmentInteractionListener{
-        void onImageUpdate(String QRtext,Boolean imageOn);
-
         void onImageUpdate(Boolean imageOn);
 
     }
@@ -122,52 +120,13 @@ public class QRDetailImageFragment extends Fragment {
         qrbt = view.findViewById(R.id.qr_detail_image_qrimage_button);
 
         if (Objects.equals(mode, "new")) {
-            listener.onImageUpdate("", imgEnable.isChecked());
+            listener.onImageUpdate(imgEnable.isChecked());
         }
 
         // image buton listener(privict)
         imgEnable.setOnClickListener(v -> {
-            if (mode.equals("new")){
-                listener.onImageUpdate(localQRcontent,imgEnable.isChecked());
-            }else{
                 listener.onImageUpdate(imgEnable.isChecked());
-            }
-
         });
-
-        // text change lister
-        if (Objects.equals(mode, "new")){
-//            qrcodeText.addTextChangedListener(new TextWatcher() {
-//                @Override
-//                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//                    //listener.onImageUpdate(s.toString(),imgEnable.isChecked());
-//                }
-//
-//                @Override
-//                public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                    //listener.onImageUpdate(s.toString(),imgEnable.isChecked());
-//                }
-//
-//                @Override
-//                public void afterTextChanged(Editable s) {
-//                    if(s.length() > 0){
-//                        localQRcontent=s.toString();
-//                        listener.onImageUpdate(s.toString(),imgEnable.isChecked());
-//                    }
-//                }
-//            });
-//            qrcodeText.setEnabled(true);
-//            if (localQRcontent.length()>=1){
-//                qrcodeText.setText(localQRcontent);
-//            }
-
-        } else {
-            qrcodeText.setEnabled(false);
-            qr_card.setVisibility(View.INVISIBLE);
-            text_card.setVisibility(View.INVISIBLE);
-            pic_text.setVisibility(View.INVISIBLE);
-            imgEnable.setEnabled(false);
-        }
 
         // load image at new mode
         if (Objects.equals(mode, "new")){

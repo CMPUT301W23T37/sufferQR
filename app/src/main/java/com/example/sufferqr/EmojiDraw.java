@@ -81,7 +81,7 @@ public class EmojiDraw {
         this.qrCodeHashValue = qrCodeHashValue;
     }
 
-    public void draw() {
+    public String draw() {
         System.out.println("Length of input hash: " + qrCodeHashValue.length());
         int[] bits = getBitsFromHash(qrCodeHashValue);
         int currentBitIndex = 0;
@@ -119,7 +119,7 @@ public class EmojiDraw {
                 + beardOption + "\n";
 
         // Print emoji face
-        System.out.println(emoji);
+        return  emoji;
     }
 
 

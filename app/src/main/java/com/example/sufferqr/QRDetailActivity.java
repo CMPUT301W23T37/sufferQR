@@ -54,7 +54,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
     private FirebaseFirestore db;
 
     private HashMap <String,Object> data; // data that sent to collection
-    String mode,userName,QRname,QRstring,OrginalName; // remember some of the name setiings
+    String mode,userName,QRname,QRstring,OrginalName,QRvisual,QRpoints; // remember some of the name setiings
 
     Uri imageUri; // at new mode, record local image location
 
@@ -91,7 +91,12 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
             QRstring = myNewIntent.getStringExtra("QRString");
             String uriString = myNewIntent.getStringExtra("imageUri");
             imageUri = Uri.parse(uriString);
+            QRpoints = myNewIntent.getStringExtra("QRScore");
+            QRvisual = myNewIntent.getStringExtra("QRVisual");
         }
+
+        // hashmap prepare uploading
+        data = new HashMap<>();
 
 
         // set up package to each tab
@@ -101,17 +106,25 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         if (Objects.equals(mode, "new")){
             infoBundle.putString("QRString",QRstring);
             infoBundle.putString("user",userName);
+            infoBundle.putString("QRScore",QRpoints);
+            infoBundle.putString("QRVisual",QRvisual);
             infoBundle.putString("imageUri",imageUri.toString());
 
+            HashMapValidate("QVisual",QRvisual);
+            HashMapValidate("points",Integer.valueOf(QRpoints));
+            HashMapValidate("QRtext","");
+            HashMapValidate("QRpath",imageUri);
+
         } else if (Objects.equals(mode, "modified")) {
+            infoBundle.putString("user",userName);
             infoBundle.putString("qrID",QRname);
             OrginalName="";
         }
 
 
 
-        // hashmap prepare uploading
-        data = new HashMap<>();
+
+
 
         // setup tabAdaper
         sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager(),infoBundle);
@@ -145,6 +158,19 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
             if (Objects.equals(mode, "new")) {
                 // if new push the image and then database
                 Boolean b1 = (Boolean) data.get("LocationExist");
+                Boolean b2 = (Boolean) data.get("imageExist");
+                if (Boolean.FALSE.equals(b2)){
+                    Uri uri = (Uri) data.get("QRpath");
+                    try{
+                        File fdel = new File(uri.getPath());//create path from uri
+                        if (fdel.exists()) {
+                            fdel.delete();
+                        }
+                    } catch (Exception e){
+                        Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                    HashMapValidate("QRpath","");
+                }
                 if (Boolean.TRUE.equals(b1) && Objects.equals((String) data.get("LocationAddress"), "")) {
                     Toast.makeText(getBaseContext(), "please wait for data complete fetching", Toast.LENGTH_SHORT).show();
                 } else if (Boolean.FALSE.equals(b1)) {
@@ -153,6 +179,11 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                     HashMapValidate("LocationLongitude",0.0);
                     HashMapValidate("LocationName","");
                     HashMapValidate("LocationAddress","");
+                    HashMapValidate("user", userName);
+                    HashMapValidate("time", new Date());
+                    GameQrRecordDB DBconnect = new GameQrRecordDB();
+                    DBconnect.imagePushFirestone(data,imageUri,userName,QRname,getContentResolver());
+                    finish();
                 }  else {
                     HashMapValidate("user", userName);
                     HashMapValidate("time", new Date());
@@ -310,46 +341,6 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
             data.replace(id,ob);
         } else {
             data.put(id,ob);
-        }
-    }
-
-  /**
-   * sync input from the user in image tab at new mode
-   */
-    @Override
-    public void onImageUpdate(String QRtext,Boolean imageOn) {
-        // future representation
-        int score= QRtext.length();
-        String demoText="";
-        // make changes om visual and points
-        if (QRtext.length() > 0 && mode.equals("new")) {
-            TextInputEditText visual = findViewById(R.id.qr_detail_general_visual_text);
-
-            // insert here for visual demo
-            demoText = QRtext;
-            visual.setText(demoText);
-
-            TextInputEditText points = findViewById(R.id.qr_detail_general_qrtext_points);
-            // insert(change) for score calcualtion
-//            int score= score;
-
-
-            String qr_le_str = String.valueOf(score);
-            points.setText(qr_le_str);
-        }
-        // save info
-        if(mode.equals("new")){
-            HashMapValidate("points",score);
-            HashMapValidate("imageExist",imageOn);
-
-            if (imageOn){
-                HashMapValidate("QRtext",QRtext);
-                HashMapValidate("QVisual",demoText);
-
-            } else {
-                // future visual represent
-                HashMapValidate("QRtext","");
-            }
         }
     }
 

@@ -47,7 +47,11 @@ import com.google.mlkit.vision.common.InputImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -157,10 +161,33 @@ public class ScanCode extends DrawerBase {
 
     private void calculation(Bitmap bitmapImage){
         Uri surrounds = saveImage(bitmapImage);
+
+        String ss;
+        MessageDigest digest=null;
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+        digest.reset();
+        ss = Arrays.toString(digest.digest(QRstring.getBytes()));
+        System.out.println(ss);
+        ScoreCounter scoreCounter = new ScoreCounter(ss);
+
+        //EmojiDraw emojiDraw = new EmojiDraw(ss.substring(3,ss.length()));
+        //ScoreCounter scoreCounter = new ScoreCounter(ss.substring(3,ss.length()));
+
+
+
         Intent scanIntent = new Intent(ScanCode.this, QRDetailActivity.class);
         scanIntent.putExtra("user",userName);
         scanIntent.putExtra("mode","new");
         scanIntent.putExtra("QRString",QRstring);
+        //scanIntent.putExtra("QVisual",ss2);
+        scanIntent.putExtra("QVisual","ss2");
+        //scanIntent.putExtra("QRScore",scoreCounter.getScore());
+        scanIntent.putExtra("QRScore",String.valueOf(QRstring.length()));
         scanIntent.putExtra("imageUri",surrounds.toString());
         scanIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         startActivity(scanIntent);
