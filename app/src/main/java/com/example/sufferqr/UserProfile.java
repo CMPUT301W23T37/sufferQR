@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
  * the total number of code been scanned, the highest score ever, and the lowest score
  * with player's username, email, QR id and the QR code from QR id. Modification to
  * Username and email is also available
+ * @author zhiyu
  */
 public class UserProfile extends DrawerBase {
 
@@ -44,6 +45,12 @@ public class UserProfile extends DrawerBase {
     private TextView qrCount;
     private FloatingActionButton profileToEdit;
 
+    /**
+     * This method is called at the creation state of the activity
+     * Make sure that the activity is connected with the drawer and
+     * the app bar above
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +60,11 @@ public class UserProfile extends DrawerBase {
         fillContent();
     }
 
+    /**
+     * This method will fill up all the content in the user profile
+     * with user specific information. It use android id as verification
+     * to access user data in the data base
+     */
     public void fillContent(){
         userName = findViewById(R.id.userName_UserProfile);
         userEmail = findViewById(R.id.userEmail_UserProfile);
