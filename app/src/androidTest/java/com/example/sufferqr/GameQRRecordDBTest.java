@@ -3,6 +3,7 @@ package com.example.sufferqr;
 import static androidx.core.content.ContentProviderCompat.requireContext;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
@@ -22,9 +23,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.AggregateQuerySnapshot;
+import com.google.firebase.firestore.AggregateSource;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.robotium.solo.Solo;
 
 import org.junit.After;
@@ -35,7 +41,9 @@ import org.junit.Test;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Handler;
 
@@ -94,7 +102,7 @@ public class GameQRRecordDBTest {
         gameQrRecordDB.CheckUnique("testing"+timeStamp,true,data );
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         try {
-            TimeUnit.SECONDS.sleep(6);
+            TimeUnit.SECONDS.sleep(3);
         } catch (InterruptedException e) {
             //throw new RuntimeException(e);
         } catch (Exception e){
@@ -108,21 +116,52 @@ public class GameQRRecordDBTest {
                 assertTrue(task.isSuccessful());
                 DocumentSnapshot document = task.getResult();
                 assertTrue(document.exists());
+                gameQrRecordDB.DelteQrInfo("testing"+timeStamp,data);
             }
         });
     }
 
     @Test
     public void checkunique(){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        final CollectionReference collectionReferenceDest = db.collection("GameQrCode");
+        // check if id is unique in the FameQr datavase
+        collectionReferenceDest.count().get(AggregateSource.SERVER).addOnCompleteListener(new OnCompleteListener<AggregateQuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<AggregateQuerySnapshot> task) {
+                assertTrue(task.isSuccessful());
+                AggregateQuerySnapshot snapshot = task.getResult();
+                int count = (int) snapshot.getCount();
+                assertNotNull(count);
+
+                // testing ability of random generate
+                HashMap<String, Object> data = makeup();
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+                GameQrRecordDB gameQrRecordDB = new GameQrRecordDB();
+                gameQrRecordDB.NewQRWithRandomGeneratedWords("",data);
+                try {
+                    TimeUnit.SECONDS.sleep(3);
+                } catch (InterruptedException e) {
+                    //throw new RuntimeException(e);
+                } catch (Exception e){
+
+                }
+                collectionReferenceDest.count().get(AggregateSource.SERVER).addOnCompleteListener(new OnCompleteListener<AggregateQuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AggregateQuerySnapshot> task) {
+                                assertTrue(task.isSuccessful());
+                                AggregateQuerySnapshot snapshot = task.getResult();
+                                int count2 = (int) snapshot.getCount();
+                                assertNotNull(count2);
+                                assertEquals(count+1,count2);
+
+                            }
+                        });
+
+                    }
+                });
 
 
-
-        
-        HashMap<String, Object> data = makeup();
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
-        GameQrRecordDB gameQrRecordDB = new GameQrRecordDB();
-        gameQrRecordDB.NewQRWithRandomGeneratedWords("",data);
-        // testing ability of random generate
     }
 
 
@@ -140,7 +179,7 @@ public class GameQRRecordDBTest {
                         // These are a method which gets executed when the task is succeeded
                         gameQrRecordDB.DelteQrInfo("testing"+timeStamp,data);
                         try {
-                            TimeUnit.SECONDS.sleep(6);
+                            TimeUnit.SECONDS.sleep(3);
                             collectionReferenceDest.document("testing"+timeStamp).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                 @Override
                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -163,6 +202,47 @@ public class GameQRRecordDBTest {
                         //listener.onSendingUpdate("Data could not be added!",false);
                     }
                 });
+    }
+
+
+    @Test
+    public void checkOnchange(){
+        HashMap<String, Object> data = makeup();
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+        GameQrRecordDB gameQrRecordDB = new GameQrRecordDB();
+        gameQrRecordDB.CheckUnique("testing"+timeStamp,true,data );
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        try {
+            TimeUnit.SECONDS.sleep(3);
+        } catch (InterruptedException e) {
+            //throw new RuntimeException(e);
+        } catch (Exception e){
+
+        }
+        data.replace("QVisual","wow you can really dance");
+        gameQrRecordDB.ChangeQrInfo("testing"+timeStamp,data);
+        try {
+            TimeUnit.SECONDS.sleep(2);
+        } catch (InterruptedException e) {
+            //throw new RuntimeException(e);
+        } catch (Exception e){
+
+        }
+        final CollectionReference collectionReferenceDest = db.collection("GameQrCode");
+        // check if id is unique in the FameQr datavase
+        collectionReferenceDest.document("testing"+timeStamp).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                assertTrue(task.isSuccessful());
+                DocumentSnapshot document = task.getResult();
+                assertTrue(document.exists());
+                String ee = (String) document.get("QVisual");
+                assertEquals(ee,"wow you can really dance");
+                gameQrRecordDB.DelteQrInfo("testing"+timeStamp,data);
+            }
+        });
+
+
     }
 
 }

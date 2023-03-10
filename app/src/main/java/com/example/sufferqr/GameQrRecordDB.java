@@ -222,7 +222,7 @@ public class GameQrRecordDB {
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()){
 //                                    listener.onSendingUpdate("delete sucess",true);
-                                    String name = (String) data.get("user");
+                                    String name = (String) myData.get("user");
                                     if (!Objects.equals(name, "testing")){
                                         PlayerProfileUpdate(UserName);
                                     }
@@ -267,7 +267,10 @@ public class GameQrRecordDB {
                                 if (task.isSuccessful()){
                                     System.out.println("update sucessfull");
 //                                    listener.onSendingUpdate("update sucessfull",true);
-                                    PlayerProfileUpdate(UserName);
+                                    String name = (String) data.get("user");
+                                    if (!Objects.equals(name, "testing")) {
+                                        PlayerProfileUpdate(UserName);
+                                    }
                                 }else {
 //                                    listener.onSendingUpdate("try again",false);
                                 }
