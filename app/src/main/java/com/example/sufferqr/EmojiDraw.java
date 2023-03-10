@@ -2,6 +2,8 @@ package com.example.sufferqr;
 
 import java.util.HashMap;
 
+
+
 public class EmojiDraw {
     private final String qrHash;
     private final HashMap<String, String[]> featuresDict;
@@ -104,6 +106,7 @@ public class EmojiDraw {
             head[4] =   shape;
             head[5] = "*     *";
             head[6] = "*******";
+
         }
 
         String[] leftEar = featuresDict.get(qrHash.substring(6, 8));
@@ -129,7 +132,5 @@ public class EmojiDraw {
 
 
 }
-
-
 
 
