@@ -49,19 +49,25 @@ dependencies {
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
+    // testing implementation
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.2'
     testImplementation 'org.testng:testng:6.9.6'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.2'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test:runner:1.5.2'
+    androidTestImplementation 'androidx.test:rules:1.5.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'com.jayway.android.robotium:robotium-solo:5.3.1'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation "androidx.navigation:navigation-testing: 2.5.3"
 
     implementation 'androidx.camera:camera-core:1.2.1'
 
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
-    testImplementation 'junit:junit:4.13.2'
 
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    androidTestImplementation 'androidx.test:runner:1.5.2'
 
     // firebase
     implementation platform('com.google.firebase:firebase-bom:31.2.2')
