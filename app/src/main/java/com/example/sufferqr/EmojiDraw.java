@@ -94,8 +94,8 @@ public class EmojiDraw {
             head[2] = "   *   * ";
             head[3] = "  *     *";
             head[4] =     shape;
-            head[5] = "*        *";
-            head[6] = "*        *";
+            head[5] = "*         *";
+            head[6] = "*         *";
         } else {
             head[0] = "*******";
             head[1] = "*     *";
