@@ -60,7 +60,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         } else if (position==2) {
             return qrDetailLocationFragment;
         } else {
-            return null;
+            return qrDetailGeneralFragment;
         }
     }
 
