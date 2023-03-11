@@ -6,10 +6,13 @@ public class ScanHistoryQRRecord {
     private String points;
     private String date;
 
-    public ScanHistoryQRRecord(String name, String point, String d1){
+    private String loc1;
+
+    public ScanHistoryQRRecord(String name, String point, String d1,String loc){
         QRname = name;
         points = point;
         date = d1;
+        loc1=loc;
     }
 
     public String getName(){
@@ -33,6 +36,14 @@ public class ScanHistoryQRRecord {
             return "";
         } else {
             return date;
+        }
+    }
+
+    public String getLoc(){
+        if (date==null){
+            return "";
+        } else {
+            return loc1;
         }
     }
 }

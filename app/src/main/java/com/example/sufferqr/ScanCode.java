@@ -1,43 +1,37 @@
 package com.example.sufferqr;
 
-import static com.google.gson.internal.$Gson$Types.arrayOf;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
+import static java.lang.Long.toHexString;
+
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.Nullable;
 import androidx.camera.core.CameraSelector;
-import androidx.camera.core.ExperimentalGetImage;
 import androidx.camera.core.ImageAnalysis;
-import androidx.camera.core.ImageCapture;
-import androidx.camera.core.ImageCaptureException;
 import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.BitmapCompat;
 import androidx.lifecycle.LifecycleOwner;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.util.Size;
 import android.view.OrientationEventListener;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,17 +48,19 @@ import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Array;
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
 
 public class ScanCode extends DrawerBase {
     // https://medium.com/swlh/introduction-to-androids-camerax-with-java-ca384c522c5
@@ -78,7 +74,7 @@ public class ScanCode extends DrawerBase {
 
     String userName,QRstring;
 
-    Button Go,Back;
+    Button Go,Back,other;
 
     Boolean foundQR;
 
@@ -96,10 +92,12 @@ public class ScanCode extends DrawerBase {
         textView = findViewById(R.id.scan_code_textView2);
         Go = findViewById(R.id.scan_code_go_button);
         Back = findViewById(R.id.scan_code_return_button);
+        other = findViewById(R.id.scan_code_lib_button);
 
         Intent myNewIntent = getIntent();
         userName = myNewIntent.getStringExtra("user");
         foundQR=false;
+
 
 
         // check if camera allowed
@@ -124,21 +122,74 @@ public class ScanCode extends DrawerBase {
         }
 
         // if user cancel go to dashboard
-        Back.setOnClickListener(new View.OnClickListener() {
+        Back.setOnClickListener(v -> {
+                Intent scanIntent = new Intent(ScanCode.this, DashBoard.class);
+                scanIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                startActivity(scanIntent);
+                finish();
+
+        });
+        other.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!foundQR){
-                    Intent scanIntent = new Intent(ScanCode.this, DashBoard.class);
-                    scanIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                    startActivity(scanIntent);
-                    finish();
-                }
+                startActivityForResult(new Intent(Intent.ACTION_PICK).setType("image/*"), 101);
+
             }
         });
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // storage/emulated/0/Pictures
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case 101:
+                    Uri uri = Objects.requireNonNull(data).getData();
+                    try {
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                        if (!foundQR){
+                            InputImage image = InputImage.fromBitmap(bitmap, 0);
+                            ImageFindQR(image,bitmap);
+                        } else {
+                            calculation(bitmap);
+                        }
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
+                    break;
+            }
+        }
+    }
+
+    private void calculation(Bitmap bitmapImage){
+        Uri surrounds = saveImage(bitmapImage);
+
+//        String ss = toHexString(getSHA(QRstring));
+//        ScoreCounter scoreCounter = new ScoreCounter(ss);
+//        int sc = scoreCounter.getScore();
 
 
 
+//        EmojiDraw emojiDraw = new EmojiDraw(ss);
+//        String se2 = emojiDraw.draw();
+
+        //String se2 ="123";
+
+
+        Intent scanIntent = new Intent(ScanCode.this, QRDetailActivity.class);
+        scanIntent.putExtra("user",userName);
+        scanIntent.putExtra("mode","new");
+        scanIntent.putExtra("QRString",QRstring);
+        //scanIntent.putExtra("QRVisual",ss2);
+        scanIntent.putExtra("QRVisual",QRstring);
+        //scanIntent.putExtra("QRScore",String.valueOf(sc));
+        scanIntent.putExtra("QRScore",String.valueOf(QRstring.length()));
+        scanIntent.putExtra("imageUri",surrounds.toString());
+        scanIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        startActivity(scanIntent);
+        finish();
     }
 
     /**
@@ -176,20 +227,10 @@ public class ScanCode extends DrawerBase {
                         ImageFindQR(image,bitmap);
                     }
                 } else {
-                    Uri surrounds = saveImage(bitmap);
-                    Intent scanIntent = new Intent(ScanCode.this, QRDetailActivity.class);
-                    scanIntent.putExtra("user",userName);
-                    scanIntent.putExtra("mode","new");
-                    scanIntent.putExtra("QRString",QRstring);
-                    scanIntent.putExtra("imageUri",surrounds.toString());
-                    scanIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                    startActivity(scanIntent);
-                    finish();
+                    calculation(bitmap);
                 }
             }
         });
-
-
     }
 
 
@@ -231,8 +272,8 @@ public class ScanCode extends DrawerBase {
 //                            new/modified/viewer
 //                             remember change ScanCode.class
                             foundQR=true;
-                            Go.setText("take picture of Surroundings");
-                            textView.setText("if you do not want to take surrounds,you can change it at next page");
+                            Go.setText("take picture");
+                            textView.setText("take a picture of surrounds");
 
                         }
 
@@ -269,7 +310,6 @@ public class ScanCode extends DrawerBase {
         }
         return image;
     }
-
 
     /**
      * save image file

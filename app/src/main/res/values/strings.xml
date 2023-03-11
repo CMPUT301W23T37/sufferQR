@@ -28,5 +28,9 @@
     <string name="highest_string">Highest Score</string>
     <string name="last_scan_string">Last Scan</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="scan_code_photo_library">photo library</string>
+    <string name="scna_code_return">Return</string>
+    <string name="scan_code_go">GO</string>
+    <string name="scan_code_focus_your_camerea_to_a_qr_code">focus your camerea to a QR code</string>
 
 </resources>

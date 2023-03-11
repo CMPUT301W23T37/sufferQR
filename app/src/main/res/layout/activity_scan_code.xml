@@ -8,11 +8,12 @@
     android:background="@color/black"
     >
 
+
     <TextView
         android:id="@+id/scan_code_textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="focus your camerea to a QR code"
+        android:text="@string/scan_code_focus_your_camerea_to_a_qr_code"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -26,7 +27,7 @@
         android:layout_marginStart="7sp"
         android:layout_marginEnd="7sp"
         android:layout_marginTop="35sp"
-        android:layout_marginBottom="115sp"
+        android:layout_marginBottom="125sp"
         android:background="@color/black"
         app:cardCornerRadius="10sp">
 
@@ -44,23 +45,36 @@
         android:id="@+id/scan_code_go_button"
         android:layout_width="match_parent"
         android:layout_height="60sp"
-        android:layout_marginBottom="50sp"
-        android:layout_marginStart="5sp"
+        android:layout_marginBottom="60sp"
+        android:layout_marginStart="210sp"
         android:layout_marginEnd="5sp"
-        android:text="GO"
+        android:text="@string/scan_code_go"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
+        android:id="@+id/scan_code_lib_button"
+        android:layout_width="200sp"
+        android:layout_height="60sp"
+        android:layout_marginBottom="60sp"
+        android:layout_marginStart="5sp"
+        android:layout_marginEnd="0sp"
+        android:backgroundTint="@color/cardview_dark_background"
+        android:text="@string/scan_code_photo_library"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/scan_code_go_button"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <Button
         android:id="@+id/scan_code_return_button"
         android:backgroundTint="@color/delete_red"
         android:layout_width="match_parent"
-        android:layout_height="40sp"
+        android:layout_height="50sp"
         android:layout_marginBottom="5sp"
-        android:layout_marginStart="5sp"
-        android:layout_marginEnd="5sp"
-        android:text="Return"
+        android:layout_marginStart="7sp"
+        android:layout_marginEnd="7sp"
+        android:text="@string/scna_code_return"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
