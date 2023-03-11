@@ -4,8 +4,10 @@ import static android.content.ContentValues.TAG;
 
 import androidx.annotation.NonNull;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+
 
 import com.example.sufferqr.databinding.ActivityDashBoardBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -20,6 +22,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.util.Comparator;
 import java.util.List;
@@ -63,6 +67,7 @@ public class DashBoard extends DrawerBase {
                 startActivity(new Intent(DashBoard.this, UserProfile.class));
             }
         });
+
         // click rank to see leader board
         TextView rank = findViewById(R.id.blue_rec_t);
         rank.setOnClickListener(new View.OnClickListener() {
@@ -71,32 +76,38 @@ public class DashBoard extends DrawerBase {
                 startActivity(new Intent(DashBoard.this, LeaderBoard.class));
             }
         });
+
         // click highest score to see user profile
-        TextView hScore = findViewById(R.id.blue_rec_m);
-        hScore.setOnClickListener(new View.OnClickListener() {
+        TextView highestScore = findViewById(R.id.blue_rec_m);
+        highestScore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(DashBoard.this, UserProfile.class));
             }
         });
+
         // click last scan to see scan history
-        TextView lastS = findViewById(R.id.blue_rec_b);
-        lastS.setOnClickListener(new View.OnClickListener() {
+        TextView lastScan = findViewById(R.id.blue_rec_b);
+        lastScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(DashBoard.this, ScanHistory.class));
+                String android_id = Settings.Secure.getString(getContentResolver(), Secure.ANDROID_ID);
+                Intent HistIntent = new Intent(DashBoard.this, ScanHistory.class);
+                HistIntent.putExtra("user",android_id);
+                startActivity(HistIntent);
             }
         });
 
         TextView totalQR = findViewById(R.id.total_qr_number);
         TextView totalPoint = findViewById(R.id.total_point_number);
-        TextView highestScore = findViewById(R.id.highest_score_number);
-        TextView lastScan = findViewById(R.id.last_scan_number);
-
+        TextView pointPercent = findViewById(R.id.point_percent);
+        TextView hScore = findViewById(R.id.highest_score_number);
+        TextView lScan = findViewById(R.id.last_scan_number);
         // Get AAID
         String android_id = Settings.Secure.getString(getContentResolver(), Secure.ANDROID_ID);
         DocumentReference userAAID = db.collection("Player").document(android_id);
         userAAID.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @SuppressLint("StringFormatInvalid")
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()){
@@ -106,7 +117,23 @@ public class DashBoard extends DrawerBase {
                     int length = scoresList.size();
 
                     // last scan
-                    lastScan.setText(getString(R.string.last_scan_number, String.valueOf(scoresList.get(length - 1))));
+                    lScan.setText(getString(R.string.last_scan_number, String.valueOf(scoresList.get(length - 1))));
+
+                    // set percentage that point increased
+                    long sumBefore = 0;
+                    int pPercent = 0;
+                    for (int i = 0; i < length-1; i++) {
+                        sumBefore += scoresList.get(i);
+                    }
+
+                    if (sumBefore == 0) {
+                        pPercent = 0;
+                    }
+                    else {
+                        pPercent = (int) ((scoresList.get(length - 1) * 100) / (sumBefore * 100));
+                    }
+                    pointPercent.setText(getString(R.string.point_percent, String.valueOf(pPercent)));
+
                     // sort the score list in reverse order
                     List<Long> scoresSorted = scoresList.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
 
@@ -126,7 +153,9 @@ public class DashBoard extends DrawerBase {
                     totalPoint.setText(String.valueOf(sumScores));
 
                     // highest score
-                    highestScore.setText(String.valueOf(scoresSorted.get(0)));
+
+                    hScore.setText(String.valueOf(scoresSorted.get(0)));
+
 
                     if(!userInfo.exists()){
                         Intent i = new Intent(DashBoard.this, RegisterPage.class);

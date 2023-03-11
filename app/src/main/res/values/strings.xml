@@ -29,6 +29,7 @@
     <string name="last_scan_string">Last Scan</string>
     <string name="your_rank_string">Your Rank</string>
     <string name="last_scan_number">+%s</string>
+    <string name="point_percent">+%s\%%</string>
     <string name="zero">0</string>
     <string name="none">None</string>
 
