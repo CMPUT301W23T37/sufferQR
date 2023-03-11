@@ -81,7 +81,7 @@
         android:id="@+id/point_percent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minWidth="40dp"
+        android:minWidth="80dp"
         android:background="@drawable/small_percentage_grey"
         android:text="@string/point_percent"
         android:textColor="@color/black"
@@ -91,7 +91,7 @@
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@id/blue_rec"
         app:layout_constraintEnd_toEndOf="@id/blue_rec"
-        app:layout_constraintHorizontal_bias="0.3"
+        app:layout_constraintHorizontal_bias="0.4"
         app:layout_constraintStart_toStartOf="@id/blue_rec"
         app:layout_constraintTop_toTopOf="@id/blue_rec"
         app:layout_constraintVertical_bias="0.35">
