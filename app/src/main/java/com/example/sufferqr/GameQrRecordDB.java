@@ -51,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicMarkableReference;
@@ -106,7 +107,10 @@ public class GameQrRecordDB {
                                     @Override
                                     public void onSuccess(Void aVoid) {
                                         // These are a method which gets executed when the task is succeeded
-                                        PlayerProfileUpdate(UserName);
+                                        String name = (String) data.get("user");
+                                        if (!Objects.equals(name, "testing")) {
+                                            PlayerProfileUpdate(UserName);
+                                        }
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override
@@ -218,7 +222,10 @@ public class GameQrRecordDB {
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()){
 //                                    listener.onSendingUpdate("delete sucess",true);
-                                    PlayerProfileUpdate(UserName);
+                                    String name = (String) myData.get("user");
+                                    if (!Objects.equals(name, "testing")){
+                                        PlayerProfileUpdate(UserName);
+                                    }
                                 } else {
 //                                    listener.onSendingUpdate("delete failed",false);
                                 }
@@ -260,7 +267,10 @@ public class GameQrRecordDB {
                                 if (task.isSuccessful()){
                                     System.out.println("update sucessfull");
 //                                    listener.onSendingUpdate("update sucessfull",true);
-                                    PlayerProfileUpdate(UserName);
+                                    String name = (String) data.get("user");
+                                    if (!Objects.equals(name, "testing")) {
+                                        PlayerProfileUpdate(UserName);
+                                    }
                                 }else {
 //                                    listener.onSendingUpdate("try again",false);
                                 }

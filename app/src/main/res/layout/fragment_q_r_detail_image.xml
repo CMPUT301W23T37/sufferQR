@@ -68,21 +68,20 @@
             android:id="@+id/qr_detail_image_qrtext_cardview"
             android:layout_width="match_parent"
             android:layout_height="170sp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginLeft="17sp"
+            android:layout_marginTop="70sp"
+            android:layout_marginRight="17sp"
+            android:layout_marginBottom="5sp"
+            android:orientation="vertical"
+            app:cardCornerRadius="10sp"
+            app:layout_constraintBottom_toTopOf="@+id/qr_detail_image_qrimage_cardview"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="70sp"
-            android:layout_marginLeft="17sp"
-            android:layout_marginRight="17sp"
-            android:layout_marginBottom="460sp"
-            android:orientation="vertical"
-            app:cardCornerRadius="10sp">
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-
 
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -90,9 +89,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginBottom="5sp"
+                    android:hint="@string/qrdetail_image_sign"
                     android:inputType="textMultiLine"
                     android:textSize="13sp"
-                    android:hint="@string/qrdetail_image_sign"
 
 
                     app:layout_constraintEnd_toEndOf="parent"
@@ -105,11 +104,9 @@
                         android:id="@+id/qr_detail_image_textfield"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:inputType="textMultiLine"
                         android:enabled="false"
                         android:gravity="top"
-                        />
-
+                        android:inputType="textMultiLine" />
 
 
                 </com.google.android.material.textfield.TextInputLayout>
