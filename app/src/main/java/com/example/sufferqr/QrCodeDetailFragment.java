@@ -40,6 +40,7 @@ public class QrCodeDetailFragment extends DialogFragment {
         return builder
                 .setView(view)
                 .setTitle("Detail of QRCode")
+                .setNegativeButton("back",null)
                 .create();
 
     }
