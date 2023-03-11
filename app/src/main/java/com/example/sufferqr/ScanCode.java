@@ -165,27 +165,32 @@ public class ScanCode extends DrawerBase {
 
     private void calculation(Bitmap bitmapImage){
         Uri surrounds = saveImage(bitmapImage);
+        String hashed = "";
+        String face="";
+        int points = 0;
+        try {
+            hashed =  QRHash.toHexString(QRHash.getSHA(QRstring));
+            EmojiDraw emojiDraw = new EmojiDraw(hashed);
+            face = emojiDraw.draw();
 
-//        String ss = toHexString(getSHA(QRstring));
-//        ScoreCounter scoreCounter = new ScoreCounter(ss);
-//        int sc = scoreCounter.getScore();
+        } catch (NoSuchAlgorithmException e) {
+            System.out.println(e);
+        } catch (Exception e){
+            System.out.println(e);
+        }
 
-
-
-//        EmojiDraw emojiDraw = new EmojiDraw(ss);
-//        String se2 = emojiDraw.draw();
-
-        //String se2 ="123";
+        ScoreCounter scoreCounter = new ScoreCounter(hashed);
+        points = scoreCounter.calculateScore();
 
 
         Intent scanIntent = new Intent(ScanCode.this, QRDetailActivity.class);
         scanIntent.putExtra("user",userName);
         scanIntent.putExtra("mode","new");
         scanIntent.putExtra("QRString",QRstring);
-        //scanIntent.putExtra("QRVisual",ss2);
-        scanIntent.putExtra("QRVisual",QRstring);
-        //scanIntent.putExtra("QRScore",String.valueOf(sc));
-        scanIntent.putExtra("QRScore",String.valueOf(QRstring.length()));
+        scanIntent.putExtra("QRVisual",face);
+        //scanIntent.putExtra("QRVisual",QRstring);
+        scanIntent.putExtra("QRScore",String.valueOf(points));
+        //scanIntent.putExtra("QRScore",String.valueOf(QRstring.length()));
         scanIntent.putExtra("imageUri",surrounds.toString());
         scanIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         startActivity(scanIntent);
