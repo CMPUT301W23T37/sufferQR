@@ -83,7 +83,7 @@ public class DrawerBase extends AppCompatActivity implements NavigationView.OnNa
                 break;
 
             case R.id.nav_map:
-                startActivity(new Intent(this, Map.class));
+                startActivity(new Intent(this, MapsActivity.class));
                 overridePendingTransition(0,0);
                 break;
             case R.id.nav_scan:
