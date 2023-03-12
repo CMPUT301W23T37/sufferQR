@@ -186,6 +186,11 @@ public class GameQrRecordDB {
                     int iRand = (int) rand.nextInt(ListOfWord.size());
                     MyName2 = MyName2 + ListOfWord.get(iRand);
                 }
+                if (data.containsKey("QRname")) {
+                    data.replace("QRname",MyName2);
+                } else {
+                    data.put("QRname",MyName2);
+                }
                 boolean unique = false;
                 CheckUnique(MyName2,true,data);
 
@@ -292,7 +297,7 @@ public class GameQrRecordDB {
     /**
      * new iamge push to firestone
      */
-    public void imagePushFirestone(HashMap<String,Object> ns,Uri imageUri, String userName, String QRname, ContentResolver cr){
+    public void imagePushFirestone(HashMap<String,Object> ns,Uri imageUri, String userName, ContentResolver cr){
         data = ns;
         Bitmap bitmap =null;
         if (imageUri!=null){
@@ -337,12 +342,13 @@ public class GameQrRecordDB {
                     // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
                     // ...
                     HashMapValidate("QRpath",Path);
-
-                    if (QRname.length()==0){
+                    String ns = (String) data.get("QRname");
+                    if (ns ==null) {
                         NewQRWithRandomGeneratedWords("",data);
-
+                    } else if (ns.length()==0){
+                        NewQRWithRandomGeneratedWords("",data);
                     } else {
-                       CheckUnique(QRname,true,data);
+                       CheckUnique(ns,true,data);
                     }
                 }
             });
@@ -361,10 +367,13 @@ public class GameQrRecordDB {
             }
 
             HashMapValidate("QRpath","");
-            if (QRname.length()==0){
+            String ns2 = (String) data.get("QRname");
+            if (ns2 ==null) {
+                NewQRWithRandomGeneratedWords("",data);
+            } else if (ns2.length()==0){
                 NewQRWithRandomGeneratedWords("",data);
             } else {
-                CheckUnique(QRname,true,data);
+                CheckUnique(ns2,true,data);
             }
         }
 

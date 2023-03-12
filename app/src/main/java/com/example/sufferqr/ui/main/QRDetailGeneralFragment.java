@@ -123,7 +123,7 @@ public class QRDetailGeneralFragment extends Fragment{
             textView.setText(myDate);
             visual.setText(QRvisual);
             points.setText(QRpoints);
-            listener.onGeneralUpdate(" ",myDate);
+            listener.onGeneralUpdate("",myDate);
             name.setEnabled(true);
         } else if (Objects.equals(mode, "modified")) {
             name.setEnabled(true);
