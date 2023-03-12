@@ -1,134 +1,303 @@
 package com.example.sufferqr;
 
-import java.util.HashMap;
+import java.util.Random;
 
 public class EmojiDraw {
-    private final String qrHash;
-    private final HashMap<String, String[]> featuresDict;
-
-    public EmojiDraw(String qrHash) {
-        this.qrHash = qrHash;
-        this.featuresDict = initFeaturesDict();
+    private final String qrhash;
+    private final String[][] face;
+    
+    //input
+    public EmojiDraw(String qrhash) {
+        this.qrhash = qrhash;
+        this.face = generateFace();
     }
 
-    // Initialize the dictionary with all the possible facial features
-    private HashMap<String, String[]> initFeaturesDict() {
-        HashMap<String, String[]> dict = new HashMap<>();
-
-        // Shapes
-        dict.put("00", new String[]{"*******", "*     *", "*     *", "*     *", "*     *", "*     *", "*******"});
-        dict.put("01", new String[]{"  ***  ", " *   * ", "*     *", "*     *", "*     *", " *   * ", "  ***  "});
-
-        // Eyebrows
-        dict.put("00", new String[]{"     ", "=====", "     ", "     "});
-        dict.put("01", new String[]{"     ", "     ", "     ", "︵︵︵︵"});
-        dict.put("10", new String[]{"\\    ", "     ", "     ", "     "});
-        dict.put("11", new String[]{"//   ", "     ", "     ", "     "});
-
-        // Eyes
-        dict.put("00", new String[]{"  >  ", "     ", "     ", "     "});
-        dict.put("01", new String[]{"  <  ", "     ", "     ", "     "});
-        dict.put("10", new String[]{"  ^  ", "     ", "     ", "     "});
-        dict.put("11", new String[]{"  3  ", "     ", "     ", "     "});
-
-        // Nose
-        dict.put("00", new String[]{"     ", " / \\ ", "/   \\", "\\   /", " \\ / ", "     ", "     "});
-        dict.put("01", new String[]{"  O  ", "     ", "     ", "     "});
-        dict.put("10", new String[]{"  •  ", "     ", "     ", "     "});
-        dict.put("11", new String[]{"  [] ", "     ", "     ", "     "});
-
-        // Ears
-        dict.put("00", new String[]{" \\  ", "@   ", " \\  ", "     "});
-        dict.put("01", new String[]{" \\  ", "8   ", " /  ", "     "});
-        dict.put("10", new String[]{" \\  ", "%   ", "/   ", "     "});
-        dict.put("11", new String[]{" \\  ", "$   ", "\"   ", "     "});
-
-        // Mustache
-        dict.put("00", new String[]{"      VVVVVVVV      ", "                    "});
-        dict.put("01", new String[]{"      ########      ", "                    "});
-        dict.put("10", new String[]{"                      ", "                    "});
-        dict.put("11", new String[]{"      -----------       ", "                    "});
-
-        // Mouth
-        dict.put("00", new String[]{"              [=====]              ", "                    "});
-        dict.put("01", new String[]{"              (┬─┬)                   ", "                    "});
-        dict.put("10", new String[]{"              {┻━┻)                    ", "                    "});
-        dict.put("11", new String[]{"              |+++++|              ", "                   "});
-
-        // Moustache
-        dict.put("00", new String[]{" ", " VVVVV", " ", " "});
-        dict.put("01", new String[]{" ", "######", " ", " "});
-        dict.put("10", new String[]{" ", " ", " ", " "});
-        dict.put("11", new String[]{" ", "------", " ", " "});
-
-        // Mouth
-        dict.put("00", new String[]{"      ", "      ", "[=====]", "      "});
-        dict.put("01", new String[]{"      ", "(┬─┬)", "      ", "      "});
-        dict.put("10", new String[]{"      ", "{┻━┻)", "      ", "      "});
-        dict.put("11", new String[]{"      ", "|++++|", "      ", "      "});
-
-        // Beard
-        dict.put("0", new String[]{"      ", "      ", "      ", "      ", "      ", "      ", "VVVVV "});
-        dict.put("1", new String[]{"      ", "      ", "      ", "      ", "      ", "      ", "      "});
-
-        return dict;
-    }
-
-    private String getFeature(String bits, String[] options) {
-        int index = Integer.parseInt(bits, 2) % options.length;
-        return options[index];
-    }
-
+    //prints the visual representation
     public void draw() {
-        String shapeBits = qrHash.substring(0, 2);
-        String shape = getFeature(shapeBits, featuresDict.get(shapeBits));
+        int sizeX = face[0].length;
+        int sizeY = face.length;
 
-        boolean isTriangle = shapeBits.charAt(0) == '0';
-        int noseIndex = Integer.parseInt(qrHash.substring(4, 6), 2) % 4;
-        int mouthIndex = Integer.parseInt(qrHash.substring(14, 15), 2);
-        String beard = getFeature(qrHash.substring(15, 16), featuresDict.get(Integer.toString(mouthIndex)));
-        String[] head = new String[7];
-        if (isTriangle) {
-            head[0] = "     *   ";
-            head[1] = "    * *  ";
-            head[2] = "   *   * ";
-            head[3] = "  *     *";
-            head[4] =     shape;
-            head[5] = "*         *";
-            head[6] = "*         *";
-        } else {
-            head[0] = "*******";
-            head[1] = "*     *";
-            head[2] = "*     *";
-            head[3] = "*     *";
-            head[4] =   shape;
-            head[5] = "*     *";
-            head[6] = "*******";
-        }
-
-        String[] leftEar = featuresDict.get(qrHash.substring(6, 8));
-        String[] rightEar = featuresDict.get(qrHash.substring(8, 10));
-        String[] eyebrows = featuresDict.get(qrHash.substring(2, 4));
-        String[] eyes = featuresDict.get(qrHash.substring(10, 12));
-        String[] nose = featuresDict.get(Integer.toString(noseIndex));
-        String[] mustache = featuresDict.get(qrHash.substring(12, 14));
-        String[] mouth = featuresDict.get(Integer.toString(mouthIndex));
-
-        int noseY = isTriangle ? 4 : 3;
-
-        // Draw face
-        for (int i = 0; i < 7; i++) {
-            String leftEarLine = i == noseY ? leftEar[0] : " ";
-            String rightEarLine = i == noseY ? rightEar[0] : " ";
-            System.out.print(leftEarLine + " " + eyebrows[i] + " " + eyes[i] + " " + nose[i] + " " + eyes[i] + " " + eyebrows[i] + " " + rightEarLine + "\n");
-        }
-        System.out.print(" " + mustache[0] + beard + mustache[0] + "\n");
-        System.out.print(" " + mouth[0] + "\n");
+        // find the length of the longest row
+        int longestRowLength = 0;
+        for (String[] row : face) {
+            if (row.length > longestRowLength) {
+                longestRowLength = row.length;
+            }
     }
 
+        // print each row with leading spaces
+        for (int i = 0; i < sizeY; i++) {
+            int numLeadingSpaces = longestRowLength - face[i].length;
+            for (int j = 0; j < numLeadingSpaces; j++) {
+                System.out.print(" ");
+            }
+            for (int j = 0; j < sizeX; j++) {
+                System.out.print(face[i][j]);
+            }
+            System.out.println();
+        }
+    }
+    
+    //generates the face itself
+    private String[][] generateFace() {
+        Random random = new Random(qrhash.hashCode());
+        int sizeY = 13 + random.nextInt(5); // random size between 13 and 18 for the y-axis
+        int sizeX = 20 + random.nextInt(6); // random size between 18 and 24 for the x-axis
+        String[][] face = new String[sizeY][sizeX];
 
+        // draw face structure
+        String structure = "#";
+        switch (random.nextInt(4)) {
+            case 0: // circle
+                structure = "O";
+                break;
+            case 1: // square
+                structure = "#";
+                break;
+            case 2: // rectangle
+                structure = "=";
+                break;
+            case 3: //triangle
+                structure = "&";    
+                break;
+        }
+       
+        for (int i = 0; i < sizeY; i++) {
+            for (int j = 0; j < sizeX; j++) {
+                if (i == 0 || i == sizeY - 1 || j == 0 || j == sizeX - 1) {
+                    face[i][j] = structure;
+                } else {
+                    face[i][j] = " ";
+                }
+            }
+        }
+        
+        // draw eyebrows
+        String[] eyebrowOptions = {"`````", "~~~~~~", "((((()))))","@@@@@"};
+        String eyebrow = eyebrowOptions[random.nextInt(eyebrowOptions.length)];
+        int eyebrowPos = (sizeY / 2) - 4; // above eyes
+        
+        switch (eyebrow) {
+            case "`````":
+                face[eyebrowPos][eyebrowPos-1] = "`````";
+                face[eyebrowPos][eyebrowPos+3] = "`````";
+                face[eyebrowPos][eyebrowPos+4] = "";face[eyebrowPos][eyebrowPos+5] = "";face[eyebrowPos][eyebrowPos+6] = "";//removed spaces occupied by eyebrows so structure stays intact
+                face[eyebrowPos][eyebrowPos+7] = "";face[eyebrowPos][eyebrowPos+8] = "";face[eyebrowPos][eyebrowPos+9] = "";
+                face[eyebrowPos][eyebrowPos+10] = "";face[eyebrowPos][eyebrowPos+11] = "";
+                break;
+                
+            case "~~~~~~":
+                face[eyebrowPos][eyebrowPos-1] = "~~~~~~";
+                face[eyebrowPos][eyebrowPos+3] = "~~~~~~";
+                face[eyebrowPos][eyebrowPos+4] = "";face[eyebrowPos][eyebrowPos+5] = "";face[eyebrowPos][eyebrowPos+6] = "";
+                face[eyebrowPos][eyebrowPos+7] = "";face[eyebrowPos][eyebrowPos+8] = "";face[eyebrowPos][eyebrowPos+9] = "";
+                face[eyebrowPos][eyebrowPos+10] = "";face[eyebrowPos][eyebrowPos+11] = "";face[eyebrowPos][eyebrowPos+12] = "";
+                face[eyebrowPos][eyebrowPos+13] = "";
+                break;
+                
+            case "((((()))))":
+                face[eyebrowPos][eyebrowPos-1] = "(((((";
+                face[eyebrowPos][eyebrowPos+3] = ")))))";
+                face[eyebrowPos][eyebrowPos+4] = "";face[eyebrowPos][eyebrowPos+5] = "";face[eyebrowPos][eyebrowPos+6] = "";
+                face[eyebrowPos][eyebrowPos+7] = "";face[eyebrowPos][eyebrowPos+8] = "";face[eyebrowPos][eyebrowPos+9] = "";
+                face[eyebrowPos][eyebrowPos+10] = "";face[eyebrowPos][eyebrowPos+11] = "";
+                break;
 
+            case "@@@@@":
+                face[eyebrowPos][eyebrowPos-1] = "@@@@@";
+                face[eyebrowPos][eyebrowPos+3] = "@@@@@";
+                face[eyebrowPos][eyebrowPos+4] = "";face[eyebrowPos][eyebrowPos+5] = "";face[eyebrowPos][eyebrowPos+6] = "";
+                face[eyebrowPos][eyebrowPos+7] = "";face[eyebrowPos][eyebrowPos+8] = "";face[eyebrowPos][eyebrowPos+9] = "";
+                face[eyebrowPos][eyebrowPos+10] = "";face[eyebrowPos][eyebrowPos+11] = "";
+                break;
+
+        }    
+        // draw eyes
+        String[] eyeOptions = {"000", "$$$", "%%%","333"};
+        String eye = eyeOptions[random.nextInt(eyeOptions.length)];
+        int eyePos = (sizeY / 2) - 2; // above bags
+        
+        switch (eye) {
+            case "000":
+                face[eyePos][eyePos-2] = "000";
+                face[eyePos][eyePos+2] = "000";
+                face[eyePos][eyePos+3] = "";face[eyePos][eyePos+4] = "";face[eyePos][eyePos+5] = "";//removed spaces occupied by eyes so structure stays intact
+                face[eyePos][eyePos+6] = "";
+                break;
+               
+            case "$$$":
+                face[eyePos][eyePos-2] = "$$$";
+                face[eyePos][eyePos+2] = "$$$";
+                face[eyePos][eyePos+3] = "";face[eyePos][eyePos+4] = "";face[eyePos][eyePos+5] = "";
+                face[eyePos][eyePos+6] = "";
+                break;
+                
+            case "%%%":
+                face[eyePos][eyePos-2] = "%%%";
+                face[eyePos][eyePos+2] = "%%%";
+                face[eyePos][eyePos+3] = "";face[eyePos][eyePos+4] = "";face[eyePos][eyePos+5] = "";
+                face[eyePos][eyePos+6] = "";
+                break;
+
+            case "333":
+                face[eyePos][eyePos-2] = "333";
+                face[eyePos][eyePos+2] = "333";
+                face[eyePos][eyePos+3] = "";face[eyePos][eyePos+4] = "";face[eyePos][eyePos+5] = "";
+                face[eyePos][eyePos+6] = "";
+                break;
+
+        }    
+
+        // draw bags/blush
+        String[] bagOptions = {"++", "--", ".."," "};
+        String bags = bagOptions[random.nextInt(bagOptions.length)];
+        int bagPos = (sizeY / 2) - 1; // above nose
+         
+        switch (bags) {
+            case "++":
+                face[bagPos][bagPos-4] = "++";
+                face[bagPos][bagPos+4] = "++";
+                face[bagPos][bagPos+5] = "";face[bagPos][bagPos+6] = "";//removed spaces occupied by bags/blush so structure stays intact
+                break;
+                    
+            case "--":
+                face[bagPos][bagPos-4] = "--";
+                face[bagPos][bagPos+4] = "--";
+                face[bagPos][bagPos+5] = "";face[bagPos][bagPos+6] = "";
+                break;
+                    
+            case "..":
+                face[bagPos][bagPos-4] = "..";
+                face[bagPos][bagPos+4] = "..";
+                face[bagPos][bagPos+5] = "";face[bagPos][bagPos+6] = "";
+                break;
+            case " ":
+                face[bagPos][bagPos-4] = " ";
+                face[bagPos][bagPos+4] = " ";
+                break;     
+    
+    
+         }    
+                
+
+        // draw nose
+        String[] noseOptions = {"<", ">", ",,", "*","[]"};
+        String nose = noseOptions[random.nextInt(noseOptions.length)];
+        int nosePos = sizeY / 2; // middle of the face
+        switch (nose) {
+            case "<":
+                face[nosePos][nosePos] = "<";
+                break;
+            case ">":
+                face[nosePos][nosePos] = ">";
+                break;
+            case ",,":
+                face[nosePos][nosePos] = ",,";
+                face[nosePos][nosePos+2] = "";//removed spaces occupied by nose so structure stays intact
+                break;
+            case "*":
+                face[nosePos][nosePos] = "*";
+                break;
+            case "[]":
+                face[nosePos][nosePos] = "[]";
+                face[nosePos][nosePos+2] = "";
+                break;
+        }
+
+        // draw moustache
+        String[] moustacheOptions = {"####"," ","^^^^"};
+        String moustache = moustacheOptions[random.nextInt(moustacheOptions.length)];
+        int moustachePos = (sizeY / 2 ) + 1; //right above the mouth
+        switch (moustache) {
+            case "####":
+                face[moustachePos][moustachePos-2] = "####";
+                face[moustachePos][moustachePos-1] = "";face[moustachePos][moustachePos] = "";face[moustachePos][moustachePos+1] = "";//removed spaces occupied by moustache so structure stays intact
+                break;
+            case " ":
+                face[moustachePos][moustachePos-2] = " ";
+                break;
+            case "^^^^":
+                face[moustachePos][moustachePos-2] = "^^^^";
+                face[moustachePos][moustachePos-1] = "";face[moustachePos][moustachePos] = "";face[moustachePos][moustachePos+1] = "";
+                break;     
+            
+        }
+
+        // draw mouth
+        String[] mouthOptions = {"{EEEEEEEEEE}", "(!!!!!!!!!!)","(DDDDDDDDDD)","[==========]","|++++++++++|"};
+        String mouth = mouthOptions[random.nextInt(mouthOptions.length)];
+        int mouthpos = (sizeY / 2 ) + 2; //right under the nose
+        switch (mouth) {
+            case "{EEEEEEEEEE}":
+                face[mouthpos][mouthpos-7] = "{EEEEEEEEEE}";
+                face[mouthpos][mouthpos-6] = "";face[mouthpos][mouthpos-5] = "";face[mouthpos][mouthpos-4] = "";//removed spaces occupied by mouth so structure stays intact
+                face[mouthpos][mouthpos-3] = "";face[mouthpos][mouthpos-2] = "";face[mouthpos][mouthpos-1] = "";
+                face[mouthpos][mouthpos] = "";face[mouthpos][mouthpos+1] = "";face[mouthpos][mouthpos+2] = "";
+                face[mouthpos][mouthpos+3] = "";face[mouthpos][mouthpos+4] = "";
+                break;
+            case "(!!!!!!!!!!)":
+                face[mouthpos][mouthpos-7] = "(!!!!!!!!!!)";
+                face[mouthpos][mouthpos-6] = "";face[mouthpos][mouthpos-5] = "";face[mouthpos][mouthpos-4] = "";
+                face[mouthpos][mouthpos-3] = "";face[mouthpos][mouthpos-2] = "";face[mouthpos][mouthpos-1] = "";
+                face[mouthpos][mouthpos] = "";face[mouthpos][mouthpos+1] = "";face[mouthpos][mouthpos+2] = "";
+                face[mouthpos][mouthpos+3] = "";face[mouthpos][mouthpos+4] = "";
+                break;
+            case "(DDDDDDDDDD)":
+                face[mouthpos][mouthpos-7] = "(DDDDDDDDDD)";
+                face[mouthpos][mouthpos-6] = "";face[mouthpos][mouthpos-5] = "";face[mouthpos][mouthpos-4] = "";
+                face[mouthpos][mouthpos-3] = "";face[mouthpos][mouthpos-2] = "";face[mouthpos][mouthpos-1] = "";
+                face[mouthpos][mouthpos] = "";face[mouthpos][mouthpos+1] = "";face[mouthpos][mouthpos+2] = "";
+                face[mouthpos][mouthpos+3] = "";face[mouthpos][mouthpos+4] = "";
+                break;
+            case "[==========]":
+                face[mouthpos][mouthpos-7] = "[==========]";
+                face[mouthpos][mouthpos-6] = "";face[mouthpos][mouthpos-5] = "";face[mouthpos][mouthpos-4] = "";
+                face[mouthpos][mouthpos-3] = "";face[mouthpos][mouthpos-2] = "";face[mouthpos][mouthpos-1] = "";
+                face[mouthpos][mouthpos] = "";face[mouthpos][mouthpos+1] = "";face[mouthpos][mouthpos+2] = "";
+                face[mouthpos][mouthpos+3] = "";face[mouthpos][mouthpos+4] = "";
+                break; 
+            case "|++++++++++|":
+                face[mouthpos][mouthpos-7] = "|++++++++++|";
+                face[mouthpos][mouthpos-6] = "";face[mouthpos][mouthpos-5] = "";face[mouthpos][mouthpos-4] = "";
+                face[mouthpos][mouthpos-3] = "";face[mouthpos][mouthpos-2] = "";face[mouthpos][mouthpos-1] = "";
+                face[mouthpos][mouthpos] = "";face[mouthpos][mouthpos+1] = "";face[mouthpos][mouthpos+2] = "";
+                face[mouthpos][mouthpos+3] = "";face[mouthpos][mouthpos+4] = "";
+                break;         
+           
+        }
+
+         // draw beard
+         String[] beardOptions = {"VVV"," "};
+         String beard = beardOptions[random.nextInt(beardOptions.length)];
+         int beardpos = (sizeY / 2 ) + 4; //right under the mouth
+         switch (beard) {
+             case "VVV":
+                 face[beardpos][beardpos-5] = "VVV";
+                 face[beardpos][beardpos-4] = "";face[beardpos][beardpos-3] = "";
+                 break;
+             case " ":
+                 face[beardpos][beardpos] = " ";
+                 break;
+            
+         }
+ 
+
+        // add colors to the whole face (fruitloop colors)
+        String[] colors = {"\u001B[31m", "\u001B[32m", "\u001B[33m", "\u001B[34m", "\u001B[35m", "\u001B[36m", "\u001B[0m"};
+        for (int i = 0; i < sizeY; i++) {
+            for (int j = 0; j < sizeX; j++) {
+                String feature = face[i][j];
+                if (!feature.equals(" ")) {
+                    String color = colors[random.nextInt(colors.length - 1)];
+                    face[i][j] = color + feature + colors[colors.length - 1];
+                }
+            }
+        }
+
+        return face;
+    }
 }
+
 
 
 
