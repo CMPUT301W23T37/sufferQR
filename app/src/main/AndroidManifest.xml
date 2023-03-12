@@ -92,6 +92,10 @@
             android:name=".MainActivity"
             android:exported="true" />
         <activity android:name=".EditProfile" />
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>
