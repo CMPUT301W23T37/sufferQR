@@ -118,14 +118,11 @@ public class EmojiDraw {
         String[] nose = featuresDict.get(Integer.toString(noseIndex));
         String[] mustache = featuresDict.get(qrHash.substring(12, 14));
         String[] mouth = featuresDict.get(Integer.toString(mouthIndex));
-
-        int noseY = isTriangle ? 4 : 3;
-
+        
+        
         String total_String ="";
         // Draw face
         for (int i = 0; i < 7; i++) {
-            String leftEarLine = i == noseY ? leftEar[0] : " ";
-            String rightEarLine = i == noseY ? rightEar[0] : " ";
             total_String = total_String+(leftEarLine + " " + eyebrows[i] + " " + eyes[i] + " " + nose[i] + " " + eyes[i] + " " + eyebrows[i] + " " + rightEarLine + "\n");
         }
         total_String=total_String+" " + mustache[0] + beard + mustache[0] + "\n";

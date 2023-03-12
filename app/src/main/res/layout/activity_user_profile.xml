@@ -14,7 +14,8 @@
         android:src="@drawable/editor_profile"
         android:backgroundTint="@color/white"
         app:fabSize="mini"
-        android:layout_gravity="end"/>
+        android:layout_gravity="end"
+        aria-label='edit'/>
 
     <ImageView
         android:id="@+id/userQRImage_UserProfile"
