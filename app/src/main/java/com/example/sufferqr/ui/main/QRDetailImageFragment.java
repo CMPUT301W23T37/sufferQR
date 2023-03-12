@@ -106,6 +106,8 @@ public class QRDetailImageFragment extends Fragment {
 
     /**
      * launch
+     * @return view
+     * @see com.example.sufferqr.QRDetailActivity
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
