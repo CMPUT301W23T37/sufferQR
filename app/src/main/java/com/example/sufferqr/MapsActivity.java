@@ -147,16 +147,7 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback {
             }
         });
 
-        // Set up the info window click listener
-        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-            @Override
-            public void onInfoWindowClick(Marker marker) {
-                // Handle info window click event
-                if (marker.getTitle() != null && !marker.getTitle().isEmpty()) {
-                    Toast.makeText(MapsActivity.this, "Marker Title Clicked", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+
 
 
         // if list of nearby QR clicked, change to list activity
