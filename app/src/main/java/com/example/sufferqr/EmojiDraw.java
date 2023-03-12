@@ -118,9 +118,8 @@ public class EmojiDraw {
         String[] nose = featuresDict.get(Integer.toString(noseIndex));
         String[] mustache = featuresDict.get(qrHash.substring(12, 14));
         String[] mouth = featuresDict.get(Integer.toString(mouthIndex));
-
-        int noseY = isTriangle ? 4 : 3;
-
+        
+       
         String total_String ="";
         // Draw face
         for (int i = 0; i < 7; i++) {
