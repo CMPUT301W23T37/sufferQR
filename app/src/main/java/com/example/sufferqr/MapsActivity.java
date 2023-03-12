@@ -163,7 +163,7 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback {
         binding.nearbylist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MapsActivity.this, ListActivity.class);
+                Intent intent = new Intent(MapsActivity.this, nearbyQrCodeList.class);
                 startActivity(intent);
             }
         });

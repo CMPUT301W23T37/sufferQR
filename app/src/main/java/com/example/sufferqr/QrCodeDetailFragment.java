@@ -1,0 +1,48 @@
+package com.example.sufferqr;
+
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
+
+public class QrCodeDetailFragment extends DialogFragment {
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_detail_qrcode, null);
+        TextView address = view.findViewById(R.id.detail_Address_text);
+        TextView lat = view.findViewById(R.id.detail_lat_text);
+        TextView lon = view.findViewById(R.id.detail_long_text);
+        TextView date = view.findViewById(R.id.detail_date_text);
+        TextView points = view.findViewById(R.id.detail_points_text);
+
+        String data1 = getArguments().getString("key1");
+        String data2 = getArguments().getString("key2");
+        String data3 = getArguments().getString("key3");
+        String data4 = getArguments().getString("key4");
+        String data5 = getArguments().getString("key5");
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
+        address.setText("Address: " + data1);
+        lat.setText("Latitude: " + data2);
+        lon.setText("Longitude: " + data3);
+        date.setText("Date: " + data4);
+        points.setText("Points: " + data5);
+
+        return builder
+                .setView(view)
+                .setTitle("Detail of QRCode")
+                .setNegativeButton("back",null)
+                .create();
+
+    }
+}
+

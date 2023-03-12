@@ -46,8 +46,12 @@
 
         <activity
             android:name=".MapsActivity"
-            android:exported="false"
+            android:exported="true"
             android:label="@string/title_activity_maps" />
+
+        <activity android:name=".nearbyQrCodeList"
+            android:exported="true"/>
+
         <activity
             android:name=".RegisterPage"
             android:exported="true" >
