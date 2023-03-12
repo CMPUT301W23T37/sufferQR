@@ -3,12 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="90sp"
-    android:padding="8sp">
+    android:layout_height="100sp"
+    >
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:cardElevation="5sp"
+        app:cardMaxElevation="10sp"
+        app:cardCornerRadius="10sp"
+        android:layout_marginBottom="8sp"
+        android:layout_marginTop="8sp"
+        android:layout_marginStart="8sp"
+        android:layout_marginEnd="8sp"
         >
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -20,23 +27,37 @@
                 android:layout_width="250sp"
                 android:layout_height="30sp"
                 android:text="QRID name=1234567890"
+                android:textStyle="bold"
                 android:textSize="20sp"
+                android:gravity="center_vertical"
                 android:layout_marginStart="10sp"
-                android:layout_marginBottom="3sp"
+                android:layout_marginTop="5sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/scan_activity_content_qrdate"
                 android:layout_width="250sp"
                 android:layout_height="20sp"
                 android:layout_marginStart="12sp"
-                android:layout_marginTop="3sp"
+                android:layout_marginBottom="20sp"
                 android:text="YYYY:MM:DD"
                 android:gravity="center_vertical"
                 android:textSize="11sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <TextView
+                android:id="@+id/scan_activity_content_qraddress"
+                android:layout_width="300sp"
+                android:layout_height="20sp"
+                android:layout_marginStart="12sp"
+                android:layout_marginBottom="3sp"
+                android:text="near earth"
+                android:gravity="center_vertical"
+                android:textSize="11sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
             <TextView
                 android:id="@+id/scan_activity_content_points_text"

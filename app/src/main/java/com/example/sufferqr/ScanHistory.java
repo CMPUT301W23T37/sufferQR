@@ -19,6 +19,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.MetadataChanges;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -41,10 +42,9 @@ public class ScanHistory extends DrawerBase {
         super.onCreate(savedInstanceState);
         setContentView(activityScanHistoryBinding.getRoot());
         allocateActivityTitle("Scan History");
+
         db = FirebaseFirestore.getInstance();
-
         qrList=findViewById(R.id.scan_history_recycleView);
-
         Intent myNewIntent = getIntent();
         UserName = myNewIntent.getStringExtra("user");
 
@@ -54,9 +54,6 @@ public class ScanHistory extends DrawerBase {
 
         qrList.setAdapter(qrAdapter);
 
-        final CollectionReference collectionReference = db.collection("GameQrCode");
-        final Query query= collectionReference.whereEqualTo("user",UserName).orderBy("time");
-
         update();
 
         qrList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -65,13 +62,37 @@ public class ScanHistory extends DrawerBase {
                 ScanHistoryQRRecord hsq = (ScanHistoryQRRecord) adapterView.getItemAtPosition(position);
                 //new/modified/viewer(mode) for QR detail activity
                 Intent scanIntent = new Intent(getApplicationContext(),QRDetailActivity.class);
-                scanIntent.putExtra("user","example");
+                scanIntent.putExtra("user",UserName);
                 scanIntent.putExtra("qrID",hsq.getName());
                 scanIntent.putExtra("mode","modified");
                 startActivity(scanIntent);
                 overridePendingTransition(0,0);
             }
         });
+        final CollectionReference collectionReference = db.collection("GameQrCode");
+        collectionReference.whereEqualTo("user",UserName).orderBy("time",Query.Direction.DESCENDING)
+                .addSnapshotListener(MetadataChanges.INCLUDE, new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if (error != null){
+                            System.err.println("Listen failed: " + error);
+                        }
+                        if (value != null && !value.isEmpty()){
+                            qrDataList.clear();
+                            for (DocumentSnapshot doc : value.getDocuments()) {
+                                String qrName = String.valueOf(doc.getData().get("QRname"));
+                                String points = String.valueOf(doc.getData().get("points"));
+                                String sDate = String.valueOf(doc.getData().get("date"));
+                                String sAddress = String.valueOf(doc.getData().get("LocationName"));
+                                qrDataList.add(new ScanHistoryQRRecord(qrName, points,sDate,sAddress)); // Adding the cities and provinces from FireStore
+                            }
+                            qrAdapter.notifyDataSetChanged();
+                        } else {
+                            Toast toast = Toast.makeText(getApplicationContext(),"no result", Toast.LENGTH_SHORT);
+                        }
+                    }
+                });
+
 
     }
 
@@ -91,7 +112,7 @@ public class ScanHistory extends DrawerBase {
 
     private void update(){
         final CollectionReference collectionReference = db.collection("GameQrCode");
-        final Query query= collectionReference.whereEqualTo("user",UserName).orderBy("time");
+        final Query query= collectionReference.whereEqualTo("user",UserName).orderBy("time",Query.Direction.DESCENDING);
         
         query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -105,7 +126,8 @@ public class ScanHistory extends DrawerBase {
                         String qrName = String.valueOf(doc.getData().get("QRname"));
                         String points = String.valueOf(doc.getData().get("points"));
                         String sDate = String.valueOf(doc.getData().get("date"));
-                        qrDataList.add(new ScanHistoryQRRecord(qrName, points,sDate)); // Adding the cities and provinces from FireStore
+                        String sAddress = String.valueOf(doc.getData().get("LocationName"));
+                        qrDataList.add(new ScanHistoryQRRecord(qrName, points,sDate,sAddress)); // Adding the cities and provinces from FireStore
                     }
                     qrAdapter.notifyDataSetChanged();
                 } else {
