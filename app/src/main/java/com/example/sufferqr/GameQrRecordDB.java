@@ -139,7 +139,7 @@ public class GameQrRecordDB {
         // Create a storage reference from our app
         storage = FirebaseStorage.getInstance();
         // referencing about 1000 words documents
-        StorageReference gsReference = storage.getReferenceFromUrl("gs://sufferqr.appspot.com/nwordlist.txt");
+        StorageReference gsReference = storage.getReferenceFromUrl("gs://sufferqr.appspot.com/ShortWordlist.txt");
 
         File localFile2 = null;
         try {
