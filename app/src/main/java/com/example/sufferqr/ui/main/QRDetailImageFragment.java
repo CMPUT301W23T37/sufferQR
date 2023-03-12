@@ -63,7 +63,8 @@ public class QRDetailImageFragment extends Fragment {
     View gbview;
 
     /**
-     * launch
+     * lauch class
+     * @param adapterImageBundle saveinstance state
      */
     public QRDetailImageFragment(Bundle adapterImageBundle) {
         myImageBundle = adapterImageBundle;
@@ -91,6 +92,8 @@ public class QRDetailImageFragment extends Fragment {
 
     /**
      * launch
+     * @param savedInstanceState If the fragment is being re-created from
+     * a previous saved state, this is the state.
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -100,6 +103,7 @@ public class QRDetailImageFragment extends Fragment {
 
     /**
      * attach to listener
+     * @param context sync listener
      */
     @Override
     public void onAttach(@NonNull Context context) {
@@ -155,6 +159,12 @@ public class QRDetailImageFragment extends Fragment {
         return view;
     }
 
+    /**
+     * data callback refresh ui
+     * @param iView view info
+     * @param userName11 user name
+     * @param data hashmap from firebase
+     */
     public void ActivityCallBack(View iView, String userName11,HashMap<String, Object> data){
         // general page change load info
 

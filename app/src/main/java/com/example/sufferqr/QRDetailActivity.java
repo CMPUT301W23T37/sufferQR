@@ -340,6 +340,10 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         }
     }
 
+   /**
+   * realtime getting user input name
+   * @param Newname qrcode name
+   */
     @Override
     public void onGeneralUpdate(String Newname) {
       HashMapValidate("QRname",Newname);

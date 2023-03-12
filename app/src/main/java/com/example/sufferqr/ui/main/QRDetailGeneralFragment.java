@@ -83,7 +83,9 @@ public class QRDetailGeneralFragment extends Fragment{
     }
 
     /**
-     * create the fragment
+     * create view
+     * @param savedInstanceState If the fragment is being re-created from
+     * a previous saved state, this is the state.
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -93,6 +95,7 @@ public class QRDetailGeneralFragment extends Fragment{
 
     /**
      * attach listener
+     * @param context fragment context
      */
     @Override
     public void onAttach(@NonNull Context context) {
@@ -195,7 +198,12 @@ public class QRDetailGeneralFragment extends Fragment{
         return view;
     }
 
-
+    /**
+     * data callback refresh ui
+     * @param gView view info
+     * @param userName11 user name
+     * @param data hashmap from firebase
+     */
     public void ActivityCallBack(View gView, String userName11,HashMap<String, Object> data){
         TextInputEditText name,points;
         TextView textView;Button button;

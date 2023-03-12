@@ -37,6 +37,10 @@ public class ScanHistoryTest {
 
     FirebaseFirestore db;
 
+    /**
+     * test rules
+     *
+     */
     @Rule
     public ActivityTestRule<ScanHistory> rule = new ActivityTestRule<ScanHistory>(ScanHistory.class, true, true){
         @Override
@@ -69,6 +73,10 @@ public class ScanHistoryTest {
         solo.finishOpenedActivities();
     }
 
+    /**
+     * compare if file loading is the same
+     *
+     */
     @Test
     public void launch(){
         final CollectionReference collectionReference = db.collection("GameQrCode");
@@ -91,15 +99,7 @@ public class ScanHistoryTest {
                                 solo.waitForText(sDate, 1, 1000);
                                 solo.waitForText(sAddress, 1, 1000);
 
-//                                solo.clickLongInList(cc);
-//                                solo.assertCurrentActivity("Wrong Activity", QRDetailActivity.class);
-//
-//                                solo.waitForText(qrName, 1, 1000);
-//                                solo.waitForText(points, 1, 1000);
-//                                solo.waitForText(sDate, 1, 1000);
-//
-//                                solo.clickOnText("CANCEL");
-//                                solo.assertCurrentActivity("Wrong Activity", ScanHistory.class);
+
                             }
                         }
 

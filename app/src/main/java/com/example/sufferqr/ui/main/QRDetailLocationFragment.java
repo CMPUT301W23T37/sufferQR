@@ -128,6 +128,7 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
 
     /**
      * launch
+     * @param mapBundle get info from qrdetailactivity
      */
     public QRDetailLocationFragment(Bundle mapBundle) {
         mymapBundle=mapBundle;
@@ -146,7 +147,9 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
     }
 
     /**
-     * launch the map settings
+     * setup map
+     * @param mapboxMap An instance of MapboxMap associated with the {@link MapFragment} or
+     *                  {@link MapView} that defines the callback.
      */
     @Override
     @SuppressWarnings( {"MissingPermission"})
