@@ -49,7 +49,8 @@ public class QRDetailGeneralFragment extends Fragment{
     private FirebaseFirestore db;
 
     /**
-     * launch
+     * launch the qrDetail page
+     * @param gbundle information tranfer from QrDetailActivty class
      */
     public QRDetailGeneralFragment(Bundle gbundle) {
         db = FirebaseFirestore.getInstance();
@@ -82,7 +83,7 @@ public class QRDetailGeneralFragment extends Fragment{
     }
 
     /**
-     * launch
+     * create the fragment
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -105,7 +106,9 @@ public class QRDetailGeneralFragment extends Fragment{
     }
 
     /**
-     * creat view
+     * on create view
+     * @return view
+     * @see com.example.sufferqr.QRDetailActivity
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

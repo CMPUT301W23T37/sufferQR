@@ -173,7 +173,7 @@ public class ScanCode extends DrawerBase {
         try {
             hashed =  QRHash.toHexString(QRHash.getSHA(QRstring));
             EmojiDraw emojiDraw = new EmojiDraw(hashed);
-            face = emojiDraw.draw();
+//          emojiDraw.draw(); //call to draw the visual respresentation
 
         } catch (NoSuchAlgorithmException e) {
             System.out.println(e);
