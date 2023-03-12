@@ -25,6 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -36,12 +37,14 @@ import java.util.Objects;
 public class QRDetailGeneralFragment extends Fragment{
 
     private OnFragmentInteractionListener listener;
-    Bundle myGeneralBudle;
+    Bundle myGeneralBudle,sIState;
     TextInputLayout TIL;
     TextInputEditText name,points,visual;
     TextView textView;
     Date madeDate;
     String myDate,mode,oldName,QRvisual,QRpoints;
+
+    View gbview;
 
     private FirebaseFirestore db;
 
@@ -63,6 +66,7 @@ public class QRDetailGeneralFragment extends Fragment{
             oldName=myGeneralBudle.getString("qrID");
         }
 
+
     }
 
     /**
@@ -83,6 +87,7 @@ public class QRDetailGeneralFragment extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        gbview = getView();
     }
 
     /**
@@ -106,7 +111,7 @@ public class QRDetailGeneralFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_q_r_detail_general, container, false);
-
+        sIState= savedInstanceState;
         name = view.findViewById(R.id.qr_detail_general_qrtext_name);
         points = view.findViewById(R.id.qr_detail_general_qrtext_points);
         visual = view.findViewById(R.id.qr_detail_general_visual_text);
@@ -185,6 +190,79 @@ public class QRDetailGeneralFragment extends Fragment{
 
         // Inflate the layout for this fragment
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    /**
+     * resume
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    /**
+     * pause
+     */
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+    }
+
+    public void ActivityCallBack(View gView, String userName11,HashMap<String, Object> data){
+        TextInputEditText name,points;
+        TextView textView;Button button;
+        name = gView.findViewById(R.id.qr_detail_general_qrtext_name);
+        points = gView.findViewById(R.id.qr_detail_general_qrtext_points);
+        textView = gView.findViewById(R.id.qr_detail_general_qrtext_date);
+        TextInputEditText visual = gView.findViewById(R.id.qr_detail_general_visual_text);
+
+        button = gView.findViewById(R.id.qr_detail_general_elevatedButton);
+        name.setText((String)data.get("QRname"));
+        Object pt = data.get("points");
+        points.setText(String.valueOf(pt));
+        textView.setText((String)data.get("date"));
+        visual.setText((String)data.get("QVisual"));
+        TextInputLayout ttl = gView.findViewById(R.id.qr_detail_general_qrtext_name_layout);
+
+        if (Objects.equals((String) data.get("user"), userName11)){
+            ttl.setEnabled(true);
+            name.setEnabled(true);
+        } else {
+            ttl.setHelperText("");
+            ttl.setCounterEnabled(false);
+            ttl.setEnabled(false);
+            name.setEnabled(false);
+        }
+
+        // if not the creator disble change option
+        if (Objects.equals((String) data.get("user"), userName11)){
+            button.setEnabled(true);
+        }
     }
 
 }

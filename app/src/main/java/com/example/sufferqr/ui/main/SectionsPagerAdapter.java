@@ -2,6 +2,7 @@ package com.example.sufferqr.ui.main;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -82,9 +83,10 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         return 3;
     }
 
-    public void infoCallBack(String userName,HashMap<String, Object> data){
-
+    public void infoCallBack(View generalView,View imageView, String userName, HashMap<String, Object> data){
+        qrDetailGeneralFragment.ActivityCallBack(generalView, userName,data);
         qrDetailLocationFragment.ActivityCallBack(userName,data);
+        qrDetailImageFragment.ActivityCallBack(imageView,userName,data);
     }
 
 }
