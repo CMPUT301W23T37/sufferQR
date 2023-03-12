@@ -37,6 +37,12 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 
 //extends FragmentActivity,Drawerbase implements OnMapReadyCallback
+
+/**
+ * map that users location is shown
+ * marker that represents the nearby QR code
+ * when the marker is clicked, the QR code name and points are shown
+ */
 public class MapsActivity extends DrawerBase implements OnMapReadyCallback {
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
@@ -73,15 +79,7 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback {
 
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
+    
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -149,7 +147,9 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback {
 
 
 
-
+        /**
+         * when list of nearby QR clicked, change to list activity
+         */
         // if list of nearby QR clicked, change to list activity
         binding.nearbylist.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,6 +163,12 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback {
 
     }
 
+    /**
+     * check if the location is within 1km of the current location
+     * @param location1
+     * @param location2
+     * @return true if within 1km, false if not
+     */
     public boolean isWithinOneKilometer(LatLng location1, LatLng location2) {
         final int R = 6371; // Radius of the earth in km
         double latDistance = Math.toRadians(location2.latitude - location1.latitude);
