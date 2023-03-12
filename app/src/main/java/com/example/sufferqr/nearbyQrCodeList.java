@@ -9,6 +9,7 @@ import androidx.core.app.ActivityCompat;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -21,6 +22,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,7 +51,13 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
     ArrayList<QrCode> qrCodeDataList;
     QrCode selectQrCode;
 
+    private Button buttonBack;
 
+    /*
+    get the location of current user
+    get those useful QRcode from firebase
+    @see list which tells us those nearby QRcode.
+     */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +74,6 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
             ActivityCompat.requestPermissions(nearbyQrCodeList.this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, 100);
         }
 
-        getLocation();
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         latitude = location.getLatitude();
@@ -146,14 +153,15 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
                 myFragment.show(getSupportFragmentManager(),"Detail of QR");
             }
         });
-    }
 
-    @SuppressLint("MissingPermission")
-    private void getLocation() {
-
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, nearbyQrCodeList.this);
-
+        buttonBack = findViewById(R.id.back_button);
+        buttonBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(nearbyQrCodeList.this, MapsActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -163,6 +171,15 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
 
     }
 
+    /*
+    check whether the given QRcode is in the required area (the distance between
+    the current user and the given QRcode is less than 1km).
+    @param userLatitude: a double which represent the latitude of current user
+    @param userLongitude: a double which represent the longitude of current user
+    @param qrLatitude: a double which represent the latitude of nearby QRcode.
+    @param qrLongitude: a double which represent the longitude of nearby QRcode.
+    @return return the boolean that represented whether in the required area.
+     */
     public boolean isWithinOneKilometer(double userLatitude, double userLongitude, double qrLatitude, double qrLongitude) {
         final int R = 6371; // Radius of the earth in km
         double latDistance = Math.toRadians(userLatitude - qrLatitude);

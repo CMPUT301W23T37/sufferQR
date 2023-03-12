@@ -51,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicMarkableReference;
@@ -106,7 +107,10 @@ public class GameQrRecordDB {
                                     @Override
                                     public void onSuccess(Void aVoid) {
                                         // These are a method which gets executed when the task is succeeded
-                                        PlayerProfileUpdate(UserName);
+                                        String name = (String) data.get("user");
+                                        if (!Objects.equals(name, "testing")) {
+                                            PlayerProfileUpdate(UserName);
+                                        }
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override
@@ -182,6 +186,11 @@ public class GameQrRecordDB {
                     int iRand = (int) rand.nextInt(ListOfWord.size());
                     MyName2 = MyName2 + ListOfWord.get(iRand);
                 }
+                if (data.containsKey("QRname")) {
+                    data.replace("QRname",MyName2);
+                } else {
+                    data.put("QRname",MyName2);
+                }
                 boolean unique = false;
                 CheckUnique(MyName2,true,data);
 
@@ -218,7 +227,10 @@ public class GameQrRecordDB {
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()){
 //                                    listener.onSendingUpdate("delete sucess",true);
-                                    PlayerProfileUpdate(UserName);
+                                    String name = (String) myData.get("user");
+                                    if (!Objects.equals(name, "testing")){
+                                        PlayerProfileUpdate(UserName);
+                                    }
                                 } else {
 //                                    listener.onSendingUpdate("delete failed",false);
                                 }
@@ -260,7 +272,10 @@ public class GameQrRecordDB {
                                 if (task.isSuccessful()){
                                     System.out.println("update sucessfull");
 //                                    listener.onSendingUpdate("update sucessfull",true);
-                                    PlayerProfileUpdate(UserName);
+                                    String name = (String) data.get("user");
+                                    if (!Objects.equals(name, "testing")) {
+                                        PlayerProfileUpdate(UserName);
+                                    }
                                 }else {
 //                                    listener.onSendingUpdate("try again",false);
                                 }
@@ -282,7 +297,7 @@ public class GameQrRecordDB {
     /**
      * new iamge push to firestone
      */
-    public void imagePushFirestone(HashMap<String,Object> ns,Uri imageUri, String userName, String QRname, ContentResolver cr){
+    public void imagePushFirestone(HashMap<String,Object> ns,Uri imageUri, String userName, ContentResolver cr){
         data = ns;
         Bitmap bitmap =null;
         if (imageUri!=null){
@@ -327,12 +342,13 @@ public class GameQrRecordDB {
                     // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
                     // ...
                     HashMapValidate("QRpath",Path);
-
-                    if (QRname.length()==0){
+                    String ns = (String) data.get("QRname");
+                    if (ns ==null) {
                         NewQRWithRandomGeneratedWords("",data);
-
+                    } else if (ns.length()==0){
+                        NewQRWithRandomGeneratedWords("",data);
                     } else {
-                       CheckUnique(QRname,true,data);
+                       CheckUnique(ns,true,data);
                     }
                 }
             });
@@ -351,10 +367,13 @@ public class GameQrRecordDB {
             }
 
             HashMapValidate("QRpath","");
-            if (QRname.length()==0){
+            String ns2 = (String) data.get("QRname");
+            if (ns2 ==null) {
+                NewQRWithRandomGeneratedWords("",data);
+            } else if (ns2.length()==0){
                 NewQRWithRandomGeneratedWords("",data);
             } else {
-                CheckUnique(QRname,true,data);
+                CheckUnique(ns2,true,data);
             }
         }
 
