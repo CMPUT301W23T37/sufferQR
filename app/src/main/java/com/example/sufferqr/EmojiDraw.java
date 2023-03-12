@@ -111,8 +111,8 @@ public class EmojiDraw {
 
         }
 
-        String[] leftEar = featuresDict.get(qrHash.substring(6, 8));
-        String[] rightEar = featuresDict.get(qrHash.substring(8, 10));
+        String[] leftEarLine = featuresDict.get(qrHash.substring(6, 8));
+        String[] rightEarLine = featuresDict.get(qrHash.substring(8, 10));
         String[] eyebrows = featuresDict.get(qrHash.substring(2, 4));
         String[] eyes = featuresDict.get(qrHash.substring(10, 12));
         String[] nose = featuresDict.get(Integer.toString(noseIndex));

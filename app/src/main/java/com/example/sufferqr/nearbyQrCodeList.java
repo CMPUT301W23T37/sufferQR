@@ -74,7 +74,6 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
             ActivityCompat.requestPermissions(nearbyQrCodeList.this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, 100);
         }
 
-        getLocation();
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         latitude = location.getLatitude();
@@ -164,25 +163,14 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
             }
         });
     }
-    /*
-    get location
-     */
-    @SuppressLint("MissingPermission")
-    private void getLocation() {
 
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, nearbyQrCodeList.this);
-
-    }
-    /*
-    get the latitude and longitude of current user.
-     */
     @Override
     public void onLocationChanged(@NonNull Location location) {
         latitude = location.getLatitude();  // get current lat
         longitude = location.getLongitude();  // get current lon
 
     }
+
     /*
     check whether the given QRcode is in the required area (the distance between
     the current user and the given QRcode is less than 1km).
