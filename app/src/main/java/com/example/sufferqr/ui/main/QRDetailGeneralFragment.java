@@ -195,46 +195,6 @@ public class QRDetailGeneralFragment extends Fragment{
         return view;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    /**
-     * resume
-     */
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    /**
-     * pause
-     */
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-    }
 
     public void ActivityCallBack(View gView, String userName11,HashMap<String, Object> data){
         TextInputEditText name,points;
