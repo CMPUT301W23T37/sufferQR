@@ -83,7 +83,7 @@
         android:layout_height="wrap_content"
         android:minWidth="80dp"
         android:background="@drawable/small_percentage_grey"
-        android:text="@string/zero"
+        android:text="+0%"
         android:textColor="@color/black"
         android:textStyle="bold"
         android:fontFamily="@font/amaranth"
