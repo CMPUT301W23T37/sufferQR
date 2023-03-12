@@ -177,13 +177,13 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                     HashMapValidate("user", userName);
                     HashMapValidate("time", new Date());
                     GameQrRecordDB DBconnect = new GameQrRecordDB();
-                    DBconnect.imagePushFirestone(data,imageUri,userName,QRname,getContentResolver());
+                    DBconnect.imagePushFirestone(data,imageUri,userName,getContentResolver());
                     finish();
                 }  else {
                     HashMapValidate("user", userName);
                     HashMapValidate("time", new Date());
                     GameQrRecordDB DBconnect = new GameQrRecordDB();
-                    DBconnect.imagePushFirestone(data,imageUri,userName,QRname,getContentResolver());
+                    DBconnect.imagePushFirestone(data,imageUri,userName,getContentResolver());
                     finish();
                 }
             } else if (mode.equals("modified")){
