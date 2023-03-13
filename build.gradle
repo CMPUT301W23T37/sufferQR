@@ -16,6 +16,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:7.4.1'
         classpath 'com.google.gms:google-services:4.3.15'
+        classpath 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin:2.0.1'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -23,6 +24,8 @@ buildscript {
 }
 allprojects {
     repositories {
+        maven { url 'https://jitpack.io' }
+
         google()
         mavenCentral()
         maven {
@@ -35,7 +38,7 @@ allprojects {
                 // This should always be `mapbox` (not your username).
                 username = "mapbox"
                 // Use the secret token you stored in gradle.properties as the password
-                password = "sk.eyJ1Ijoiem1haTEzMDEiLCJhIjoiY2xlZHdienllMGF1dTQ0cXFwemh0aTZ1ayJ9.BVpDknd0Kp-QKGZhKxbZSw"
+                password = "sk.eyJ1Ijoiem1haTEzMDEiLCJhIjoiY2xmNmVuc3dsMWxhODQzcnFhc3VmMHdyYiJ9.AVnrSp5MGgADZjCr3FSRgA"
             }
         }
     }

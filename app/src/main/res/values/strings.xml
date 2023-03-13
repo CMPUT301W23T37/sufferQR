@@ -10,7 +10,7 @@
     <string name="tab_text_1">General</string>
     <string name="tab_text_2">Image</string>
     <string name="tab_text_3">Location</string>
-    <string name="mapbox_access_token">pk.eyJ1Ijoiem1haTEzMDEiLCJhIjoiY2xlYXRjdmZhMG1lOTNwbzljMmdvbDEyeCJ9.rmhZUTFBNaem1p3LoUmepA</string>
+    <string name="mapbox_access_token">pk.eyJ1Ijoiem1haTEzMDEiLCJhIjoiY2xmNmVtMDA4MHMwbzNzcXJjZ3M3Mzh4OCJ9.PNQG4m4kDucnzcQdSMqQ9Q</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="activity_qrdetail_waiting">waiting...</string>
@@ -27,5 +27,18 @@
     <string name="total_qr_string">Total QR Scanned:</string>
     <string name="highest_string">Highest Score</string>
     <string name="last_scan_string">Last Scan</string>
+
+    <string name="your_rank_string">Your Rank</string>
+    <string name="last_scan_number">+%s</string>
+    <string name="point_percent">+%s\%%</string>
+    <string name="zero">0</string>
+    <string name="none">None</string>
+
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="scan_code_photo_library">photo library</string>
+    <string name="scna_code_return">Return</string>
+    <string name="scan_code_go">GO</string>
+    <string name="scan_code_focus_your_camerea_to_a_qr_code">focus your camerea to a QR code</string>
+
 
 </resources>

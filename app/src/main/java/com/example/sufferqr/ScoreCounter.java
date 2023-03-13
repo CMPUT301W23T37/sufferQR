@@ -1,29 +1,37 @@
 package com.example.sufferqr;
+import java.util.HashMap;
 
-import java.math.BigInteger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class ScoreCounter {
 
-        private String hexString;
+    private String qrhash;
 
-        public ScoreCounter(String qrCode) {
-            // Convert the QR code to a hexadecimal string
-            BigInteger qrBigInt = new BigInteger(qrCode, 16);
-            this.hexString = qrBigInt.toString(16);
-        }
+    public ScoreCounter(String qrhash) {
+        this.qrhash = qrhash;
+    }
 
-        public int getScore() {
-            int score = 0;
-            // Use regex to find repeated digits and count them
-            Pattern pattern = Pattern.compile("(.)\\1{2,}");
-            Matcher matcher = pattern.matcher(hexString);
-            while (matcher.find()) {
-                int count = matcher.group().length();
-                score += (count - 1) * 10; // Add 10 points for each repeated digit after the first
+    public int calculateScore() {
+        HashMap<Character, Integer> charCount = new HashMap<Character, Integer>();
+        int score = 0;
+
+        // Count the number of occurrences of each character in the qrhash
+        for (char c : qrhash.toCharArray()) {
+            if (charCount.containsKey(c)) {
+                charCount.put(c, charCount.get(c) + 1);
+            } else {
+                charCount.put(c, 1);
             }
-            return score;
         }
+
+        // Calculate the score based on the number of occurrences of each character
+        for (char c : charCount.keySet()) {
+            int count = charCount.get(c);
+            if (count > 1) {
+                score += (int) c * count;
+            }
+        }
+
+        return score;
+    }
 
 }
