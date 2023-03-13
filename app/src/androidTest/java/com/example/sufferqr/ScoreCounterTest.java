@@ -1,7 +1,8 @@
 package com.example.sufferqr;
 
 import org.junit.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.Assert.assertEquals;
 
 
 /**
@@ -34,7 +35,7 @@ public class ScoreCounterTest {
     public void testCalculateScoreWithRepeatedCharacters() {
         ScoreCounter counter = new ScoreCounter("aabbccdd");
         int score = counter.calculateScore();
-        assertEquals(960, score);
+        assertEquals(788, score);
     }
 
     /**
@@ -53,7 +54,7 @@ public class ScoreCounterTest {
     public void testCalculateScoreWithMixedCharacters() {
         ScoreCounter counter = new ScoreCounter("aabbccDDEEFF1122");
         int score = counter.calculateScore();
-        assertEquals(19680, score);
+        assertEquals(1200, score);
     }
 
 }

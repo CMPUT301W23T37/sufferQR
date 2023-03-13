@@ -21,6 +21,7 @@ public class EmojiDraw {
 
     /**
      * draws the visual representation using a 2D array
+     * @return face string
      */
     //prints the visual representation
     public String draw() {

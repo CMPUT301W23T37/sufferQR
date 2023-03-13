@@ -252,8 +252,6 @@ public class GameQrRecordDB {
      * update document informatuin
      * @param ID qr name
      * @param data details
-     * @return
-     * null
      */
     public void ChangeQrInfo(String ID,HashMap<String, Object> data){
         db = FirebaseFirestore.getInstance();
