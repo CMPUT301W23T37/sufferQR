@@ -74,14 +74,11 @@ public class GameQrRecordDB {
     }
 
 
-
-
     /**
      * check if user id if unique if it is ,push it to db
-     * @param data qrdata
-     * @param RetryIfFail add new sting on the back if conflict
      * @param name qrname
-     * null
+     * @param RetryIfFail add staff if confilct
+     * @param data details
      */
     public void CheckUnique(String name,boolean RetryIfFail,HashMap<String, Object> data) {
         db = FirebaseFirestore.getInstance();
@@ -211,7 +208,7 @@ public class GameQrRecordDB {
     /**
      * delete Database information
      * @param ID qrname
-     * @param myData qedata
+     * @param myData qrdata
      * null
      */
     public void DelteQrInfo(String ID,HashMap<String,Object> myData){
@@ -253,8 +250,10 @@ public class GameQrRecordDB {
 
     /**
      * update document informatuin
-     * @param data qrdetail
-     * @param ID qrname
+     * @param ID qr name
+     * @param data details
+     * @return
+     * null
      */
     public void ChangeQrInfo(String ID,HashMap<String, Object> data){
         db = FirebaseFirestore.getInstance();
@@ -300,10 +299,10 @@ public class GameQrRecordDB {
 
     /**
      * new iamge push to firestone
-     * @param userName username
-     * @param ns data
-     * @param imageUri saved image location
-     * @param cr content creatiour from activity
+     * @param cr contentresolver
+     * @param imageUri imageuri
+     * @param ns data details
+     * @param userName userName
      */
     public void imagePushFirestone(HashMap<String,Object> ns,Uri imageUri, String userName, ContentResolver cr){
         data = ns;
@@ -397,7 +396,7 @@ public class GameQrRecordDB {
 
     /**
      * delete a image in firestone
-     * @param s1  something
+     * @param s1 username
      */
     public void imageDelFirestone(String s1){
         StorageReference storageRef = storage.getReference();
@@ -419,6 +418,10 @@ public class GameQrRecordDB {
         });
     }
 
+    /**
+     * update profile name
+     * @param userName username
+     */
     public void PlayerProfileUpdate(String userName){
         final CollectionReference collectionReference = db.collection("Player");
         final Query qrCodeQuery= db.collection("GameQrCode").whereEqualTo("user",userName);

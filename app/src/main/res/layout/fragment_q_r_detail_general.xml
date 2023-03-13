@@ -148,7 +148,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginBottom="10sp"
                 android:inputType="textMultiLine"
-                android:textSize="13sp"
+                android:textSize="6sp"
                 android:hint="@string/qr_detail_general_visual_text_tittle"
 
                 app:layout_constraintBottom_toBottomOf="parent"

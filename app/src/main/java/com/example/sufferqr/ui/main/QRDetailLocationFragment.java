@@ -155,16 +155,19 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
     @SuppressWarnings( {"MissingPermission"})
     public void onMapReady(@NonNull MapboxMap mapboxMap) {
         QRDetailLocationFragment.this.mapboxMap = mapboxMap;
-        mapboxMap.setStyle(Style.MAPBOX_STREETS, style -> {
-            // Add a marker on the map's center/"target" for the place picker UI
-            ImageView hoveringMarker = new ImageView(requireContext());
-            hoveringMarker.setImageResource(R.drawable.ic_red_dot);
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
-            hoveringMarker.setLayoutParams(params);
-            mapView.addView(hoveringMarker);
 
+        mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
+            @Override
+            public void onStyleLoaded(@NonNull Style style) {
+                // Add a marker on the map's center/"target" for the place picker UI
+                ImageView hoveringMarker = new ImageView(requireContext());
+                hoveringMarker.setImageResource(R.drawable.ic_red_dot);
+                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
+                hoveringMarker.setLayoutParams(params);
+                mapView.addView(hoveringMarker);
+            }
         });
         // ccis
         CameraPosition position = new CameraPosition.Builder()
@@ -238,11 +241,16 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
 
         // init with mapwill to university of alberta ccis
         // Initialize the mapboxMap view
-        mapView= view.findViewById(R.id.qr_detail_location_content_map_view);
+        mapView= (MapView) view.findViewById(R.id.qr_detail_location_content_map_view);
+        //mapView= view.findViewById(R.id.qr_detail_location_content_map_view);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
-        listener.onLocationUpdate(mapboxMap,true,0.0,0.0,"","");
+        if (Objects.equals(mode, "new")){
+            listener.onLocationUpdate(mapboxMap,true,0.0,0.0,"","");
+        }else{
+            listener.onLocationUpdate(mapboxMap,true,0.0,0.0,"","");
+        }
 
         if (Objects.equals(mode, "visitor")){
             locEnable.setEnabled(false);
@@ -368,6 +376,18 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
         });
     }
 
+
+    /**
+     * settings setup
+     */
+    private void openSettings(){
+        Intent intent = new Intent();
+        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package",getContext().getPackageName(),null);
+        intent.setData(uri);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
 
     /**
      * confirm permission and launch finding user location

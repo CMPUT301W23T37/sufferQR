@@ -77,8 +77,9 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
     SectionsPagerAdapter sectionsPagerAdapter;
 
 
-              /**
-   * it start when class create detect the class from, and show different ele,emts
+  /**
+   * it start when class create detect the class from, and show different elemts
+   * @param savedInstanceState save state
    */
 
     @Override
@@ -278,6 +279,8 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
 
   /**
    * if a key exist override,if not delete
+   * @param id name
+   * @param ob thing to store
    */
     private void HashMapValidate(String id,Object ob){
         if (data.containsKey(id)) {
@@ -289,6 +292,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
 
   /**
    * sync input from the user in image tab at other mode
+   * @param imageOn boolean
    */
     @Override
     public void onImageUpdate(Boolean imageOn) {
@@ -297,6 +301,12 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
 
   /**
    * sync input from the user in location tab at new mode
+   * @param mapboxMap mapbox details
+   * @param btOn button
+   * @param longitude location
+   * @param latitude location
+   * @param name name of poi
+   * @param address full mailing address
    */
     @Override
     public void onLocationUpdate(MapboxMap mapboxMap,Boolean btOn, Double longitude, Double latitude, String name, String address) {
@@ -318,6 +328,8 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
 
   /**
    * sync input from the user in general tab at new mode
+   * @param QRcodename name
+   * @param today time
    */
     @Override
     public void onGeneralUpdate(String QRcodename,String today) {
@@ -328,6 +340,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
 
   /**
    * delete request in general tab at modifier mode
+   * @param delreq delte request
    */
     @Override
     public void onGeneralUpdate(Boolean delreq) {

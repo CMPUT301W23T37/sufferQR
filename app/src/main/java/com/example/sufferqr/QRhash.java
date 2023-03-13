@@ -11,7 +11,7 @@ import java.security.NoSuchAlgorithmException;
 //Author: Ayushya Gupta
 
 /**
- * calculating a string hash
+ * give hash of a string
  */
 class  QRHash {
     public static byte[] getSHA(String input) throws NoSuchAlgorithmException
