@@ -63,6 +63,9 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * reconize of qr code taken,and a photo of sorrounds and send to qrdetailactivity
+ */
 public class ScanCode extends DrawerBase {
     // https://medium.com/swlh/introduction-to-androids-camerax-with-java-ca384c522c5
     // https://developers.google.com/ml-kit/vision/barcode-scanning/android

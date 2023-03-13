@@ -1,7 +1,9 @@
 package com.example.sufferqr;
 import java.util.HashMap;
 
-
+/**
+ * qrcode points calcuate
+ */
 public class ScoreCounter {
 
     private String qrhash;

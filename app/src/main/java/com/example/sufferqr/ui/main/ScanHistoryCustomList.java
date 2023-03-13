@@ -25,7 +25,8 @@ public class ScanHistoryCustomList extends ArrayAdapter<ScanHistoryQRRecord> {
 
     /**
      * set up list item
-     *
+     * @param context context
+     * @param qrrecord qrrecord showing
      */
     public ScanHistoryCustomList(Context context, ArrayList<ScanHistoryQRRecord> qrrecord){
         super(context,0, qrrecord);

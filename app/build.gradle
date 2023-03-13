@@ -43,6 +43,7 @@ android {
 }
 
 dependencies {
+    implementation files("C:\\Users\\birdd\\AppData\\Local\\Android\\Sdk\\platforms\\android-33\\android.jar")
     // GeoFirebase
     implementation 'com.github.imperiumlabs:GeoFirestore-Android:v1.5.0'
 

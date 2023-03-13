@@ -42,6 +42,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * a list for showing nearby qr list
+ */
 public class nearbyQrCodeList extends AppCompatActivity implements LocationListener {
     private Double latitude,longitude;
     private LocationManager locationManager;
@@ -53,12 +56,11 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
 
     private Button buttonBack;
 
-    /*
+    /**
     get the location of current user
     get those useful QRcode from firebase
-    @see list which tells us those nearby QRcode.
+    @see nearbyQrCodeList which tells us those nearby QRcode.
      */
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -171,7 +173,7 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
 
     }
 
-    /*
+    /**
     check whether the given QRcode is in the required area (the distance between
     the current user and the given QRcode is less than 1km).
     @param userLatitude: a double which represent the latitude of current user

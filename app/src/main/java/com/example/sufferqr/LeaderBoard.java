@@ -6,6 +6,9 @@ import android.os.Bundle;
 
 import com.example.sufferqr.databinding.ActivityLeaderBoardBinding;
 
+/**
+ * leadboard
+ */
 public class LeaderBoard extends DrawerBase {
     ActivityLeaderBoardBinding activityLeaderBoardBinding;
     @Override

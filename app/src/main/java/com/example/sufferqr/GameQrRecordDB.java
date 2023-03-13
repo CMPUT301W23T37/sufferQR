@@ -78,7 +78,9 @@ public class GameQrRecordDB {
 
     /**
      * check if user id if unique if it is ,push it to db
-     * @return
+     * @param data qrdata
+     * @param RetryIfFail add new sting on the back if conflict
+     * @param name qrname
      * null
      */
     public void CheckUnique(String name,boolean RetryIfFail,HashMap<String, Object> data) {
@@ -130,7 +132,8 @@ public class GameQrRecordDB {
 
     /**
      * Download a random name text from clound and random slect one and push new qr code to database
-     * @return
+     * @param name qrname
+     * @param data qrdata
      * null
      */
     public void NewQRWithRandomGeneratedWords(String name,HashMap<String, Object> data)  {
@@ -207,7 +210,8 @@ public class GameQrRecordDB {
 
     /**
      * delete Database information
-     * @return
+     * @param ID qrname
+     * @param myData qedata
      * null
      */
     public void DelteQrInfo(String ID,HashMap<String,Object> myData){
@@ -249,8 +253,8 @@ public class GameQrRecordDB {
 
     /**
      * update document informatuin
-     * @return
-     * null
+     * @param data qrdetail
+     * @param ID qrname
      */
     public void ChangeQrInfo(String ID,HashMap<String, Object> data){
         db = FirebaseFirestore.getInstance();
@@ -296,6 +300,10 @@ public class GameQrRecordDB {
 
     /**
      * new iamge push to firestone
+     * @param userName username
+     * @param ns data
+     * @param imageUri saved image location
+     * @param cr content creatiour from activity
      */
     public void imagePushFirestone(HashMap<String,Object> ns,Uri imageUri, String userName, ContentResolver cr){
         data = ns;
@@ -389,6 +397,7 @@ public class GameQrRecordDB {
 
     /**
      * delete a image in firestone
+     * @param s1  something
      */
     public void imageDelFirestone(String s1){
         StorageReference storageRef = storage.getReference();

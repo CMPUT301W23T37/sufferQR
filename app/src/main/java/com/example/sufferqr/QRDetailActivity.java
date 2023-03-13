@@ -50,6 +50,9 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * qr code details reviewing,including location,image,name,points.etc
+ */
 public class QRDetailActivity extends AppCompatActivity implements QRDetailLocationFragment.OnFragmentInteractionListener,
         QRDetailImageFragment.OnFragmentInteractionListener, QRDetailGeneralFragment.OnFragmentInteractionListener
           {

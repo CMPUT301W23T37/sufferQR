@@ -2,6 +2,9 @@ package com.example.sufferqr;
 
 import java.util.Random;
 
+/**
+ * draw photo for visuals
+ */
 public class EmojiDraw {
     private final String qrhash;
     private final String[][] face;

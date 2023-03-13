@@ -14,6 +14,9 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
+/**
+ * qrcode nearby list each item uidrawing
+ */
 public class QrCodeList extends ArrayAdapter<QrCode> {
 
     private ArrayList<QrCode> qrCodes;
