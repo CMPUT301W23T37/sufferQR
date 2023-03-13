@@ -130,8 +130,7 @@ public class GameQrRecordDB {
     /**
      * Download a random name text from clound and random slect one and push new qr code to database
      * @param name qrname
-     * @param data deatils
-     * @return
+     * @param data qrdata
      * null
      */
     public void NewQRWithRandomGeneratedWords(String name,HashMap<String, Object> data)  {
@@ -209,8 +208,7 @@ public class GameQrRecordDB {
     /**
      * delete Database information
      * @param ID qrname
-     * @param myData details
-     * @return none
+     * @param myData qrdata
      * null
      */
     public void DelteQrInfo(String ID,HashMap<String,Object> myData){

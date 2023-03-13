@@ -6,6 +6,9 @@ import android.os.Bundle;
 
 import com.example.sufferqr.databinding.ActivitySearchPlayerBinding;
 
+/**
+ * search player
+ */
 public class SearchPlayer extends DrawerBase {
 
     ActivitySearchPlayerBinding activitySearchPlayerBinding;

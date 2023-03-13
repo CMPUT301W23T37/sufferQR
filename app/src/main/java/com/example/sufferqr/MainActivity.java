@@ -29,6 +29,9 @@ import android.widget.Button;
 import java.io.IOException;
 import java.util.HashMap;
 
+/**
+ * currently not in use
+ */
 public class MainActivity extends AppCompatActivity {
 
     public DrawerLayout drawerLayout;

@@ -33,6 +33,9 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     /**
      * setup page adapter
+     * @param context context
+     * @param fm fragment manger
+     * @param myBundle activity to context transferring
      */
     public SectionsPagerAdapter(Context context, FragmentManager fm,Bundle myBundle) {
         super(fm);

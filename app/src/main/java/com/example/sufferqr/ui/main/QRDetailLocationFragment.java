@@ -148,7 +148,7 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
 
     /**
      * setup map
-     * @param mapboxMap An instance of MapboxMap associated with the or
+     * @param mapboxMap An instance of MapboxMap associated with the  or
      *                  {@link MapView} that defines the callback.
      */
     @Override
