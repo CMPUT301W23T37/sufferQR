@@ -74,12 +74,11 @@ public class GameQrRecordDB {
     }
 
 
-
-
     /**
      * check if user id if unique if it is ,push it to db
-     * @return
-     * null
+     * @param name qrname
+     * @param RetryIfFail add staff if confilct
+     * @param data details
      */
     public void CheckUnique(String name,boolean RetryIfFail,HashMap<String, Object> data) {
         db = FirebaseFirestore.getInstance();
@@ -130,6 +129,8 @@ public class GameQrRecordDB {
 
     /**
      * Download a random name text from clound and random slect one and push new qr code to database
+     * @param name qrname
+     * @param data deatils
      * @return
      * null
      */
@@ -207,7 +208,9 @@ public class GameQrRecordDB {
 
     /**
      * delete Database information
-     * @return
+     * @param ID qrname
+     * @param myData details
+     * @return none
      * null
      */
     public void DelteQrInfo(String ID,HashMap<String,Object> myData){
@@ -249,6 +252,8 @@ public class GameQrRecordDB {
 
     /**
      * update document informatuin
+     * @param ID qr name
+     * @param data details
      * @return
      * null
      */
@@ -296,6 +301,10 @@ public class GameQrRecordDB {
 
     /**
      * new iamge push to firestone
+     * @param cr contentresolver
+     * @param imageUri imageuri
+     * @param ns data details
+     * @param userName userName
      */
     public void imagePushFirestone(HashMap<String,Object> ns,Uri imageUri, String userName, ContentResolver cr){
         data = ns;
@@ -389,6 +398,7 @@ public class GameQrRecordDB {
 
     /**
      * delete a image in firestone
+     * @param s1 username
      */
     public void imageDelFirestone(String s1){
         StorageReference storageRef = storage.getReference();
@@ -410,6 +420,10 @@ public class GameQrRecordDB {
         });
     }
 
+    /**
+     * update profile name
+     * @param userName username
+     */
     public void PlayerProfileUpdate(String userName){
         final CollectionReference collectionReference = db.collection("Player");
         final Query qrCodeQuery= db.collection("GameQrCode").whereEqualTo("user",userName);

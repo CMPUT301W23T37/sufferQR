@@ -35,7 +35,7 @@ public class ScanHistoryCustomList extends ArrayAdapter<ScanHistoryQRRecord> {
 
     /**
      * load each list item to its ui
-     *
+     * @param position touched position
      */
     @NonNull
     @Override

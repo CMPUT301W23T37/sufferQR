@@ -2,16 +2,27 @@ package com.example.sufferqr;
 
 import java.util.Random;
 
+/**
+ * draw visual
+ */
 public class EmojiDraw {
     private final String qrhash;
     private final String[][] face;
-    
+
+    /**
+     * start class
+     * @param qrhash
+     */
     //input
     public EmojiDraw(String qrhash) {
         this.qrhash = qrhash;
         this.face = generateFace();
     }
 
+    /**
+     * draw class
+     * @return emoji class
+     */
     //prints the visual representation
     public String draw() {
         int sizeX = face[0].length;
@@ -34,7 +45,7 @@ public class EmojiDraw {
                System.out.print(" ");
             }
             for (int j = 0; j < sizeX; j++) {
-                String sa= face[i][j].toString();
+                String sa= face[i][j];
                 output.append(sa);
                System.out.print(face[i][j]);
             }
@@ -43,8 +54,11 @@ public class EmojiDraw {
         }
         return output.toString();
     }
-    
-    //generates the face itself
+
+    /**
+    * generates the face itself
+     * @return string
+     * */
     private String[][] generateFace() {
         Random random = new Random(qrhash.hashCode());
         int sizeY = 13 + random.nextInt(5); // random size between 13 and 18 for the y-axis
