@@ -3,7 +3,9 @@ package com.example.sufferqr;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+/**
+ * Tests the EmojiDraw class to make sure it functions properlu
+ */
 public class EmojiDrawTest {
 
     /**
