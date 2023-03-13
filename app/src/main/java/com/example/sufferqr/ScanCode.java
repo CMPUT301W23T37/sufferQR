@@ -17,6 +17,7 @@ import androidx.lifecycle.LifecycleOwner;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -78,6 +79,8 @@ public class ScanCode extends DrawerBase {
 
     Boolean foundQR;
 
+    ProgressDialog progressDialog;
+
     /**
      * create view
      */
@@ -97,7 +100,6 @@ public class ScanCode extends DrawerBase {
         Intent myNewIntent = getIntent();
         userName = myNewIntent.getStringExtra("user");
         foundQR=false;
-
 
 
         // check if camera allowed
@@ -171,7 +173,7 @@ public class ScanCode extends DrawerBase {
         try {
             hashed =  QRHash.toHexString(QRHash.getSHA(QRstring));
             EmojiDraw emojiDraw = new EmojiDraw(hashed);
-//            face = emojiDraw.draw();
+//          emojiDraw.draw(); //call to draw the visual respresentation
 
         } catch (NoSuchAlgorithmException e) {
             System.out.println(e);
