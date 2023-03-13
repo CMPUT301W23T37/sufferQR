@@ -10,6 +10,9 @@ import java.security.NoSuchAlgorithmException;
 //Title: SHA-256 Hash in Java
 //Author: Ayushya Gupta
 
+/**
+ * give hash of a string
+ */
 class  QRHash {
     public static byte[] getSHA(String input) throws NoSuchAlgorithmException
     {

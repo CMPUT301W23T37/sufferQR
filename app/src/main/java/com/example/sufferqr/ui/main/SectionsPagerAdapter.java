@@ -43,7 +43,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     /**
      * return correct fragment
-     * @param currently clicked location
+     * @param position currently clicked location
      */
     @NonNull
     @Override
