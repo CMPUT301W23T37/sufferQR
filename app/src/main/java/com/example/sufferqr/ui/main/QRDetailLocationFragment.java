@@ -156,7 +156,7 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
     public void onMapReady(@NonNull MapboxMap mapboxMap) {
         QRDetailLocationFragment.this.mapboxMap = mapboxMap;
 
-        mapboxMap.setStyle(Style.SATELLITE_STREETS, new Style.OnStyleLoaded() {
+        mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
             @Override
             public void onStyleLoaded(@NonNull Style style) {
                 // Add a marker on the map's center/"target" for the place picker UI

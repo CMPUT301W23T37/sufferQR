@@ -10,7 +10,7 @@
     <string name="tab_text_1">General</string>
     <string name="tab_text_2">Image</string>
     <string name="tab_text_3">Location</string>
-    <string name="mapbox_access_token">pk.eyJ1Ijoiem1haTEzMDEiLCJhIjoiY2xlYXRjdmZhMG1lOTNwbzljMmdvbDEyeCJ9.rmhZUTFBNaem1p3LoUmepA</string>
+    <string name="mapbox_access_token">pk.eyJ1Ijoiem1haTEzMDEiLCJhIjoiY2xmNmVtMDA4MHMwbzNzcXJjZ3M3Mzh4OCJ9.PNQG4m4kDucnzcQdSMqQ9Q</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="activity_qrdetail_waiting">waiting...</string>
