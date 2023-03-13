@@ -3,15 +3,15 @@ package com.example.sufferqr;
 import java.util.Random;
 
 /**
- * draw visual
+ * Draws the visual representation of th QRcode
  */
 public class EmojiDraw {
     private final String qrhash;
     private final String[][] face;
 
     /**
-     * start class
-     * @param qrhash
+     * stars the class by taking qrhash as input and generating a face
+     * @param qrhash the hash value
      */
     //input
     public EmojiDraw(String qrhash) {
@@ -20,8 +20,7 @@ public class EmojiDraw {
     }
 
     /**
-     * draw class
-     * @return emoji class
+     * draws the visual representation using a 2D array
      */
     //prints the visual representation
     public String draw() {
@@ -56,7 +55,7 @@ public class EmojiDraw {
     }
 
     /**
-     * generates the face itself
+     * generates the face itself by using 2D arrays to combine alll the facial features into 1 2D list
      * @return string
      * */
     private String[][] generateFace() {
