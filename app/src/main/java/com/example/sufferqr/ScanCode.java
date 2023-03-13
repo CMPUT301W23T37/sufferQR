@@ -173,7 +173,7 @@ public class ScanCode extends DrawerBase {
         try {
             hashed =  QRHash.toHexString(QRHash.getSHA(QRstring));
             EmojiDraw emojiDraw = new EmojiDraw(hashed);
-//          emojiDraw.draw(); //call to draw the visual respresentation
+            face = emojiDraw.draw(); //call to draw the visual respresentation
 
         } catch (NoSuchAlgorithmException e) {
             System.out.println(e);
@@ -338,6 +338,16 @@ public class ScanCode extends DrawerBase {
         return mFileTemp;
     }
 
+    /**
+     * check permission status
+     * @param requestCode The request code passed in {@link (
+     * android.app.Activity, String[], int)}
+     * @param permissions The requested permissions. Never null.
+     * @param grantResults The grant results for the corresponding permissions
+     *     which is either {@link android.content.pm.PackageManager#PERMISSION_GRANTED}
+     *     or {@link android.content.pm.PackageManager#PERMISSION_DENIED}. Never null.
+     *
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
