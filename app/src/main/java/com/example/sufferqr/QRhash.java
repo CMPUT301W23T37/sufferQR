@@ -11,9 +11,15 @@ import java.security.NoSuchAlgorithmException;
 //Author: Ayushya Gupta
 
 /**
- * give hash of a string
+ * class provides hash value of a string in the form of hexidecimal values
  */
 class  QRHash {
+    /**
+     *turns the string input into a hash value in the form of a byte array
+     *@param input the input string
+     *@return the hash value as a byte array
+     *@throws NoSuchAlgorithmException if the specified algorithm is not available
+     */
     public static byte[] getSHA(String input) throws NoSuchAlgorithmException
     {
         // Static getInstance method is called with hashing SHA
@@ -24,7 +30,12 @@ class  QRHash {
         // and return array of byte
         return md.digest(input.getBytes(StandardCharsets.UTF_8));
     }
-
+    /**
+     *
+     *Converts a byte array into a hexadecimal string.
+     *@param hash the byte array to convert
+     *@return the hexadecimal representation of the byte array
+     */
     public static String toHexString(byte[] hash)
     {
         // Convert byte array into signum representation
