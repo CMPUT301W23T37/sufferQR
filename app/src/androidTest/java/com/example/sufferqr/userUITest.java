@@ -27,6 +27,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+/**
+ * user interface testing
+ */
 public class userUITest {
 
     private Solo solo;
@@ -38,7 +41,7 @@ public class userUITest {
     /**
      * Runs before all tests and creates solo instance.
      *
-     * @throws Exception
+     * @throws Exception something
      */
     @Before
     public void setUp() throws Exception {
@@ -48,7 +51,7 @@ public class userUITest {
     /**
      * Gets the Activity
      *
-     * @throws Exception
+     * @throws Exception something
      */
     @Test
     public void start() throws Exception {

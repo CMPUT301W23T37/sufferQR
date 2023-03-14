@@ -26,7 +26,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 
 /**
- * reconize qr code and take photo of sourrounds
+ * display scaned qrcode
  */
 public class ScanHistory extends DrawerBase {
 

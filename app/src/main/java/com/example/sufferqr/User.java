@@ -4,6 +4,9 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * user info saving
+ */
 public class User {
     private String username;
     private String email;

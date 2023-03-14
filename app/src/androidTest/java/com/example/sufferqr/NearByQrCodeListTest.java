@@ -12,6 +12,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+/**
+ * nearby qr list testing
+ */
+
 public class NearByQrCodeListTest {
     private Solo solo;
 
@@ -21,7 +25,7 @@ public class NearByQrCodeListTest {
     /**
      * Runs before all tests and creates solo instance.
      *
-     * @throws Exception
+     * @throws Exception something
      */
     @Before
     public void setUp() throws Exception {
@@ -31,7 +35,7 @@ public class NearByQrCodeListTest {
     /**
      * Gets the Activity
      *
-     * @throws Exception
+     * @throws Exception something
      */
     @Test
     public void start() throws Exception {
@@ -40,7 +44,7 @@ public class NearByQrCodeListTest {
 
     /**
      * Closes the activity after each test
-     * @throws Exception
+     * @throws Exception something
      */
     @After
     public void tearDown() throws Exception{

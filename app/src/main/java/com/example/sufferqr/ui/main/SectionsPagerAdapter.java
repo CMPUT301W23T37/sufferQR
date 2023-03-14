@@ -33,6 +33,9 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     /**
      * setup page adapter
+     * @param context context
+     * @param fm fragment manger
+     * @param myBundle activity to context transferring
      */
     public SectionsPagerAdapter(Context context, FragmentManager fm,Bundle myBundle) {
         super(fm);
@@ -43,7 +46,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     /**
      * return correct fragment
-     * @param currently clicked location
+     * @param position currently clicked location
      */
     @NonNull
     @Override
