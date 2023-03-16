@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".QRQuickViewScrollingActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/q_r_quick_view_app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:fitsSystemWindows="true"
+        app:layout_scrollFlags="scroll|exitUntilCollapsed"
+
+        android:theme="@style/Theme.SufferQR.AppBarOverlay">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/q_r_quick_view_toolbar_layout"
+            style="@style/Widget.MaterialComponents.Toolbar.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            app:contentScrim="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:toolbarId="@+id/q_r_quick_view_toolbar"
+            app:collapsedTitleGravity="start"
+            app:expandedTitleMarginBottom="200dp"
+            app:extraMultilineHeightEnabled="true"
+            >
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/q_r_quick_view_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/min_height"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/Theme.SufferQR.PopupOverlay"
+                app:menu="@menu/menu_q_r_quick_view_scrolling"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                />
+
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/points"
+                    android:gravity="end"
+                    android:layout_gravity="end|bottom"
+                    android:layout_marginEnd="50pt"
+                    android:layout_marginBottom="30pt"/>
+
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <include layout="@layout/q_r_quick_view_content_scrolling" />
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

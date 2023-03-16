@@ -374,6 +374,8 @@ public class ScanCode extends DrawerBase {
                     scanIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                     startActivity(scanIntent);
                     finish();
+
+
                 }
                 return;
         }

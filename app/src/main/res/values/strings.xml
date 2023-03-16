@@ -10,6 +10,7 @@
     <string name="tab_text_1">General</string>
     <string name="tab_text_2">Image</string>
     <string name="tab_text_3">Location</string>
+    <string name="tab_text_4">Comments</string>
     <string name="mapbox_access_token">pk.eyJ1Ijoiem1haTEzMDEiLCJhIjoiY2xmNmVtMDA4MHMwbzNzcXJjZ3M3Mzh4OCJ9.PNQG4m4kDucnzcQdSMqQ9Q</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -21,6 +22,7 @@
     <string name="qr_detail_general_visual_text_tittle">visual representation of yout QRcode</string>
     <string name="qrdetail_image_sign">QRCode content</string>
     <string name="temp_0">0</string>
+    <string name="large_text">0</string>
 
 
     <string name="total_points_string">Total Points:</string>
@@ -39,6 +41,11 @@
     <string name="scna_code_return">Return</string>
     <string name="scan_code_go">GO</string>
     <string name="scan_code_focus_your_camerea_to_a_qr_code">focus your camerea to a QR code</string>
+
+    <string name="title_activity_qrquick_view_scrolling">QRQuickViewScrollingActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="edit">Edit</string>
+    <string name="points">user name,points</string>
 
 
 </resources>

@@ -23,7 +23,7 @@ import com.example.sufferqr.databinding.ActivityQrdetailBinding;
 import com.example.sufferqr.ui.main.QRDetailGeneralFragment;
 import com.example.sufferqr.ui.main.QRDetailImageFragment;
 import com.example.sufferqr.ui.main.QRDetailLocationFragment;
-import com.example.sufferqr.ui.main.SectionsPagerAdapter;
+import com.example.sufferqr.ui.main.QRDetailSectionsPagerAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -74,7 +74,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
 
     ProgressDialog progressDialog;
 
-    SectionsPagerAdapter sectionsPagerAdapter;
+    QRDetailSectionsPagerAdapter qrDetailSectionsPagerAdapter;
 
 
   /**
@@ -134,10 +134,10 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         }
 
         // setup tabAdaper
-        sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager(),infoBundle);
-        int limit = (sectionsPagerAdapter.getCount() > 1 ? sectionsPagerAdapter.getCount() -1 : 1);// setuo all three tab alive,no kill
+        qrDetailSectionsPagerAdapter = new QRDetailSectionsPagerAdapter(this, getSupportFragmentManager(),infoBundle);
+        int limit = (qrDetailSectionsPagerAdapter.getCount() > 1 ? qrDetailSectionsPagerAdapter.getCount() -1 : 1);// setuo all three tab alive,no kill
         ViewPager viewPager = findViewById(R.id.qrdetail_view_pager); // binding.qrdetail_viewPager;
-        viewPager.setAdapter(sectionsPagerAdapter);
+        viewPager.setAdapter(qrDetailSectionsPagerAdapter);
         viewPager.setOffscreenPageLimit(limit);
         viewPager.beginFakeDrag(); // disable drag
 
@@ -259,7 +259,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                     ViewPager AllView = findViewById(R.id.qrdetail_view_pager);
                     View GeneralView = AllView.getChildAt(0);
                     View ImageView = AllView.getChildAt(1);
-                    sectionsPagerAdapter.infoCallBack(GeneralView,ImageView ,userName, data);
+                    qrDetailSectionsPagerAdapter.infoCallBack(GeneralView,ImageView ,userName, data);
                     OrginalName=(String)document.get("QRname");
                     QRname =OrginalName;
                 } else {

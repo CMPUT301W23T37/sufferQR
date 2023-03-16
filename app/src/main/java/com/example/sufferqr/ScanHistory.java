@@ -2,6 +2,8 @@ package com.example.sufferqr;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -72,11 +74,18 @@ public class ScanHistory extends DrawerBase {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 ScanHistoryQRRecord hsq = (ScanHistoryQRRecord) adapterView.getItemAtPosition(position);
                 //new/modified/viewer(mode) for QR detail activity
-                Intent scanIntent = new Intent(getApplicationContext(),QRDetailActivity.class);
+//                Intent scanIntent = new Intent(getApplicationContext(),QRDetailActivity.class);
+//                scanIntent.putExtra("user",UserName);
+//                scanIntent.putExtra("qrID",hsq.getName());
+//                scanIntent.putExtra("mode","modified");
+//                startActivity(scanIntent);
+
+
+                Intent scanIntent = new Intent(getApplicationContext(),QRQuickViewScrollingActivity.class);
                 scanIntent.putExtra("user",UserName);
                 scanIntent.putExtra("qrID",hsq.getName());
-                scanIntent.putExtra("mode","modified");
                 startActivity(scanIntent);
+
                 overridePendingTransition(0,0);
             }
         });
