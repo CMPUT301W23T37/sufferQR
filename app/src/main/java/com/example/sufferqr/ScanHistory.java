@@ -26,6 +26,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * display scaned qrcode
@@ -84,6 +85,13 @@ public class ScanHistory extends DrawerBase {
                 Intent scanIntent = new Intent(getApplicationContext(),QRQuickViewScrollingActivity.class);
                 scanIntent.putExtra("user",UserName);
                 scanIntent.putExtra("qrID",hsq.getName());
+
+                Bundle bundle = new Bundle();
+                for (Map.Entry<String, Object> entry : hsq.getMap().entrySet()) {
+                    bundle.putString(entry.getKey(),String.valueOf(entry.getValue()));
+                }
+
+                scanIntent.putExtra("MapData",bundle);
                 startActivity(scanIntent);
 
                 overridePendingTransition(0,0);
@@ -104,7 +112,7 @@ public class ScanHistory extends DrawerBase {
                                 String points = String.valueOf(doc.getData().get("points"));
                                 String sDate = String.valueOf(doc.getData().get("date"));
                                 String sAddress = String.valueOf(doc.getData().get("LocationName"));
-                                qrDataList.add(new ScanHistoryQRRecord(qrName, points,sDate,sAddress)); // Adding the cities and provinces from FireStore
+                                qrDataList.add(new ScanHistoryQRRecord(qrName, points,sDate,sAddress,doc.getData())); // Adding the cities and provinces from FireStore
                             }
                             qrAdapter.notifyDataSetChanged();
                         } else {
@@ -158,7 +166,7 @@ public class ScanHistory extends DrawerBase {
                         String points = String.valueOf(doc.getData().get("points"));
                         String sDate = String.valueOf(doc.getData().get("date"));
                         String sAddress = String.valueOf(doc.getData().get("LocationName"));
-                        qrDataList.add(new ScanHistoryQRRecord(qrName, points,sDate,sAddress)); // Adding the cities and provinces from FireStore
+                        qrDataList.add(new ScanHistoryQRRecord(qrName, points,sDate,sAddress,doc.getData())); // Adding the cities and provinces from FireStore
                     }
                     qrAdapter.notifyDataSetChanged();
                 } else {

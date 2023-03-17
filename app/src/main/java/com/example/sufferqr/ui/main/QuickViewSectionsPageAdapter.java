@@ -35,8 +35,8 @@ public class QuickViewSectionsPageAdapter extends FragmentPagerAdapter {
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        qrQuickViewCommentsFragment = new QRQuickViewCommentsFragment();
-        qrQuickViewGeneralFragment = new QRQuickViewGeneralFragment();
+        qrQuickViewCommentsFragment = new QRQuickViewCommentsFragment(myHereBundle);
+        qrQuickViewGeneralFragment = new QRQuickViewGeneralFragment(myHereBundle);
         if (position==0){
             return  qrQuickViewGeneralFragment;
         } else if (position==1) {
