@@ -119,46 +119,49 @@ public class DashBoard extends DrawerBase {
                     else {
                         // get the score list
                         List<Long> scoresList = (List<Long>) userInfo.get("scores");
-                        int length = scoresList.size();
-
-                        // last scan
-                        lScan.setText(getString(R.string.last_scan_number, String.valueOf(scoresList.get(length - 1))));
-
-                        // set percentage that point increased
-                        long sumBefore = 0;
-                        int pPercent = 0;
-                        for (int i = 0; i < length - 1; i++) {
-                            sumBefore += scoresList.get(i);
+                        int length = 0;
+                        if (scoresList.size() != 0) {
+                            length = scoresList.size();
                         }
+                        // check if there is any code record
+                        if (length != 0) {
+                            // set last scan
+                            lScan.setText(getString(R.string.last_scan_number, String.valueOf(scoresList.get(length - 1))));
 
-                        if (sumBefore == 0) {
-                            pPercent = 0;
-                        } else {
-                            pPercent = (int) ((scoresList.get(length - 1) * 100) / (sumBefore * 100));
+                            // set percentage that point increased
+                            long sumBefore = 0;
+                            int pPercent = 0;
+                            for (int i = 0; i < length - 1; i++) {
+                                sumBefore += scoresList.get(i);
+                            }
+
+                            if (sumBefore == 0) {
+                                pPercent = 0;
+                            } else {
+                                pPercent = (int) ((scoresList.get(length - 1) * 100) / (sumBefore * 100));
+                            }
+                            pointPercent.setText(getString(R.string.point_percent, String.valueOf(pPercent)));
+
+                            // sort the score list in reverse order
+                            List<Long> scoresSorted = scoresList.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
+
+                            // set total qr code scanned
+                            if (length == 1 && scoresSorted.get(0) == 0) {
+                                totalQR.setText(String.valueOf(0));
+                            } else {
+                                totalQR.setText(String.valueOf(length));
+                            }
+
+                            // set total points
+                            long sumScores = 0;
+                            for (int i = 0; i < length; i++) {
+                                sumScores += scoresList.get(i);
+                            }
+                            totalPoint.setText(String.valueOf(sumScores));
+
+                            // set highest score
+                            hScore.setText(String.valueOf(scoresSorted.get(0)));
                         }
-                        pointPercent.setText(getString(R.string.point_percent, String.valueOf(pPercent)));
-
-                        // sort the score list in reverse order
-                        List<Long> scoresSorted = scoresList.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
-
-                        // total qr code scanned
-                        if (length == 1 && scoresSorted.get(0) == 0) {
-                            totalQR.setText(String.valueOf(0));
-                        } else {
-                            totalQR.setText(String.valueOf(length));
-                        }
-
-                        // total points
-                        long sumScores = 0;
-                        for (int i = 0; i < length; i++) {
-                            sumScores += scoresList.get(i);
-                        }
-                        totalPoint.setText(String.valueOf(sumScores));
-
-                        // highest score
-
-                        hScore.setText(String.valueOf(scoresSorted.get(0)));
-
                     }
 
                 } else {

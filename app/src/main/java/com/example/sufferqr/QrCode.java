@@ -1,5 +1,8 @@
 package com.example.sufferqr;
 
+/**
+ * saving qrcode clss for nearby 1km qr
+ */
 public class QrCode {
     private String locationAddress;
     private boolean locationExist;

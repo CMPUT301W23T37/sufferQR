@@ -25,6 +25,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
+/**
+ * display scaned qrcode
+ */
 public class ScanHistory extends DrawerBase {
 
     ActivityScanHistoryBinding activityScanHistoryBinding;
@@ -36,6 +39,14 @@ public class ScanHistory extends DrawerBase {
     ScanHistoryCustomList customList;
     String UserName;
     FirebaseFirestore db;
+
+    /**
+     * create view
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         activityScanHistoryBinding = ActivityScanHistoryBinding.inflate(getLayoutInflater());
@@ -96,6 +107,9 @@ public class ScanHistory extends DrawerBase {
 
     }
 
+    /**
+     * update when comeback
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -103,6 +117,11 @@ public class ScanHistory extends DrawerBase {
 
     }
 
+    /**
+     * update when comeback
+     * @param savedInstanceState the data most recently supplied in {@link #onSaveInstanceState}.
+     *
+     */
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
@@ -110,6 +129,9 @@ public class ScanHistory extends DrawerBase {
 
     }
 
+    /**
+     * update info from fire base
+     */
     private void update(){
         final CollectionReference collectionReference = db.collection("GameQrCode");
         final Query query= collectionReference.whereEqualTo("user",UserName).orderBy("time",Query.Direction.DESCENDING);

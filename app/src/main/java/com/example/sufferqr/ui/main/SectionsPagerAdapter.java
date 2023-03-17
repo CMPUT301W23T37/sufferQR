@@ -2,6 +2,7 @@ package com.example.sufferqr.ui.main;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,6 +33,9 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     /**
      * setup page adapter
+     * @param context context
+     * @param fm fragment manger
+     * @param myBundle activity to context transferring
      */
     public SectionsPagerAdapter(Context context, FragmentManager fm,Bundle myBundle) {
         super(fm);
@@ -42,6 +46,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     /**
      * return correct fragment
+     * @param position currently clicked location
      */
     @NonNull
     @Override
@@ -82,9 +87,17 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         return 3;
     }
 
-    public void infoCallBack(String userName,HashMap<String, Object> data){
-
+    /**
+     * when other than new mode ,sync to ui
+     * @param generalView view info
+     * @param imageView view info
+     * @param userName username
+     * @param data all data in hashpmap from firebase
+     */
+    public void infoCallBack(View generalView,View imageView, String userName, HashMap<String, Object> data){
+        qrDetailGeneralFragment.ActivityCallBack(generalView, userName,data);
         qrDetailLocationFragment.ActivityCallBack(userName,data);
+        qrDetailImageFragment.ActivityCallBack(imageView,userName,data);
     }
 
 }

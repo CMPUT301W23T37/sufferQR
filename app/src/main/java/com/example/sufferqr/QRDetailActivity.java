@@ -2,6 +2,7 @@ package com.example.sufferqr;
 
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.viewpager.widget.ViewPager;
@@ -30,7 +32,12 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.MetadataChanges;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.mapbox.mapboxsdk.Mapbox;
@@ -41,7 +48,11 @@ import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
+/**
+ * qr code details reviewing,including location,image,name,points.etc
+ */
 public class QRDetailActivity extends AppCompatActivity implements QRDetailLocationFragment.OnFragmentInteractionListener,
         QRDetailImageFragment.OnFragmentInteractionListener, QRDetailGeneralFragment.OnFragmentInteractionListener
           {
@@ -61,13 +72,14 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
     Button CancelBt,ConfirmBt; // listener for bottom button
     Bundle infoBundle; //tabs transit information
 
-
+    ProgressDialog progressDialog;
 
     SectionsPagerAdapter sectionsPagerAdapter;
 
 
-              /**
-   * it start when class create detect the class from, and show different ele,emts
+  /**
+   * it start when class create detect the class from, and show different elemts
+   * @param savedInstanceState save state
    */
 
     @Override
@@ -176,12 +188,14 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                     HashMapValidate("LocationAddress","");
                     HashMapValidate("user", userName);
                     HashMapValidate("time", new Date());
+                    //progressDialog = ProgressDialog.show(getBaseContext(),"","Processing",true);
                     GameQrRecordDB DBconnect = new GameQrRecordDB();
                     DBconnect.imagePushFirestone(data,imageUri,userName,getContentResolver());
                     finish();
                 }  else {
                     HashMapValidate("user", userName);
                     HashMapValidate("time", new Date());
+                    //progressDialog = ProgressDialog.show(getApplicationContext(),"","Processing",true);
                     GameQrRecordDB DBconnect = new GameQrRecordDB();
                     DBconnect.imagePushFirestone(data,imageUri,userName,getContentResolver());
                     finish();
@@ -242,77 +256,12 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                 DocumentSnapshot document = task.getResult();
                 if (document.exists()) {
                     data = (HashMap<String, Object>) document.getData();
-                    sectionsPagerAdapter.infoCallBack(userName, data);
-
-                    // general page change load info
-
-
-                    TextInputEditText name,points;
-                    TextView textView;Button button;
-                    name = findViewById(R.id.qr_detail_general_qrtext_name);
-                    points = findViewById(R.id.qr_detail_general_qrtext_points);
-                    textView = findViewById(R.id.qr_detail_general_qrtext_date);
-                    TextInputEditText visual = findViewById(R.id.qr_detail_general_visual_text);
-
-                    button = findViewById(R.id.qr_detail_general_elevatedButton);
-                    name.setText((String)document.get("QRname"));
+                    ViewPager AllView = findViewById(R.id.qrdetail_view_pager);
+                    View GeneralView = AllView.getChildAt(0);
+                    View ImageView = AllView.getChildAt(1);
+                    sectionsPagerAdapter.infoCallBack(GeneralView,ImageView ,userName, data);
                     OrginalName=(String)document.get("QRname");
-                    Object pt = document.get("points");
-                    points.setText(String.valueOf(pt));
-                    textView.setText((String)document.get("date"));
-                    visual.setText((String)document.get("QVisual"));
-                    TextInputLayout ttl = findViewById(R.id.qr_detail_general_qrtext_name_layout);
-
-                    if (Objects.equals((String) document.get("user"), userName)){
-                        ttl.setEnabled(true);
-                        name.setEnabled(true);
-                    } else {
-                        ttl.setHelperText("");
-                        ttl.setCounterEnabled(false);
-                        ttl.setEnabled(false);
-                        name.setEnabled(false);
-                    }
-
-                    // if not the creator disble change option
-                    if (Objects.equals((String) document.get("user"), userName)){
-                        button.setEnabled(true);
-                    }
-
-                    // image page chage load info
-                    TextInputEditText QRcontent;
-                    SwitchMaterial imgEnable;
-                    QRcontent = findViewById(R.id.qr_detail_image_textfield);
-                    imgEnable = findViewById(R.id.qr_detail_image_enable_switch);
-                    Boolean imgE = (Boolean) document.get("imageExist");
-
-                    CardView c1= findViewById(R.id.qr_detail_image_qrtext_cardview);
-                    CardView c2= findViewById(R.id.qr_detail_image_qrimage_cardview);
-                    TextView t1= findViewById(R.id.qr_detail_image_privacy_text);
-
-                    if (Boolean.FALSE.equals(imgE)){
-                        // if not the creator disble change option
-                        imgEnable.setChecked(false);
-                        imgEnable.setEnabled(false);
-
-                        t1.setVisibility(View.INVISIBLE);
-                        c1.setVisibility(View.INVISIBLE);
-                        c2.setVisibility(View.INVISIBLE);
-                    } else {
-                        // since image exist load content
-                        c1.setVisibility(View.VISIBLE);
-                        c2.setVisibility(View.VISIBLE);
-                        imgEnable.setChecked(true);
-                        if (userName.equals((String) document.get("user"))){
-                            imgEnable.setEnabled(true);
-                            t1.setVisibility(View.VISIBLE);
-                        } else {
-                            imgEnable.setEnabled(false);
-                            t1.setVisibility(View.INVISIBLE);
-                        }
-                        QRcontent.setText((String) document.get("QRtext"));
-                        // conect firebase storage
-                        imageFetchFirestone((String) document.get("QRpath"));
-                    }
+                    QRname =OrginalName;
                 } else {
                     // record not exost exit
                     Toast toast = Toast.makeText(getApplicationContext(), "Record does not exist", Toast.LENGTH_SHORT);
@@ -330,6 +279,8 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
 
   /**
    * if a key exist override,if not delete
+   * @param id name
+   * @param ob thing to store
    */
     private void HashMapValidate(String id,Object ob){
         if (data.containsKey(id)) {
@@ -341,6 +292,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
 
   /**
    * sync input from the user in image tab at other mode
+   * @param imageOn boolean
    */
     @Override
     public void onImageUpdate(Boolean imageOn) {
@@ -349,6 +301,12 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
 
   /**
    * sync input from the user in location tab at new mode
+   * @param mapboxMap mapbox details
+   * @param btOn button
+   * @param longitude location
+   * @param latitude location
+   * @param name name of poi
+   * @param address full mailing address
    */
     @Override
     public void onLocationUpdate(MapboxMap mapboxMap,Boolean btOn, Double longitude, Double latitude, String name, String address) {
@@ -370,6 +328,8 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
 
   /**
    * sync input from the user in general tab at new mode
+   * @param QRcodename name
+   * @param today time
    */
     @Override
     public void onGeneralUpdate(String QRcodename,String today) {
@@ -380,6 +340,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
 
   /**
    * delete request in general tab at modifier mode
+   * @param delreq delte request
    */
     @Override
     public void onGeneralUpdate(Boolean delreq) {
@@ -395,33 +356,17 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         }
     }
 
-      @Override
-      public void onGeneralUpdate(String Newname) {
-          HashMapValidate("QRname",Newname);
-          QRname=Newname;
-      }
-
-
-
-  /**
-   * petching existing image
+   /**
+   * realtime getting user input name
+   * @param Newname qrcode name
    */
-    private void imageFetchFirestone(String FilePath) {
-        StorageReference storageRef = storage.getReference();
-        final StorageReference ref = storageRef.child(FilePath);
-        final long ONE_MEGABYTE = 1024 * 1024; //1mb
-        ref.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
-            // Data for "images/island.jpg" is returns, use this as needed
-            Drawable image = null;
-            ByteArrayInputStream is = new ByteArrayInputStream(bytes);
-            image = Drawable.createFromStream(is, "QR code surrounding");
-            ImageButton qrbt = findViewById(R.id.qr_detail_image_qrimage_button);
-            qrbt.setBackground(image);
-        }).addOnFailureListener(exception -> {
-            Toast.makeText(getApplicationContext(), exception.toString(), Toast.LENGTH_SHORT).show();
-            ImageButton qrbt = findViewById(R.id.qr_detail_image_qrimage_button);
-            qrbt.setBackground(null);
-        });
+    @Override
+    public void onGeneralUpdate(String Newname) {
+      HashMapValidate("QRname",Newname);
+      QRname=Newname;
     }
+
+
+
 
 }

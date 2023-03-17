@@ -165,8 +165,8 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback {
 
     /**
      * check if the location is within 1km of the current location
-     * @param location1
-     * @param location2
+     * @param location1 something
+     * @param location2 something
      * @return true if within 1km, false if not
      */
     public boolean isWithinOneKilometer(LatLng location1, LatLng location2) {

@@ -49,7 +49,7 @@ public class UserProfile extends DrawerBase {
      * This method is called at the creation state of the activity
      * Make sure that the activity is connected with the drawer and
      * the app bar above
-     * @param savedInstanceState
+     * @param savedInstanceState save state
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +93,10 @@ public class UserProfile extends DrawerBase {
 
                 // sorted list
                 List<Long> sortedList = userScores.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
+                // deal with empty list
+                if(sortedList.size() == 0){
+                    sortedList.add(0L);
+                }
                 // set highest in the list
                 long tempHighest = sortedList.get(0);
                 highScore.setText(Long.toString(tempHighest));
@@ -102,12 +106,13 @@ public class UserProfile extends DrawerBase {
                 // set sum of the list
                 long sum = sortedList.stream().mapToLong(Long::longValue).sum();
                 sumScore.setText(String.valueOf(sum));
-                // set size of the list
+                // set size of the list from start
                 if(sortedList.size() == 1 && sortedList.get(0) == 0){
                     qrCount.setText(String.valueOf(0));
                 } else{
                     qrCount.setText(String.valueOf(sortedList.size()));
                 }
+
             }
         });
 

@@ -29,6 +29,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+/**
+ * qrcode scan history test
+ */
 public class ScanHistoryTest {
     private Solo solo;
 
@@ -37,6 +40,10 @@ public class ScanHistoryTest {
 
     FirebaseFirestore db;
 
+    /**
+     * test rules
+     *
+     */
     @Rule
     public ActivityTestRule<ScanHistory> rule = new ActivityTestRule<ScanHistory>(ScanHistory.class, true, true){
         @Override
@@ -51,7 +58,7 @@ public class ScanHistoryTest {
     /**
      * Runs before all tests and creates solo instance.
      *
-     * @throws Exception
+     * @throws Exception it throwed it means solo did not run
      */
     @Before
     public void setUp() throws Exception {
@@ -62,13 +69,17 @@ public class ScanHistoryTest {
 
     /**
      * Closes the activity after each test
-     * @throws Exception
+     * @throws Exception solo did not go success
      */
     @After
     public void tearDown() throws Exception{
         solo.finishOpenedActivities();
     }
 
+    /**
+     * compare if file loading is the same
+     *
+     */
     @Test
     public void launch(){
         final CollectionReference collectionReference = db.collection("GameQrCode");
@@ -91,15 +102,7 @@ public class ScanHistoryTest {
                                 solo.waitForText(sDate, 1, 1000);
                                 solo.waitForText(sAddress, 1, 1000);
 
-//                                solo.clickLongInList(cc);
-//                                solo.assertCurrentActivity("Wrong Activity", QRDetailActivity.class);
-//
-//                                solo.waitForText(qrName, 1, 1000);
-//                                solo.waitForText(points, 1, 1000);
-//                                solo.waitForText(sDate, 1, 1000);
-//
-//                                solo.clickOnText("CANCEL");
-//                                solo.assertCurrentActivity("Wrong Activity", ScanHistory.class);
+
                             }
                         }
 

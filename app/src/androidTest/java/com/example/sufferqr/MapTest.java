@@ -32,6 +32,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+/**
+ * nearby map testing
+ */
 public class MapTest {
 
     private Solo solo;
@@ -44,7 +47,7 @@ public class MapTest {
     /**
      * Runs before all tests and creates solo instance.
      *
-     * @throws Exception
+     * @throws Exception something
      */
     @Before
     public void setUp() throws Exception {
@@ -54,7 +57,7 @@ public class MapTest {
     /**
      * Gets the Activity
      *
-     * @throws Exception
+     * @throws Exception something
      */
     @Test
     public void start() throws Exception {
@@ -64,7 +67,7 @@ public class MapTest {
 
     /**
      * test whether go to the list activity after click the list button
-     * @throws Exception
+     * @throws Exception something
      */
     @Test
     public void TestListButton() throws Exception{
