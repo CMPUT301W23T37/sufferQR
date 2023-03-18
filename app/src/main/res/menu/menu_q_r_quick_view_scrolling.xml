@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.sufferqr.QRQuickViewScrollingActivity">
+    <item
+        android:id="@+id/qr_quick_view_edit"
+        android:icon="@drawable/ic_edit"
+        android:iconTint="@color/white"
+        app:showAsAction="always"
+        android:title="@string/edit">
+    </item>
+
+
+</menu>

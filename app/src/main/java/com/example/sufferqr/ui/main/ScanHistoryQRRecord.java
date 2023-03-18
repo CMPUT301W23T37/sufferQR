@@ -1,5 +1,8 @@
 package com.example.sufferqr.ui.main;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * item data for the list
  *
@@ -12,6 +15,8 @@ public class ScanHistoryQRRecord {
 
     private String loc1;
 
+    private Map<String,Object> data;
+
     /**
      * load info into list
      * @param d1 date in yyy-mm-dd
@@ -19,11 +24,12 @@ public class ScanHistoryQRRecord {
      * @param name qr code name
      * @param point score of qrcode
      */
-    public ScanHistoryQRRecord(String name, String point, String d1,String loc){
+    public ScanHistoryQRRecord(String name, String point, String d1,String loc,Map<String,Object> data1){
         QRname = name;
         points = point;
         date = d1;
         loc1=loc;
+        data = data1;
     }
 
     /**
@@ -72,5 +78,13 @@ public class ScanHistoryQRRecord {
         } else {
             return loc1;
         }
+    }
+
+    /**
+     * get entire collection
+     * @return data
+     */
+    public Map<String,Object> getMap(){
+        return data;
     }
 }
