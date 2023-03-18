@@ -68,8 +68,6 @@ public class ScanHistory extends DrawerBase {
 
         qrList.setAdapter(qrAdapter);
 
-        update();
-
         qrList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -122,60 +120,5 @@ public class ScanHistory extends DrawerBase {
                 });
 
 
-    }
-
-    /**
-     * update when comeback
-     */
-    @Override
-    protected void onResume() {
-        super.onResume();
-        update();
-
-    }
-
-    /**
-     * update when comeback
-     * @param savedInstanceState the data most recently supplied in {@link #onSaveInstanceState}.
-     *
-     */
-    @Override
-    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        update();
-
-    }
-
-    /**
-     * update info from fire base
-     */
-    private void update(){
-        final CollectionReference collectionReference = db.collection("GameQrCode");
-        final Query query= collectionReference.whereEqualTo("user",UserName).orderBy("time",Query.Direction.DESCENDING);
-        
-        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (error != null){
-                    System.err.println("Listen failed: " + error);
-                }
-                if (value != null && !value.isEmpty()){
-                    qrDataList.clear();
-                    for (DocumentSnapshot doc : value.getDocuments()) {
-                        String qrName = String.valueOf(doc.getData().get("QRname"));
-                        String points = String.valueOf(doc.getData().get("points"));
-                        String sDate = String.valueOf(doc.getData().get("date"));
-                        String sAddress = String.valueOf(doc.getData().get("LocationName"));
-                        qrDataList.add(new ScanHistoryQRRecord(qrName, points,sDate,sAddress,doc.getData())); // Adding the cities and provinces from FireStore
-                    }
-                    qrAdapter.notifyDataSetChanged();
-                } else {
-                    Toast toast = Toast.makeText(getApplicationContext(),"no result", Toast.LENGTH_SHORT);
-                }
-
-            }
-
-
-        });
     }
 }

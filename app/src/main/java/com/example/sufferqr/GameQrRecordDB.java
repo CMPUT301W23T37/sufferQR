@@ -519,4 +519,73 @@ public class GameQrRecordDB {
 
         });
     }
+
+    public boolean NewPreProcessing(Context context,HashMap<String,Object> data1,String us,ContentResolver cr){
+        data =data1;
+        // if new push the image and then database
+        Boolean b1 = (Boolean) data.get("LocationExist");
+        Boolean b2 = (Boolean) data.get("imageExist");
+        Uri uri = Uri.parse((String) data.get("QRpath"));
+        if (Boolean.FALSE.equals(b2)){
+            try{
+                File fdel = new File(uri.getPath());//create path from uri
+                if (fdel.exists()) {
+                    fdel.delete();
+                }
+            } catch (Exception e){
+                Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
+            }
+            HashMapValidate("QRpath","");
+        }
+        if (Boolean.TRUE.equals(b1) && Objects.equals((String) data.get("LocationAddress"), "")) {
+            Toast.makeText(context, "please wait for data complete fetching", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if (Boolean.FALSE.equals(b1)) {
+            // future visual represent
+            HashMapValidate("LocationLatitude",0.0);
+            HashMapValidate("LocationLongitude",0.0);
+            HashMapValidate("LocationName","");
+            HashMapValidate("LocationAddress","");
+            HashMapValidate("user", us);
+            HashMapValidate("time", new Date());
+            //progressDialog = ProgressDialog.show(getBaseContext(),"","Processing",true);
+            imagePushFirestone(data, uri,us,cr);
+            return true;
+        }  else {
+            HashMapValidate("user", us);
+            HashMapValidate("time", new Date());
+            //progressDialog = ProgressDialog.show(getApplicationContext(),"","Processing",true);
+            imagePushFirestone(data, uri,us,cr);
+            return true;
+        }
+    }
+
+    public boolean ChangePreProcessing(HashMap<String,Object> data1,String QRname,String OrginalName){
+        data =data1;
+        // check if change,something releated also need to change
+        Boolean b1 = (Boolean)data.get("imageExist");
+        Boolean b2 = (Boolean)data.get("LocationExist");
+        String s1 = (String) data.get("QRpath");
+        if (Boolean.FALSE.equals(b1)){
+            HashMapValidate("QRtext","");
+            if (!Objects.equals(s1, "")){
+                imageDelFirestone(s1);
+                HashMapValidate("QRpath","");
+            }
+        }
+        if (Boolean.FALSE.equals(b2)){
+            HashMapValidate("LocationLatitude",0.0);
+            HashMapValidate("LocationLongitude",0.0);
+            HashMapValidate("LocationName","");
+            HashMapValidate("LocationAddress","");
+        }
+
+        if (!Objects.equals(QRname, OrginalName)){
+            DelteQrInfo(OrginalName,data);
+            CheckUnique(QRname,true,data);
+        } else {
+            ChangeQrInfo(QRname,data);
+        }
+        return true;
+    }
 }

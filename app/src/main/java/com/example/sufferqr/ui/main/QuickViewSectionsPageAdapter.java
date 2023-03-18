@@ -2,6 +2,7 @@ package com.example.sufferqr.ui.main;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,7 +16,7 @@ import com.example.sufferqr.R;
 public class QuickViewSectionsPageAdapter extends FragmentPagerAdapter {
 
     @StringRes
-    private static final int[] TAB_TITLES = new int[]{R.string.tab_text_1, R.string.tab_text_4};
+    private static final int[] TAB_TITLES = new int[]{R.string.tab_text_1,R.string.tab_text_5, R.string.tab_text_4};
 
     Bundle myHereBundle;
 
@@ -23,6 +24,8 @@ public class QuickViewSectionsPageAdapter extends FragmentPagerAdapter {
 
     QRQuickViewGeneralFragment qrQuickViewGeneralFragment;
     QRQuickViewCommentsFragment qrQuickViewCommentsFragment;
+
+    QRQuickViewSameQRFragment qrQuickViewSameQRFragment;
 
 
     public QuickViewSectionsPageAdapter(Context context, FragmentManager fm,Bundle myBundle) {
@@ -37,11 +40,13 @@ public class QuickViewSectionsPageAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         qrQuickViewCommentsFragment = new QRQuickViewCommentsFragment(myHereBundle);
         qrQuickViewGeneralFragment = new QRQuickViewGeneralFragment(myHereBundle);
+        qrQuickViewSameQRFragment = new QRQuickViewSameQRFragment(myHereBundle);
         if (position==0){
             return  qrQuickViewGeneralFragment;
-        } else if (position==1) {
+        } else if (position==2) {
             return qrQuickViewCommentsFragment;
-
+        } else if (position==1) {
+            return  qrQuickViewSameQRFragment;
         }else {
             return null;
         }
@@ -58,6 +63,7 @@ public class QuickViewSectionsPageAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 2;
+        return 3;
     }
+
 }

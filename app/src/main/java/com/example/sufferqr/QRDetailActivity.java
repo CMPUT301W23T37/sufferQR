@@ -4,51 +4,35 @@ package com.example.sufferqr;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import androidx.viewpager.widget.ViewPager;
+
 
 import com.example.sufferqr.databinding.ActivityQrdetailBinding;
+import com.example.sufferqr.ui.main.CustomNoDragViewPager;
 import com.example.sufferqr.ui.main.QRDetailGeneralFragment;
 import com.example.sufferqr.ui.main.QRDetailImageFragment;
 import com.example.sufferqr.ui.main.QRDetailLocationFragment;
 import com.example.sufferqr.ui.main.QRDetailSectionsPagerAdapter;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.MetadataChanges;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
+import java.util.Set;
 
 /**
  * qr code details reviewing,including location,image,name,points.etc
@@ -65,7 +49,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
     private FirebaseFirestore db;
 
     private HashMap <String,Object> data; // data that sent to collection
-    String mode,userName,QRname,QRstring,OrginalName,QRvisual,QRpoints; // remember some of the name setiings
+    String mode,userName,QRname,OrginalName; // remember some of the name setiings
 
     Uri imageUri; // at new mode, record local image location
 
@@ -97,49 +81,38 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         mode = myNewIntent.getStringExtra("mode");
         userName = myNewIntent.getStringExtra("user");
 
+        data = new HashMap<>();
+        // hashmap prepare uploading
         if (!Objects.equals(mode, "new")){
             QRname = myNewIntent.getStringExtra("qrID");
-        } else if (mode.equals("new")) {
-            QRstring = myNewIntent.getStringExtra("QRString");
-            String uriString = myNewIntent.getStringExtra("imageUri");
-            imageUri = Uri.parse(uriString);
-            QRpoints = myNewIntent.getStringExtra("QRScore");
-            QRvisual = myNewIntent.getStringExtra("QRVisual");
-        }
-
-        // hashmap prepare uploading
-        data = new HashMap<>();
-
-
-        // set up package to each tab
-        infoBundle = new Bundle();
-        infoBundle.putString("mode",mode);
-
-        if (Objects.equals(mode, "new")){
-            infoBundle.putString("QRString",QRstring);
-            infoBundle.putString("user",userName);
-            infoBundle.putString("QRScore",QRpoints);
-            infoBundle.putString("QRVisual",QRvisual);
-            infoBundle.putString("imageUri",imageUri.toString());
-
-            HashMapValidate("QVisual",QRvisual);
-            HashMapValidate("points",Integer.valueOf(QRpoints));
-            HashMapValidate("QRtext","");
-            HashMapValidate("QRpath",imageUri);
-
-        } else if (Objects.equals(mode, "modified")) {
+            infoBundle = new Bundle();
+            // set up package to each tab
+            infoBundle.putString("mode",mode);
             infoBundle.putString("user",userName);
             infoBundle.putString("qrID",QRname);
             OrginalName="";
+        } else if (mode.equals("new")) {
+            String uriString = myNewIntent.getStringExtra("imageUri");
+            imageUri = Uri.parse(uriString);
+            infoBundle = myNewIntent.getBundleExtra("data");
+            // data transmitting
+            Set<String> ks = infoBundle.keySet();
+            Iterator<String> iterator = ks.iterator();
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                HashMapValidate(key,infoBundle.get(key));
+            }
+            // set up package to each tab
+            infoBundle.putString("mode",mode);
+            infoBundle.putString("imageUri",imageUri.toString());
         }
 
         // setup tabAdaper
         qrDetailSectionsPagerAdapter = new QRDetailSectionsPagerAdapter(this, getSupportFragmentManager(),infoBundle);
         int limit = (qrDetailSectionsPagerAdapter.getCount() > 1 ? qrDetailSectionsPagerAdapter.getCount() -1 : 1);// setuo all three tab alive,no kill
-        ViewPager viewPager = findViewById(R.id.qrdetail_view_pager); // binding.qrdetail_viewPager;
+        CustomNoDragViewPager viewPager = findViewById(R.id.qrdetail_view_pager); // binding.qrdetail_viewPager;
         viewPager.setAdapter(qrDetailSectionsPagerAdapter);
         viewPager.setOffscreenPageLimit(limit);
-        viewPager.beginFakeDrag(); // disable drag
 
         TabLayout tabs = findViewById(R.id.qrdetail_tabs); //   binding.qrdetail_tabs;
         tabs.setupWithViewPager(viewPager);
@@ -162,72 +135,15 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
             finish();
         });
         ConfirmBt.setOnClickListener(v -> {
+            Boolean success=false;
+            GameQrRecordDB DBconnect = new GameQrRecordDB();
             if (Objects.equals(mode, "new")) {
-                // if new push the image and then database
-                Boolean b1 = (Boolean) data.get("LocationExist");
-                Boolean b2 = (Boolean) data.get("imageExist");
-                if (Boolean.FALSE.equals(b2)){
-                    Uri uri = (Uri) data.get("QRpath");
-                    try{
-                        File fdel = new File(uri.getPath());//create path from uri
-                        if (fdel.exists()) {
-                            fdel.delete();
-                        }
-                    } catch (Exception e){
-                        Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
-                    }
-                    HashMapValidate("QRpath","");
-                }
-                if (Boolean.TRUE.equals(b1) && Objects.equals((String) data.get("LocationAddress"), "")) {
-                    Toast.makeText(getBaseContext(), "please wait for data complete fetching", Toast.LENGTH_SHORT).show();
-                } else if (Boolean.FALSE.equals(b1)) {
-                    // future visual represent
-                    HashMapValidate("LocationLatitude",0.0);
-                    HashMapValidate("LocationLongitude",0.0);
-                    HashMapValidate("LocationName","");
-                    HashMapValidate("LocationAddress","");
-                    HashMapValidate("user", userName);
-                    HashMapValidate("time", new Date());
-                    //progressDialog = ProgressDialog.show(getBaseContext(),"","Processing",true);
-                    GameQrRecordDB DBconnect = new GameQrRecordDB();
-                    DBconnect.imagePushFirestone(data,imageUri,userName,getContentResolver());
-                    finish();
-                }  else {
-                    HashMapValidate("user", userName);
-                    HashMapValidate("time", new Date());
-                    //progressDialog = ProgressDialog.show(getApplicationContext(),"","Processing",true);
-                    GameQrRecordDB DBconnect = new GameQrRecordDB();
-                    DBconnect.imagePushFirestone(data,imageUri,userName,getContentResolver());
-                    finish();
-                }
+                success = DBconnect.NewPreProcessing(getBaseContext(),data,userName,getContentResolver());
             } else if (mode.equals("modified")){
-                GameQrRecordDB DBconnect = new GameQrRecordDB();
-                // check if change,something releated also need to change
-                Boolean b1 = (Boolean)data.get("imageExist");
-                Boolean b2 = (Boolean)data.get("LocationExist");
-                String s1 = (String) data.get("QRpath");
-                if (Boolean.FALSE.equals(b1)){
-                    HashMapValidate("QRtext","");
-                    if (!Objects.equals(s1, "")){
-                        DBconnect.imageDelFirestone(s1);
-                        HashMapValidate("QRpath","");
-                    }
-                }
-                if (Boolean.FALSE.equals(b2)){
-                    HashMapValidate("LocationLatitude",0.0);
-                    HashMapValidate("LocationLongitude",0.0);
-                    HashMapValidate("LocationName","");
-                    HashMapValidate("LocationAddress","");
-                }
-
-                if (!Objects.equals(QRname, OrginalName)){
-                    DBconnect.DelteQrInfo(OrginalName,data);
-                    DBconnect.CheckUnique(QRname,true,data);
-                } else {
-                    DBconnect.ChangeQrInfo(QRname,data);
-                }
+                success = DBconnect.ChangePreProcessing(data,QRname,OrginalName);
+            }
+            if (success){
                 finish();
-
             }
 
 
@@ -240,6 +156,8 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
             }else{
                 getContent();
             }
+        }else {
+            getUserName();
         }
     }
 
@@ -256,7 +174,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                 DocumentSnapshot document = task.getResult();
                 if (document.exists()) {
                     data = (HashMap<String, Object>) document.getData();
-                    ViewPager AllView = findViewById(R.id.qrdetail_view_pager);
+                    CustomNoDragViewPager AllView = findViewById(R.id.qrdetail_view_pager);
                     View GeneralView = AllView.getChildAt(0);
                     View ImageView = AllView.getChildAt(1);
                     qrDetailSectionsPagerAdapter.infoCallBack(GeneralView,ImageView ,userName, data);
@@ -277,6 +195,27 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         });
     }
 
+    private void getUserName(){
+          // collect from ducument name
+          db = FirebaseFirestore.getInstance();
+          final CollectionReference collectionReferenceDest = db.collection("Player");
+          // check if id is unique in the FameQr datavase
+          collectionReferenceDest.document(userName).get().addOnCompleteListener(task -> {
+              if (task.isSuccessful()) {
+                  DocumentSnapshot document = task.getResult();
+                  if (document.exists()) {
+                      HashMapValidate("userName",(String)document.get("name"));
+                      HashMapValidate("email",(String)document.get("email"));
+                  } else {
+                      // record not exost exit
+                      Toast.makeText(getApplicationContext(), "Record does not exist", Toast.LENGTH_SHORT).show();
+                  }
+              } else {
+                  // fail to connect
+                  Toast.makeText(getApplicationContext(), "Conect fail", Toast.LENGTH_SHORT).show();
+              }
+          });
+      }
   /**
    * if a key exist override,if not delete
    * @param id name
@@ -365,8 +304,5 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
       HashMapValidate("QRname",Newname);
       QRname=Newname;
     }
-
-
-
 
 }

@@ -187,15 +187,17 @@ public class ScanCode extends DrawerBase {
         ScoreCounter scoreCounter = new ScoreCounter(hashed);
         points = scoreCounter.calculateScore();
 
+        Bundle bundle = new Bundle();
+        bundle.putString("QRhash",hashed);
+        bundle.putString("QVisual",face);
+        bundle.putString("points",String.valueOf(points));
+        bundle.putString("user",userName);
+        bundle.putString("QRpath",surrounds.toString());
 
         Intent scanIntent = new Intent(ScanCode.this, QRDetailActivity.class);
         scanIntent.putExtra("user",userName);
         scanIntent.putExtra("mode","new");
-        scanIntent.putExtra("QRString",QRstring);
-        scanIntent.putExtra("QRVisual",face);
-        //scanIntent.putExtra("QRVisual",QRstring);
-        scanIntent.putExtra("QRScore",String.valueOf(points));
-        //scanIntent.putExtra("QRScore",String.valueOf(QRstring.length()));
+        scanIntent.putExtra("data",bundle);
         scanIntent.putExtra("imageUri",surrounds.toString());
         scanIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         startActivity(scanIntent);

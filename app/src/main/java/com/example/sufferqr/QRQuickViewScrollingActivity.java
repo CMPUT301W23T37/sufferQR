@@ -34,13 +34,18 @@ import android.widget.Toast;
 
 import com.example.sufferqr.databinding.ActivityQrquickViewScrollingBinding;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.mapbox.mapboxsdk.Mapbox;
 
 import java.io.ByteArrayInputStream;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 public class QRQuickViewScrollingActivity extends AppCompatActivity {
 
@@ -65,7 +70,10 @@ public class QRQuickViewScrollingActivity extends AppCompatActivity {
         user = myIntent.getStringExtra("user");
         qrID = myIntent.getStringExtra("qrID");
         data = myIntent.getBundleExtra("MapData");
-
+        if (user == null || qrID == null || data == null){
+            Toast.makeText(getBaseContext(),"document required but ull",Toast.LENGTH_LONG).show();
+            finish();
+        }
         // toolbar
 
         Toolbar toolbar = binding.qRQuickViewToolbar;
@@ -88,8 +96,6 @@ public class QRQuickViewScrollingActivity extends AppCompatActivity {
         NestedScrollView scrollView = (NestedScrollView) findViewById (R.id.qr_quick_view_nesetedView);
         scrollView.setFillViewport (true);
 
-
-
         quickViewSectionsPageAdapter = new QuickViewSectionsPageAdapter(this, getSupportFragmentManager(),data);
         int limit = (quickViewSectionsPageAdapter.getCount() > 1 ? quickViewSectionsPageAdapter.getCount() -1 : 1);// setuo all three tab alive,no kill
         CustomNoDragViewPager viewPager = findViewById(R.id.qr_quick_viewPager); // binding.qrdetail_viewPager;
@@ -99,16 +105,11 @@ public class QRQuickViewScrollingActivity extends AppCompatActivity {
         TabLayout tabs =findViewById(R.id.qr_quick_view_tabs); //   binding.qrdetail_tabs;
         tabs.setupWithViewPager(viewPager);
 
-        if (data!=null){
-            toolBarLayout.setTitle(qrID);
-            String imageExist = data.getString("imageExist");
-            if (Boolean.parseBoolean(imageExist)){
-                String uri_image = data.getString("QRpath");
-                imageFetchFirestone(uri_image);
-
-            }
-        } else {
-
+        toolBarLayout.setTitle(qrID);
+        String imageExist = data.getString("imageExist");
+        if (Boolean.parseBoolean(imageExist)){
+            String uri_image = data.getString("QRpath");
+            imageFetchFirestone(uri_image);
         }
 
     }
@@ -135,7 +136,7 @@ public class QRQuickViewScrollingActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id= item.getItemId();
         if (id == R.id.qr_quick_view_edit){
-
+            // top bar edit
             if (Objects.equals(data.getString("user"), user)){
                 //new/modified/viewer(mode) for QR detail activity
                 Intent scanIntent = new Intent(getApplicationContext(),QRDetailActivity.class);
@@ -167,4 +168,6 @@ public class QRQuickViewScrollingActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), exception.toString(), Toast.LENGTH_SHORT).show();
         });
     }
+
+
 }
