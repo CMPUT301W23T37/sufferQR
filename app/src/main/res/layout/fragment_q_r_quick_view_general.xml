@@ -22,7 +22,7 @@
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginStart="7pt"
             android:layout_marginEnd="7pt"
-            android:layout_marginTop="27pt"
+            android:layout_marginTop="7pt"
             app:cardCornerRadius="10sp"
             app:cardMaxElevation="5sp"
             >
@@ -142,13 +142,27 @@
 
                 <TextView
                     android:id="@+id/fragment_q_r_quick_view_general_location_address"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="address"
+                    android:textSize="10sp"
                     android:layout_marginStart="10sp"
-                    android:layout_marginBottom="10sp"
+                    android:layout_marginEnd="170sp"
+                    android:layout_marginBottom="20sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
+
+                <Button
+                    android:id="@+id/fragment_q_r_quick_view_general_go_elevatedButton"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="70sp"
+                    android:layout_height="70sp"
+                    android:text="GO"
+                    android:textSize="15sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginEnd="17sp"/>
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -162,10 +176,11 @@
             android:layout_marginStart="7pt"
             android:layout_marginTop="7pt"
             android:layout_marginEnd="7pt"
-            android:layout_marginBottom="57pt"
+            android:layout_marginBottom="17pt"
             app:cardCornerRadius="10sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/fragment_q_r_quick_view_general_location_info_cardView">
 
             <com.mapbox.mapboxsdk.maps.MapView
@@ -178,12 +193,7 @@
         </androidx.cardview.widget.CardView>
 
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="100sp"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_q_r_quick_view_general_location_map_cardView"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+
 
 
 

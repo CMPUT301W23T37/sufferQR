@@ -6,6 +6,8 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacem
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconOffset;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,17 +21,18 @@ import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.sufferqr.R;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.textfield.TextInputEditText;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
+import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -55,6 +58,8 @@ public class QRQuickViewGeneralFragment extends Fragment  implements OnMapReadyC
     TextInputEditText visual;
 
     CardView location_card,map_card;
+
+    Button go_button;
 
     View gbView;
 
@@ -91,6 +96,7 @@ public class QRQuickViewGeneralFragment extends Fragment  implements OnMapReadyC
         location_card = view.findViewById(R.id.fragment_q_r_quick_view_general_location_info_cardView);
         address_name = view.findViewById(R.id.fragment_q_r_quick_view_general_location_address_name);
         address = view.findViewById(R.id.fragment_q_r_quick_view_general_location_address);
+        go_button = view.findViewById(R.id.fragment_q_r_quick_view_general_go_elevatedButton);
 
         map_card = view.findViewById(R.id.fragment_q_r_quick_view_general_location_map_cardView);
 
@@ -115,7 +121,7 @@ public class QRQuickViewGeneralFragment extends Fragment  implements OnMapReadyC
             @Override
             public void onStyleLoaded(@NonNull Style style) {
                 style.addImage("red-pin", BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_red_dot)));
-                style.addLayer(new SymbolLayer("icon-layer-id","icon-red-pin")
+                style.addLayer(new SymbolLayer("icon-red-layer-id","icon-red-pin")
 
                         .withProperties(
                         iconImage("red-pin"),
@@ -124,19 +130,29 @@ public class QRQuickViewGeneralFragment extends Fragment  implements OnMapReadyC
                         iconOffset(new Float[]{0f,-0f})
 
                 ));
+
+
                 // add pint
-                GeoJsonSource destinationIconGeoJsonSource = style.getSourceAs("icon-red-pin");
                 Double latitude,longitude;
                 latitude =  Double.parseDouble(bundle.getString("LocationLatitude"));
                 longitude = Double.parseDouble(bundle.getString("LocationLongitude"));
-                if (destinationIconGeoJsonSource != null) {
-                    destinationIconGeoJsonSource.setGeoJson(Feature.fromGeometry(Point.fromLngLat(longitude, latitude)));
-                    style.addSource(destinationIconGeoJsonSource);
-                }
+                GeoJsonSource iconGeoJsonSource = new GeoJsonSource("icon-red-pin", Feature.fromGeometry(Point.fromLngLat(longitude,latitude)));
+                style.addSource(iconGeoJsonSource);
 
+                mapboxMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(latitude, -longitude))
+                        .title("marker one"));
 
-
-
+                go_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String query = "https://www.google.com/maps/dir/?api=1&destination=" + latitude + "," + longitude + "&travelmode=driving";
+                        Uri gmmIntentUri = Uri.parse(query);
+                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                        mapIntent.setPackage("com.google.android.apps.maps");
+                        startActivity(mapIntent);
+                    }
+                });
 
             }
         });
@@ -171,7 +187,7 @@ public class QRQuickViewGeneralFragment extends Fragment  implements OnMapReadyC
 
     public void loadInfo(){
         author.setText(bundle.getString("user","author"));
-        points.setText(bundle.getString("points","0"));
+        points.setText(bundle.getString("points","0")+" Points");
         date.setText(bundle.getString("date","1970-01-01"));
         visual.setText(bundle.getString("QVisual"));
 

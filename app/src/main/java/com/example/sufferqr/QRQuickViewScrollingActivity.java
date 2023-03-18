@@ -40,6 +40,7 @@ import com.mapbox.mapboxsdk.Mapbox;
 
 import java.io.ByteArrayInputStream;
 import java.util.Map;
+import java.util.Objects;
 
 public class QRQuickViewScrollingActivity extends AppCompatActivity {
 
@@ -99,15 +100,15 @@ public class QRQuickViewScrollingActivity extends AppCompatActivity {
         tabs.setupWithViewPager(viewPager);
 
         if (data!=null){
+            toolBarLayout.setTitle(qrID);
             String imageExist = data.getString("imageExist");
             if (Boolean.parseBoolean(imageExist)){
                 String uri_image = data.getString("QRpath");
                 imageFetchFirestone(uri_image);
-                System.out.println("aaaaaaaaaaaaaaaaaaaaaa");
 
             }
         } else {
-            System.out.println("aaaaaaaaaaaaaaaaaaaaaavvbb");
+
         }
 
     }
@@ -134,7 +135,18 @@ public class QRQuickViewScrollingActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id= item.getItemId();
         if (id == R.id.qr_quick_view_edit){
-            Toast.makeText(getBaseContext(),"user miss match",Toast.LENGTH_LONG).show();
+
+            if (Objects.equals(data.getString("user"), user)){
+                //new/modified/viewer(mode) for QR detail activity
+                Intent scanIntent = new Intent(getApplicationContext(),QRDetailActivity.class);
+                scanIntent.putExtra("user",user);
+                scanIntent.putExtra("qrID",qrID);
+                scanIntent.putExtra("mode","modified");
+                startActivity(scanIntent);
+                finish();
+            } else {
+                Toast.makeText(getBaseContext(),"user miss match",Toast.LENGTH_LONG).show();
+            }
         }
         return super.onOptionsItemSelected(item);
     }

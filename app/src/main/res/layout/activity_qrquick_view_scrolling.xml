@@ -10,7 +10,7 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/q_r_quick_view_app_bar"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="350dp"
         android:fitsSystemWindows="true"
         app:layout_scrollFlags="scroll|exitUntilCollapsed"
 
@@ -26,7 +26,6 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:toolbarId="@+id/q_r_quick_view_toolbar"
             app:collapsedTitleGravity="start"
-            app:expandedTitleMarginBottom="200dp"
             app:extraMultilineHeightEnabled="true"
             >
 

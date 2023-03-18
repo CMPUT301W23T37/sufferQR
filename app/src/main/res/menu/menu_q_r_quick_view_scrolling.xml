@@ -5,7 +5,7 @@
     <item
         android:id="@+id/qr_quick_view_edit"
         android:icon="@drawable/ic_edit"
-        android:iconTint="@color/dashboard_white"
+        android:iconTint="@color/white"
         app:showAsAction="always"
         android:title="@string/edit">
     </item>
