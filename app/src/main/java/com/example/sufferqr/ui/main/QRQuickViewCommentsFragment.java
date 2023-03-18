@@ -40,7 +40,7 @@ public class QRQuickViewCommentsFragment extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_q_r_quick_view_comments, container, false);
 
-        
+
         return view;
     }
 }

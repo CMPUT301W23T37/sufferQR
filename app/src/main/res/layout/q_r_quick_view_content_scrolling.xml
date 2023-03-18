@@ -28,7 +28,7 @@
             android:id="@+id/qr_quick_viewPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="25pt"
+            android:layout_marginTop="50sp"
             android:overScrollMode="never"
             android:nestedScrollingEnabled="false"
 
