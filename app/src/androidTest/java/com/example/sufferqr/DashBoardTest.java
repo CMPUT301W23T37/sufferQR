@@ -12,6 +12,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+/**
+ * Dashboard test
+ */
 public class DashBoardTest {
     private Solo solo;
 
@@ -21,7 +24,7 @@ public class DashBoardTest {
     /**
      * Runs before all tests and creates solo instance.
      *
-     * @throws Exception
+     * @throws Exception something
      */
     @Before
     public void setUp() throws Exception {
@@ -31,7 +34,7 @@ public class DashBoardTest {
     /**
      * Gets the Activity
      *
-     * @throws Exception
+     * @throws Exception something
      */
     @Test
     public void start() throws Exception {
@@ -40,7 +43,7 @@ public class DashBoardTest {
 
     /**
      * Closes the activity after each test
-     * @throws Exception
+     * @throws Exception something
      */
     @After
     public void tearDown() throws Exception{

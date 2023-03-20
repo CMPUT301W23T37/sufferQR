@@ -29,6 +29,9 @@ import org.junit.runner.RunWith;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * qrcode details testing on each fragment
+ */
 @RunWith(AndroidJUnit4.class)
 public class QRDetailHistoryTest {
     private Solo solo;
@@ -58,7 +61,7 @@ public class QRDetailHistoryTest {
     /**
      * Runs before all tests and creates solo instance.
      *
-     * @throws Exception
+     * @throws Exception something
      */
     @Before
     public void setUp() throws Exception {
@@ -69,7 +72,7 @@ public class QRDetailHistoryTest {
 
     /**
      * Closes the activity after each test
-     * @throws Exception
+     * @throws Exception something
      */
     @After
     public void tearDown() throws Exception{

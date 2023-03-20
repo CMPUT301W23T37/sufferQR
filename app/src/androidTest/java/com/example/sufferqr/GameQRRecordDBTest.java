@@ -47,6 +47,9 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Handler;
 
+/**
+ * database send testing
+ */
 public class GameQRRecordDBTest {
     private Solo solo;
 
@@ -58,7 +61,7 @@ public class GameQRRecordDBTest {
     /**
      * Runs before all tests and creates solo instance.
      *
-     * @throws Exception
+     * @throws Exception something
      */
     @Before
     public void setUp() throws Exception {
@@ -67,7 +70,7 @@ public class GameQRRecordDBTest {
 
     /**
      * Closes the activity after each test
-     * @throws Exception
+     * @throws Exception something
      */
     @After
     public void tearDown() throws Exception{
@@ -76,7 +79,7 @@ public class GameQRRecordDBTest {
 
     /**
      * add in data setup
-     *
+     * @return data
      */
     public HashMap<String, Object> makeup(){
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());

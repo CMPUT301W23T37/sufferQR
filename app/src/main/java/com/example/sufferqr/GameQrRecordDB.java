@@ -74,12 +74,11 @@ public class GameQrRecordDB {
     }
 
 
-
-
     /**
      * check if user id if unique if it is ,push it to db
-     * @return
-     * null
+     * @param name qrname
+     * @param RetryIfFail add staff if confilct
+     * @param data details
      */
     public void CheckUnique(String name,boolean RetryIfFail,HashMap<String, Object> data) {
         db = FirebaseFirestore.getInstance();
@@ -130,7 +129,8 @@ public class GameQrRecordDB {
 
     /**
      * Download a random name text from clound and random slect one and push new qr code to database
-     * @return
+     * @param name qrname
+     * @param data qrdata
      * null
      */
     public void NewQRWithRandomGeneratedWords(String name,HashMap<String, Object> data)  {
@@ -207,7 +207,8 @@ public class GameQrRecordDB {
 
     /**
      * delete Database information
-     * @return
+     * @param ID qrname
+     * @param myData qrdata
      * null
      */
     public void DelteQrInfo(String ID,HashMap<String,Object> myData){
@@ -249,8 +250,8 @@ public class GameQrRecordDB {
 
     /**
      * update document informatuin
-     * @return
-     * null
+     * @param ID qr name
+     * @param data details
      */
     public void ChangeQrInfo(String ID,HashMap<String, Object> data){
         db = FirebaseFirestore.getInstance();
@@ -296,6 +297,10 @@ public class GameQrRecordDB {
 
     /**
      * new iamge push to firestone
+     * @param cr contentresolver
+     * @param imageUri imageuri
+     * @param ns data details
+     * @param userName userName
      */
     public void imagePushFirestone(HashMap<String,Object> ns,Uri imageUri, String userName, ContentResolver cr){
         data = ns;
@@ -389,6 +394,7 @@ public class GameQrRecordDB {
 
     /**
      * delete a image in firestone
+     * @param s1 username
      */
     public void imageDelFirestone(String s1){
         StorageReference storageRef = storage.getReference();
@@ -410,6 +416,10 @@ public class GameQrRecordDB {
         });
     }
 
+    /**
+     * update profile name
+     * @param userName username
+     */
     public void PlayerProfileUpdate(String userName){
         final CollectionReference collectionReference = db.collection("Player");
         final Query qrCodeQuery= db.collection("GameQrCode").whereEqualTo("user",userName);
@@ -508,5 +518,74 @@ public class GameQrRecordDB {
             }
 
         });
+    }
+
+    public boolean NewPreProcessing(Context context,HashMap<String,Object> data1,String us,ContentResolver cr){
+        data =data1;
+        // if new push the image and then database
+        Boolean b1 = (Boolean) data.get("LocationExist");
+        Boolean b2 = (Boolean) data.get("imageExist");
+        Uri uri = Uri.parse((String) data.get("QRpath"));
+        if (Boolean.FALSE.equals(b2)){
+            try{
+                File fdel = new File(uri.getPath());//create path from uri
+                if (fdel.exists()) {
+                    fdel.delete();
+                }
+            } catch (Exception e){
+                Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
+            }
+            HashMapValidate("QRpath","");
+        }
+        if (Boolean.TRUE.equals(b1) && Objects.equals((String) data.get("LocationAddress"), "")) {
+            Toast.makeText(context, "please wait for data complete fetching", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if (Boolean.FALSE.equals(b1)) {
+            // future visual represent
+            HashMapValidate("LocationLatitude",0.0);
+            HashMapValidate("LocationLongitude",0.0);
+            HashMapValidate("LocationName","");
+            HashMapValidate("LocationAddress","");
+            HashMapValidate("user", us);
+            HashMapValidate("time", new Date());
+            //progressDialog = ProgressDialog.show(getBaseContext(),"","Processing",true);
+            imagePushFirestone(data, uri,us,cr);
+            return true;
+        }  else {
+            HashMapValidate("user", us);
+            HashMapValidate("time", new Date());
+            //progressDialog = ProgressDialog.show(getApplicationContext(),"","Processing",true);
+            imagePushFirestone(data, uri,us,cr);
+            return true;
+        }
+    }
+
+    public boolean ChangePreProcessing(HashMap<String,Object> data1,String QRname,String OrginalName){
+        data =data1;
+        // check if change,something releated also need to change
+        Boolean b1 = (Boolean)data.get("imageExist");
+        Boolean b2 = (Boolean)data.get("LocationExist");
+        String s1 = (String) data.get("QRpath");
+        if (Boolean.FALSE.equals(b1)){
+            HashMapValidate("QRtext","");
+            if (!Objects.equals(s1, "")){
+                imageDelFirestone(s1);
+                HashMapValidate("QRpath","");
+            }
+        }
+        if (Boolean.FALSE.equals(b2)){
+            HashMapValidate("LocationLatitude",0.0);
+            HashMapValidate("LocationLongitude",0.0);
+            HashMapValidate("LocationName","");
+            HashMapValidate("LocationAddress","");
+        }
+
+        if (!Objects.equals(QRname, OrginalName)){
+            DelteQrInfo(OrginalName,data);
+            CheckUnique(QRname,true,data);
+        } else {
+            ChangeQrInfo(QRname,data);
+        }
+        return true;
     }
 }

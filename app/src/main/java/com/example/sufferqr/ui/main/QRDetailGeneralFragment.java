@@ -60,8 +60,8 @@ public class QRDetailGeneralFragment extends Fragment{
             mode="new";
         }
         if (mode.equals("new")){
-            QRpoints=myGeneralBudle.getString("QRScore");
-            QRvisual=myGeneralBudle.getString("QRVisual");
+            QRpoints=myGeneralBudle.getString("points");
+            QRvisual=myGeneralBudle.getString("QVisual");
         }
         if (mode.equals("modified")){
             oldName=myGeneralBudle.getString("qrID");

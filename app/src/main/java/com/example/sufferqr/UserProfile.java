@@ -49,7 +49,7 @@ public class UserProfile extends DrawerBase {
      * This method is called at the creation state of the activity
      * Make sure that the activity is connected with the drawer and
      * the app bar above
-     * @param savedInstanceState
+     * @param savedInstanceState save state
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {

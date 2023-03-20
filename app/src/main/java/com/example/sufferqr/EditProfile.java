@@ -19,6 +19,9 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * allow user to edit their profile
+ */
 public class EditProfile extends AppCompatActivity {
 
     private TextInputEditText username;
