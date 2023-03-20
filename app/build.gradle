@@ -43,6 +43,8 @@ android {
 }
 
 dependencies {
+    //javadoc only disable when run app
+    //implementation files("C:\\Users\\birdd\\AppData\\Local\\Android\\Sdk\\platforms\\android-33\\android.jar")
     // GeoFirebase
     implementation 'com.github.imperiumlabs:GeoFirestore-Android:v1.5.0'
 
@@ -111,6 +113,8 @@ dependencies {
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.7.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-sdk-geojson:6.9.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-sdk-services:5.8.0'
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v9:0.9.0'
+
 
     //
     implementation 'com.karumi:dexter:6.2.2'
@@ -123,7 +127,7 @@ dependencies {
     // CameraX View class
     implementation "androidx.camera:camera-view:1.2.1"
 
-    // ViewModel and LiveData  DO NOT upgrade
+    // ViewModel and LiveData  DO NOT upgrade ver 2.5.1
     implementation "androidx.lifecycle:lifecycle-livedata:2.5.1"
     implementation "androidx.lifecycle:lifecycle-viewmodel:2.5.1"
 //    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'

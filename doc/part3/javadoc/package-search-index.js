@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"com.example.sufferqr"},{"l":"com.example.sufferqr.ui.main"}]

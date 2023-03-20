@@ -11,6 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+/**
+ * nearby qrcode for each qr records
+ */
 public class QrCodeDetailFragment extends DialogFragment {
 
     @NonNull

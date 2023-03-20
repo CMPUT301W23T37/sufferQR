@@ -29,6 +29,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+/**
+ * qrcode scan history test
+ */
 public class ScanHistoryTest {
     private Solo solo;
 
@@ -55,7 +58,7 @@ public class ScanHistoryTest {
     /**
      * Runs before all tests and creates solo instance.
      *
-     * @throws Exception
+     * @throws Exception it throwed it means solo did not run
      */
     @Before
     public void setUp() throws Exception {
@@ -66,7 +69,7 @@ public class ScanHistoryTest {
 
     /**
      * Closes the activity after each test
-     * @throws Exception
+     * @throws Exception solo did not go success
      */
     @After
     public void tearDown() throws Exception{
