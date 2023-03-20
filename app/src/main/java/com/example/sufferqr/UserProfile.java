@@ -1,44 +1,23 @@
 package com.example.sufferqr;
 
-import static android.content.ContentValues.TAG;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.sufferqr.databinding.ActivityUserProfileBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.color.utilities.MathUtils;
-import com.google.android.material.color.utilities.Score;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.util.Util;
 
-import org.w3c.dom.Text;
-
-import java.lang.reflect.Type;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,6 +27,7 @@ import java.util.stream.Collectors;
  * the total number of code been scanned, the highest score ever, and the lowest score
  * with player's username, email, QR id and the QR code from QR id. Modification to
  * Username and email is also available
+ * @author zhiyu
  */
 public class UserProfile extends DrawerBase {
 
@@ -65,6 +45,12 @@ public class UserProfile extends DrawerBase {
     private TextView qrCount;
     private FloatingActionButton profileToEdit;
 
+    /**
+     * This method is called at the creation state of the activity
+     * Make sure that the activity is connected with the drawer and
+     * the app bar above
+     * @param savedInstanceState save state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +60,11 @@ public class UserProfile extends DrawerBase {
         fillContent();
     }
 
+    /**
+     * This method will fill up all the content in the user profile
+     * with user specific information. It use android id as verification
+     * to access user data in the data base
+     */
     public void fillContent(){
         userName = findViewById(R.id.userName_UserProfile);
         userEmail = findViewById(R.id.userEmail_UserProfile);
@@ -102,6 +93,10 @@ public class UserProfile extends DrawerBase {
 
                 // sorted list
                 List<Long> sortedList = userScores.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
+                // deal with empty list
+                if(sortedList.size() == 0){
+                    sortedList.add(0L);
+                }
                 // set highest in the list
                 long tempHighest = sortedList.get(0);
                 highScore.setText(Long.toString(tempHighest));
@@ -111,12 +106,13 @@ public class UserProfile extends DrawerBase {
                 // set sum of the list
                 long sum = sortedList.stream().mapToLong(Long::longValue).sum();
                 sumScore.setText(String.valueOf(sum));
-                // set size of the list
+                // set size of the list from start
                 if(sortedList.size() == 1 && sortedList.get(0) == 0){
                     qrCount.setText(String.valueOf(0));
                 } else{
                     qrCount.setText(String.valueOf(sortedList.size()));
                 }
+
             }
         });
 
@@ -126,7 +122,6 @@ public class UserProfile extends DrawerBase {
             public void onClick(View view) {
                 Intent i = new Intent(UserProfile.this, EditProfile.class);
                 startActivity(i);
-                finish();
             }
         });
     }

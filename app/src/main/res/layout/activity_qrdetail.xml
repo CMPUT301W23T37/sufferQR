@@ -44,7 +44,7 @@
             android:layout_width="match_parent"
             android:orientation="vertical">
 
-            <androidx.viewpager.widget.ViewPager
+            <com.example.sufferqr.ui.main.CustomNoDragViewPager
                 android:id="@+id/qrdetail_view_pager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

@@ -26,6 +26,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * This method is used to register page to the user
+ * and ask user to set up their user name
+ * give an email, choose an qr id, in order to create an account
+ */
 public class RegisterPage extends AppCompatActivity {
 
     private TextInputEditText usernameRegisterText;
@@ -107,6 +112,10 @@ public class RegisterPage extends AppCompatActivity {
         });
     }
 
+    /**
+     * This method is used to generate random string for qr id
+     * @return string of 12 random character
+     */
     public String randomString(){
         String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                 + "0123456789"

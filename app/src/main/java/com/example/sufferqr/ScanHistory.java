@@ -2,6 +2,8 @@ package com.example.sufferqr;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,7 +26,11 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Map;
 
+/**
+ * display scaned qrcode
+ */
 public class ScanHistory extends DrawerBase {
 
     ActivityScanHistoryBinding activityScanHistoryBinding;
@@ -36,6 +42,14 @@ public class ScanHistory extends DrawerBase {
     ScanHistoryCustomList customList;
     String UserName;
     FirebaseFirestore db;
+
+    /**
+     * create view
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         activityScanHistoryBinding = ActivityScanHistoryBinding.inflate(getLayoutInflater());
@@ -54,18 +68,30 @@ public class ScanHistory extends DrawerBase {
 
         qrList.setAdapter(qrAdapter);
 
-        update();
-
         qrList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 ScanHistoryQRRecord hsq = (ScanHistoryQRRecord) adapterView.getItemAtPosition(position);
                 //new/modified/viewer(mode) for QR detail activity
-                Intent scanIntent = new Intent(getApplicationContext(),QRDetailActivity.class);
+//                Intent scanIntent = new Intent(getApplicationContext(),QRDetailActivity.class);
+//                scanIntent.putExtra("user",UserName);
+//                scanIntent.putExtra("qrID",hsq.getName());
+//                scanIntent.putExtra("mode","modified");
+//                startActivity(scanIntent);
+
+
+                Intent scanIntent = new Intent(getApplicationContext(),QRQuickViewScrollingActivity.class);
                 scanIntent.putExtra("user",UserName);
                 scanIntent.putExtra("qrID",hsq.getName());
-                scanIntent.putExtra("mode","modified");
+
+                Bundle bundle = new Bundle();
+                for (Map.Entry<String, Object> entry : hsq.getMap().entrySet()) {
+                    bundle.putString(entry.getKey(),String.valueOf(entry.getValue()));
+                }
+
+                scanIntent.putExtra("MapData",bundle);
                 startActivity(scanIntent);
+
                 overridePendingTransition(0,0);
             }
         });
@@ -84,7 +110,7 @@ public class ScanHistory extends DrawerBase {
                                 String points = String.valueOf(doc.getData().get("points"));
                                 String sDate = String.valueOf(doc.getData().get("date"));
                                 String sAddress = String.valueOf(doc.getData().get("LocationName"));
-                                qrDataList.add(new ScanHistoryQRRecord(qrName, points,sDate,sAddress)); // Adding the cities and provinces from FireStore
+                                qrDataList.add(new ScanHistoryQRRecord(qrName, points,sDate,sAddress,doc.getData())); // Adding the cities and provinces from FireStore
                             }
                             qrAdapter.notifyDataSetChanged();
                         } else {
@@ -94,49 +120,5 @@ public class ScanHistory extends DrawerBase {
                 });
 
 
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        update();
-
-    }
-
-    @Override
-    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        update();
-
-    }
-
-    private void update(){
-        final CollectionReference collectionReference = db.collection("GameQrCode");
-        final Query query= collectionReference.whereEqualTo("user",UserName).orderBy("time",Query.Direction.DESCENDING);
-        
-        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (error != null){
-                    System.err.println("Listen failed: " + error);
-                }
-                if (value != null && !value.isEmpty()){
-                    qrDataList.clear();
-                    for (DocumentSnapshot doc : value.getDocuments()) {
-                        String qrName = String.valueOf(doc.getData().get("QRname"));
-                        String points = String.valueOf(doc.getData().get("points"));
-                        String sDate = String.valueOf(doc.getData().get("date"));
-                        String sAddress = String.valueOf(doc.getData().get("LocationName"));
-                        qrDataList.add(new ScanHistoryQRRecord(qrName, points,sDate,sAddress)); // Adding the cities and provinces from FireStore
-                    }
-                    qrAdapter.notifyDataSetChanged();
-                } else {
-                    Toast toast = Toast.makeText(getApplicationContext(),"no result", Toast.LENGTH_SHORT);
-                }
-
-            }
-
-
-        });
     }
 }

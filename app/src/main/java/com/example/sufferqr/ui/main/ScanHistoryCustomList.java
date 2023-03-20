@@ -14,18 +14,30 @@ import com.example.sufferqr.R;
 
 import java.util.ArrayList;
 import java.util.Objects;
-
+/**
+ * set up each list item
+ *
+ */
 public class ScanHistoryCustomList extends ArrayAdapter<ScanHistoryQRRecord> {
 
     private ArrayList<ScanHistoryQRRecord> rec;
     private Context context;
 
+    /**
+     * set up list item
+     * @param context context
+     * @param qrrecord qrrecord showing
+     */
     public ScanHistoryCustomList(Context context, ArrayList<ScanHistoryQRRecord> qrrecord){
         super(context,0, qrrecord);
         this.rec = qrrecord;
         this.context = context;
     }
 
+    /**
+     * load each list item to its ui
+     * @param position touched position
+     */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {

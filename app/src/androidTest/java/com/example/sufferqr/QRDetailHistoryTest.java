@@ -29,6 +29,9 @@ import org.junit.runner.RunWith;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * qrcode details testing on each fragment
+ */
 @RunWith(AndroidJUnit4.class)
 public class QRDetailHistoryTest {
     private Solo solo;
@@ -39,6 +42,9 @@ public class QRDetailHistoryTest {
     String mode2= "visitor";
     FirebaseFirestore db;
 
+    /**
+     * set up test rules
+     */
     @Rule
     public ActivityTestRule<QRDetailActivity> rule = new ActivityTestRule<QRDetailActivity>(QRDetailActivity.class, true, true){
         @Override
@@ -55,7 +61,7 @@ public class QRDetailHistoryTest {
     /**
      * Runs before all tests and creates solo instance.
      *
-     * @throws Exception
+     * @throws Exception something
      */
     @Before
     public void setUp() throws Exception {
@@ -66,13 +72,17 @@ public class QRDetailHistoryTest {
 
     /**
      * Closes the activity after each test
-     * @throws Exception
+     * @throws Exception something
      */
     @After
     public void tearDown() throws Exception{
         solo.finishOpenedActivities();
     }
 
+    /**
+     * General page testing
+     *
+     */
     @Test
     public void GeneralTest(){
         solo.assertCurrentActivity("Wrong Activity", QRDetailActivity.class);
@@ -94,6 +104,11 @@ public class QRDetailHistoryTest {
 
     }
 
+
+    /**
+     * Image page testing
+     *
+     */
     @Test
     public void ImageTest(){
         solo.assertCurrentActivity("Wrong Activity", QRDetailActivity.class);
@@ -119,6 +134,11 @@ public class QRDetailHistoryTest {
 
     }
 
+
+    /**
+     * Location page testing
+     *
+     */
     @Test
     public void LocationTest(){
         solo.assertCurrentActivity("Wrong Activity", QRDetailActivity.class);
@@ -147,7 +167,6 @@ public class QRDetailHistoryTest {
                     solo.waitForText((String) document.get("LocationName"),1,1000);
                     solo.waitForText((String) document.get("LocationAddress"),1,1000);
                 }
-
 
             }
         });

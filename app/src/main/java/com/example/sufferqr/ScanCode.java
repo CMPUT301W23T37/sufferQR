@@ -17,6 +17,7 @@ import androidx.lifecycle.LifecycleOwner;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -62,6 +63,9 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * reconize of qr code taken,and a photo of sorrounds and send to qrdetailactivity
+ */
 public class ScanCode extends DrawerBase {
     // https://medium.com/swlh/introduction-to-androids-camerax-with-java-ca384c522c5
     // https://developers.google.com/ml-kit/vision/barcode-scanning/android
@@ -77,6 +81,8 @@ public class ScanCode extends DrawerBase {
     Button Go,Back,other;
 
     Boolean foundQR;
+
+    ProgressDialog progressDialog;
 
     /**
      * create view
@@ -97,7 +103,6 @@ public class ScanCode extends DrawerBase {
         Intent myNewIntent = getIntent();
         userName = myNewIntent.getStringExtra("user");
         foundQR=false;
-
 
 
         // check if camera allowed
@@ -171,7 +176,7 @@ public class ScanCode extends DrawerBase {
         try {
             hashed =  QRHash.toHexString(QRHash.getSHA(QRstring));
             EmojiDraw emojiDraw = new EmojiDraw(hashed);
-            face = emojiDraw.draw();
+            face = emojiDraw.draw(); //call to draw the visual respresentation
 
         } catch (NoSuchAlgorithmException e) {
             System.out.println(e);
@@ -182,15 +187,17 @@ public class ScanCode extends DrawerBase {
         ScoreCounter scoreCounter = new ScoreCounter(hashed);
         points = scoreCounter.calculateScore();
 
+        Bundle bundle = new Bundle();
+        bundle.putString("QRhash",hashed);
+        bundle.putString("QVisual",face);
+        bundle.putString("points",String.valueOf(points));
+        bundle.putString("user",userName);
+        bundle.putString("QRpath",surrounds.toString());
 
         Intent scanIntent = new Intent(ScanCode.this, QRDetailActivity.class);
         scanIntent.putExtra("user",userName);
         scanIntent.putExtra("mode","new");
-        scanIntent.putExtra("QRString",QRstring);
-        scanIntent.putExtra("QRVisual",face);
-        //scanIntent.putExtra("QRVisual",QRstring);
-        scanIntent.putExtra("QRScore",String.valueOf(points));
-        //scanIntent.putExtra("QRScore",String.valueOf(QRstring.length()));
+        scanIntent.putExtra("data",bundle);
         scanIntent.putExtra("imageUri",surrounds.toString());
         scanIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         startActivity(scanIntent);
@@ -336,6 +343,16 @@ public class ScanCode extends DrawerBase {
         return mFileTemp;
     }
 
+    /**
+     * check permission status
+     * @param requestCode The request code passed in {@link (
+     * android.app.Activity, String[], int)}
+     * @param permissions The requested permissions. Never null.
+     * @param grantResults The grant results for the corresponding permissions
+     *     which is either {@link android.content.pm.PackageManager#PERMISSION_GRANTED}
+     *     or {@link android.content.pm.PackageManager#PERMISSION_DENIED}. Never null.
+     *
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -359,6 +376,8 @@ public class ScanCode extends DrawerBase {
                     scanIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                     startActivity(scanIntent);
                     finish();
+
+
                 }
                 return;
         }

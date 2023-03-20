@@ -47,6 +47,9 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Handler;
 
+/**
+ * database send testing
+ */
 public class GameQRRecordDBTest {
     private Solo solo;
 
@@ -58,7 +61,7 @@ public class GameQRRecordDBTest {
     /**
      * Runs before all tests and creates solo instance.
      *
-     * @throws Exception
+     * @throws Exception something
      */
     @Before
     public void setUp() throws Exception {
@@ -67,12 +70,17 @@ public class GameQRRecordDBTest {
 
     /**
      * Closes the activity after each test
-     * @throws Exception
+     * @throws Exception something
      */
     @After
     public void tearDown() throws Exception{
         solo.finishOpenedActivities();
     }
+
+    /**
+     * add in data setup
+     * @return data
+     */
     public HashMap<String, Object> makeup(){
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
         HashMap<String, Object> data = new HashMap<>();
@@ -94,6 +102,10 @@ public class GameQRRecordDBTest {
         return data;
     }
 
+    /**
+     * add in new data
+     *
+     */
     @Test
     public void AddInNew(){
         HashMap<String, Object> data = makeup();
@@ -121,6 +133,10 @@ public class GameQRRecordDBTest {
         });
     }
 
+    /**
+     * check if a file name exist
+     *
+     */
     @Test
     public void checkunique(){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -165,6 +181,10 @@ public class GameQRRecordDBTest {
     }
 
 
+    /**
+     * check function delete
+     *
+     */
     @Test
     public void checkDelete(){
         HashMap<String, Object> data = makeup();
@@ -205,6 +225,10 @@ public class GameQRRecordDBTest {
     }
 
 
+    /**
+     * test of data changeds
+     *
+     */
     @Test
     public void checkOnchange(){
         HashMap<String, Object> data = makeup();
