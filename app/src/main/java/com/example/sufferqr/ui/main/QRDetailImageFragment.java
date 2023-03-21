@@ -57,7 +57,7 @@ public class QRDetailImageFragment extends Fragment {
     Bundle myImageBundle;
     TextView pic_text;
     CardView text_card,qr_card;
-    String mode,localQRcontent="";
+    String mode;
     Uri imageUri;
     ImageButton qrbt;
     View gbview;
@@ -73,13 +73,12 @@ public class QRDetailImageFragment extends Fragment {
             mode="new";
         }
         if (mode.equals("new")){
-            localQRcontent=myImageBundle.getString("QRString");
-            String imageU = myImageBundle.getString("imageUri");
+            String imageU = myImageBundle.getString("QRpath");
             imageUri = Uri.parse(imageU);
 
         }
 
-        System.out.println(localQRcontent);
+
     }
 
     /**
