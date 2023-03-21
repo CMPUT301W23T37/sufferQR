@@ -54,10 +54,6 @@
             android:label="@string/title_activity_maps" />
         <activity android:name=".nearbyQrCodeList"
             android:exported="true"/>
-        <activity android:name=".GameHighScorePlayers"
-            android:exported="true"/>
-        <activity android:name=".GameHighScoreQRcode"
-            android:exported="true"/>
         <activity
             android:name=".RegisterPage"
             android:exported="true"></activity>
