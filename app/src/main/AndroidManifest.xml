@@ -29,8 +29,15 @@
         android:theme="@style/Theme.SufferQR"
         tools:targetApi="31">
         <activity
+
             android:name=".OtherUser"
             android:exported="false" />
+        <activity
+            android:name=".QRQuickViewScrollingActivity"
+            android:exported="false"
+            android:label="@string/title_activity_qrquick_view_scrolling"
+            android:theme="@style/Theme.SufferQR.NoActionBar" />
+
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
 
