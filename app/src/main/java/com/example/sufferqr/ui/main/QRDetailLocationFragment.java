@@ -10,6 +10,7 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconOffset;
 import android.Manifest;
 import android.annotation.SuppressLint;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -31,6 +32,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -71,6 +73,8 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete;
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.utils.BitmapUtils;
 import android.widget.Toast;
@@ -122,9 +126,9 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
     SwitchMaterial locEnable;
     TextView privacy_text;
     CardView poi_card,map_card;
-    Boolean LocExist=false;
-
+    Boolean LocExist=false,updatePaused=false;
     View gbview;
+    Button search;
 
     /**
      * launch
@@ -139,10 +143,14 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
      */
     @Override
     public void onCameraIdle() {
-        if (mapboxMap != null && (Objects.equals(mode, "new") || Objects.equals(mode, "modified"))) {
-            double newLongtiude = mapboxMap.getCameraPosition().target.getLongitude();
-            double newLatitude = mapboxMap.getCameraPosition().target.getLatitude();
-            updatePOI(gbview,newLongtiude,newLatitude);
+        if (!updatePaused){
+            if (mapboxMap != null && (Objects.equals(mode, "new") || Objects.equals(mode, "modified"))) {
+                double newLongtiude = mapboxMap.getCameraPosition().target.getLongitude();
+                double newLatitude = mapboxMap.getCameraPosition().target.getLatitude();
+                updatePOI(gbview,newLongtiude,newLatitude);
+            }
+        } else {
+            updatePaused=false;
         }
     }
 
@@ -199,9 +207,6 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
             mode="new";
         }
         userName =mymapBundle.getString("user");
-
-
-
     }
 
     /**
@@ -236,7 +241,7 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
         privacy_text = view.findViewById(R.id.qr_detail_location_privacy_text);
         map_card=view.findViewById(R.id.qr_detail_location_map_cardview);
         poi_card=view.findViewById(R.id.qr_detail_location_poi_cardview);
-
+        search=view.findViewById(R.id.qr_detail_loacation_search);
 
         // init with mapwill to university of alberta ccis
         // Initialize the mapboxMap view
@@ -261,42 +266,23 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
             switch_operations(view,"auto_on",true);
         }
 
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new PlaceAutocomplete.IntentBuilder()
+                        .accessToken(getResources().getString(R.string.mapbox_access_token))
+                        .placeOptions(PlaceOptions.builder()
+                                .backgroundColor(getResources().getColor(R.color.white))
+                                .build())
+                        .build(getActivity());
+                startActivityForResult(intent, 10322);
+            }
+        });
 
         // if mode -- new get geolocation
         if (mode.equals("new")){
-            fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
-            settingsClient=LocationServices.getSettingsClient(requireActivity());
-            locationCallback = new LocationCallback() {
-                @Override
-               public void onLocationResult(@NonNull LocationResult locationResult) {
-                    locationCurrent = locationResult.getLastLocation();
-                    double latiude = locationCurrent.getLatitude();
-                    double longtiude = locationCurrent.getLongitude();
-                    // remove a focus
-                    CameraPosition position = new CameraPosition.Builder()
-                            .target(new LatLng(latiude, longtiude))
-                            .zoom(13).tilt(20).build();
-                    mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), null);
-                    updatePOI(view,longtiude,latiude);
-                    stopLocationUpdate();
-                    // show poi information
-                    LocExist=true;
-                }
-            };
-
-
-
-            locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY,UPDATE_INTERVAL)
-                    .setWaitForAccurateLocation(false)
-                    .setMinUpdateDistanceMeters(FAST_UPDATE_IN_ML)
-                    .setMaxUpdateDelayMillis(10000)
-                    .build();
-
-            LocationSettingsRequest.Builder builder1 = new LocationSettingsRequest.Builder();
-            builder1.addLocationRequest(locationRequest);
-            locationSettingsRequest = builder1.build();
             // when a at adding mode will get location
-            switchLocUpdate();
+            switchLocUpdate(view);
         }
 
         // Inflate the layout for this fragment
@@ -340,6 +326,23 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
         });
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK && requestCode == 10322) {
+            updatePaused=true;
+            CarmenFeature feature = PlaceAutocomplete.getPlace(data);
+            Point point = feature.center();
+            Double latitude = point.latitude();
+            Double longitude = point.longitude();
+
+            fillInAdress(gbview,feature.text(),feature.placeName(),longitude,latitude);
+            listener.onLocationUpdate(mapboxMap,locEnable.isChecked(),longitude,latitude,feature.text(),feature.placeName());
+            CameraPosition position = new CameraPosition.Builder().target(new LatLng(latitude, longitude)).zoom(15).tilt(20).build();
+            mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), null);
+        }
+    }
+
     private void fillInAdress(View myView,String AddressName,String Address,Double locMyLongtiude,Double locMyLatiude){
         TextView textView_name=myView.findViewById(R.id.qr_detail_loacation_name);
         textView_name.setText(AddressName);
@@ -380,13 +383,40 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
         }
     }
 
-
     /**
      * confirm permission and launch finding user location
      * @see Dexter
      * @see com.mapbox.android.core.permissions.PermissionsManager
      */
-    private void switchLocUpdate(){
+    private void switchLocUpdate(View view){
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
+        settingsClient=LocationServices.getSettingsClient(requireActivity());
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(@NonNull LocationResult locationResult) {
+                locationCurrent = locationResult.getLastLocation();
+                double latiude = locationCurrent.getLatitude();
+                double longtiude = locationCurrent.getLongitude();
+                // remove a focus
+                CameraPosition position = new CameraPosition.Builder()
+                        .target(new LatLng(latiude, longtiude))
+                        .zoom(13).tilt(20).build();
+                mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), null);
+                updatePOI(view,longtiude,latiude);
+                stopLocationUpdate();
+                // show poi information
+                LocExist=true;
+            }
+        };
+        locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY,UPDATE_INTERVAL)
+                .setWaitForAccurateLocation(false)
+                .setMinUpdateDistanceMeters(FAST_UPDATE_IN_ML)
+                .setMaxUpdateDelayMillis(10000)
+                .build();
+
+        LocationSettingsRequest.Builder builder1 = new LocationSettingsRequest.Builder();
+        builder1.addLocationRequest(locationRequest);
+        locationSettingsRequest = builder1.build();
         // listener runner,and check if permission exist
         Dexter.withContext(requireActivity())
                 .withPermission(Manifest.permission.ACCESS_FINE_LOCATION )
@@ -431,18 +461,10 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
                         int statusCode = ((ApiException) e).getStatusCode();
                         switch (statusCode) {
                             case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                                Log.i(TAG,"Location setthings are not satified, upgrade location settings");
-                                try {
-                                    ResolvableApiException rae = (ResolvableApiException) e;
-                                    rae.startResolutionForResult(requireActivity(), REQUEST_CHECK_SETTING);
-                                    //rae.startResolutionForResult(QRDetailLocationFragment.this,REQUEST_CHECK_SETTING);
-                                } catch (IntentSender.SendIntentException sie){
-                                    Log.i(TAG,"peddingIntent unable to execuate request");
-                                }
+                                Toast.makeText(requireContext(),"higher resoluction location require",Toast.LENGTH_SHORT).show();
                                 break;
                             case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                                String msg = "no precise location";
-                                Log.e(TAG,msg);
+                                Toast.makeText(requireContext(),"no locations",Toast.LENGTH_SHORT).show();
                                 break;
                         }
                     }
@@ -570,7 +592,4 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
         super.onLowMemory();
         mapView.onLowMemory();
     }
-
-
-
 }
