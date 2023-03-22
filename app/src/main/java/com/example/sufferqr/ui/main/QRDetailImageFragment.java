@@ -163,7 +163,6 @@ public class QRDetailImageFragment extends Fragment {
         SwitchMaterial imgEnable;
         imgEnable = iView.findViewById(R.id.qr_detail_image_enable_switch);
         Boolean imgE = (Boolean) data.get("imageExist");
-
         CardView c2= iView.findViewById(R.id.qr_detail_image_qrimage_cardview);
         TextView t1= iView.findViewById(R.id.qr_detail_image_privacy_text);
 

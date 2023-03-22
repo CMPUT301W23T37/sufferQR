@@ -28,9 +28,12 @@ import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
@@ -158,7 +161,11 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
             }
         }else {
             getUserName();
+            Date madeDate = new Date();
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd ", Locale.CANADA);
+            HashMapValidate("date",dateFormat.format(madeDate));
         }
+
     }
 
   /**
@@ -259,20 +266,6 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         }
 
     }
-
-
-  /**
-   * sync input from the user in general tab at new mode
-   * @param QRcodename name
-   * @param today time
-   */
-    @Override
-    public void onGeneralUpdate(String QRcodename,String today) {
-        HashMapValidate("QRname",QRcodename);
-        HashMapValidate("date",today);
-        QRname=QRcodename;
-    }
-
   /**
    * delete request in general tab at modifier mode
    * @param delreq delte request
