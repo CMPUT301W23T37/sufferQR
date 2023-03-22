@@ -17,12 +17,17 @@ public class LeaderBoard extends DrawerBase {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_leader_board);
         tabLayout = findViewById(R.id.LeaderBoardTabLayout);
         viewPager2 = findViewById(R.id.LeaderBoardViewPager);
         leaderPageAdapter = new LeaderPageAdapter(this);
         viewPager2.setAdapter(leaderPageAdapter);
+        setTitle("Leader Board");
+
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
