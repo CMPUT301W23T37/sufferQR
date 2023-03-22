@@ -59,8 +59,7 @@ public class QRQuickViewGeneralFragment extends Fragment  implements OnMapReadyC
     MapView mapView;
     MapboxMap mapboxMapGlobal;
     Bundle bundle;
-    TextView author,points,date,address_name,address;
-    TextInputEditText visual;
+    TextView author,points,date,address_name,address,visual;
     CardView location_card,map_card;
     Button go_button;
     View gbView;
