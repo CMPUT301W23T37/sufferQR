@@ -47,6 +47,7 @@
     <string name="action_settings">Settings</string>
     <string name="edit">Edit</string>
     <string name="points">points</string>
+    <string name="surrounding_qrcode">Surrounding QRcode</string>
 
 
 </resources>

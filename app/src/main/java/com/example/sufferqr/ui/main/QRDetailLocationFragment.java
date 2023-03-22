@@ -116,9 +116,9 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
     // new/visitor/modify
     String mode= "new",localName,localAdress;
 
-    Bundle mymapBundle,sIState;
+    Bundle mymapBundle;
     String userName;
-    Double localLongtiude,localLatiude;
+    Double localLongtiude=-113.5257,localLatiude=53.5282;
     SwitchMaterial locEnable;
     TextView privacy_text;
     CardView poi_card,map_card;
@@ -139,7 +139,7 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
      */
     @Override
     public void onCameraIdle() {
-        if (mapboxMap != null && Objects.equals(mode, "new")) {
+        if (mapboxMap != null && (Objects.equals(mode, "new") || Objects.equals(mode, "modified"))) {
             double newLongtiude = mapboxMap.getCameraPosition().target.getLongitude();
             double newLatitude = mapboxMap.getCameraPosition().target.getLatitude();
             updatePOI(gbview,newLongtiude,newLatitude);
@@ -171,7 +171,7 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
         });
         // ccis
         CameraPosition position = new CameraPosition.Builder()
-                .target(new LatLng(53.5282, -113.5257))
+                .target(new LatLng(localLatiude, localLongtiude))
                 .zoom(15)
                 .tilt(20)
                 .build();
@@ -231,7 +231,6 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
         Mapbox.getInstance(getApplicationContext(), getResources().getString(R.string.mapbox_access_token));
         View view = inflater.inflate(R.layout.fragment_q_r_detail_location, container, false);
         gbview = view;
-        sIState= savedInstanceState;
 
         locEnable = view.findViewById(R.id.qr_detail_location_enable_switch);
         privacy_text = view.findViewById(R.id.qr_detail_location_privacy_text);
@@ -242,41 +241,24 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
         // init with mapwill to university of alberta ccis
         // Initialize the mapboxMap view
         mapView= (MapView) view.findViewById(R.id.qr_detail_location_content_map_view);
-        //mapView= view.findViewById(R.id.qr_detail_location_content_map_view);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
-        if (Objects.equals(mode, "new")){
-            listener.onLocationUpdate(mapboxMap,true,0.0,0.0,"","");
-        }else{
-            listener.onLocationUpdate(mapboxMap,true,0.0,0.0,"","");
-        }
 
-        if (Objects.equals(mode, "visitor")){
-            locEnable.setEnabled(false);
+        listener.onLocationUpdate(mapboxMap,true,0.0,0.0,"","");
+
+        // switch
+        locEnable.setOnClickListener(v -> {
+            switch_operations(view,"user",true);
+        });
+
+        if (Objects.equals(mode, "visitor")) {
+            switch_operations(view, "auto_off",true);
             privacy_text.setText("following information provided by mapbox");
-
+        } else if (Objects.equals(mode, "modfied")) {
+            switch_operations(view,"auto_off",true);
         } else {
-            // button listener,send changes information
-            locEnable.setOnClickListener(v -> {
-                listener.onLocationUpdate(mapboxMap,locEnable.isChecked(),localLongtiude,localLatiude,localName,localAdress);
-                if(locEnable.isChecked()){
-                    if (mode.equals("new")){
-                        poi_card.setVisibility(View.VISIBLE);
-                        map_card.setVisibility(View.VISIBLE);
-                    }
-                }else {
-                    if (mode.equals("new")){
-                        poi_card.setVisibility(View.INVISIBLE);
-                        map_card.setVisibility(View.INVISIBLE);
-                    }
-                }
-            });
-            if (!Objects.equals(mode, "new")){
-                locEnable.setEnabled(false);
-                poi_card.setVisibility(View.INVISIBLE);
-                map_card.setVisibility(View.INVISIBLE);
-            }
+            switch_operations(view,"auto_on",true);
         }
 
 
@@ -290,20 +272,19 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
                     locationCurrent = locationResult.getLastLocation();
                     double latiude = locationCurrent.getLatitude();
                     double longtiude = locationCurrent.getLongitude();
-
                     // remove a focus
                     CameraPosition position = new CameraPosition.Builder()
                             .target(new LatLng(latiude, longtiude))
                             .zoom(13).tilt(20).build();
                     mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), null);
                     updatePOI(view,longtiude,latiude);
-
                     stopLocationUpdate();
                     // show poi information
                     LocExist=true;
-
                 }
             };
+
+
 
             locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY,UPDATE_INTERVAL)
                     .setWaitForAccurateLocation(false)
@@ -314,9 +295,7 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
             LocationSettingsRequest.Builder builder1 = new LocationSettingsRequest.Builder();
             builder1.addLocationRequest(locationRequest);
             locationSettingsRequest = builder1.build();
-
             // when a at adding mode will get location
-
             switchLocUpdate();
         }
 
@@ -344,22 +323,7 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
                 List<CarmenFeature> results = response.body().features();
                 // write information back to textVIew
                 if (results.size() > 0) {
-                    TextView textView_name=view.findViewById(R.id.qr_detail_loacation_name);
-                    textView_name.setText(results.get(0).text());
-                    localName=results.get(0).text();
-                    TextView textView_address=view.findViewById(R.id.qr_detail_loacation_address);
-                    textView_address.setText(results.get(0).placeName());
-                    localAdress=results.get(0).placeName();
-                    textView_address.setVisibility(View.VISIBLE);
-                    TextView textView_longtiude=view.findViewById(R.id.qr_detail_loacation_longtiude);
-                    textView_longtiude.setText("longtiude:"+locMyLongtiude);
-                    localLongtiude=locMyLongtiude;
-                    textView_longtiude.setVisibility(View.VISIBLE);
-                    TextView textView_latitude=view.findViewById(R.id.qr_detail_loacation_latitude);
-                    textView_latitude.setText("latitude:"+locMyLatiude);
-                    localLatiude=locMyLatiude;
-                    textView_latitude.setVisibility(View.VISIBLE);
-
+                    fillInAdress(view,results.get(0).text(),results.get(0).placeName(),locMyLongtiude,locMyLatiude);
                     listener.onLocationUpdate(mapboxMap,locEnable.isChecked(),locMyLongtiude,locMyLatiude,results.get(0).text(),results.get(0).placeName());
                 } else {
                     // No result for your request were found.
@@ -376,18 +340,46 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
         });
     }
 
-
-    /**
-     * settings setup
-     */
-    private void openSettings(){
-        Intent intent = new Intent();
-        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        Uri uri = Uri.fromParts("package",getContext().getPackageName(),null);
-        intent.setData(uri);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+    private void fillInAdress(View myView,String AddressName,String Address,Double locMyLongtiude,Double locMyLatiude){
+        TextView textView_name=myView.findViewById(R.id.qr_detail_loacation_name);
+        textView_name.setText(AddressName);
+        localName=AddressName;
+        TextView textView_address=myView.findViewById(R.id.qr_detail_loacation_address);
+        textView_address.setText(Address);
+        localAdress=Address;
+        textView_address.setVisibility(View.VISIBLE);
+        TextView textView_longtiude=myView.findViewById(R.id.qr_detail_loacation_longtiude);
+        textView_longtiude.setText("longtiude:"+locMyLongtiude);
+        localLongtiude=locMyLongtiude;
+        textView_longtiude.setVisibility(View.VISIBLE);
+        TextView textView_latitude=myView.findViewById(R.id.qr_detail_loacation_latitude);
+        textView_latitude.setText("latitude:"+locMyLatiude);
+        localLatiude=locMyLatiude;
+        textView_latitude.setVisibility(View.VISIBLE);
     }
+
+    private void switch_operations(View view,String noting,Boolean options){
+        locEnable = view.findViewById(R.id.qr_detail_location_enable_switch);
+        listener.onLocationUpdate(mapboxMap,locEnable.isChecked(),localLongtiude,localLatiude,localName,localAdress);
+        if(locEnable.isChecked() || Objects.equals(noting, "info_on")){
+            poi_card.setVisibility(View.VISIBLE);
+            map_card.setVisibility(View.VISIBLE);
+        }else if (!locEnable.isChecked() || Objects.equals(noting, "info_off")) {
+            poi_card.setVisibility(View.INVISIBLE);
+            map_card.setVisibility(View.INVISIBLE);
+        }
+        if (Objects.equals(noting, "auto_off") || (Objects.equals(noting, "info_off") && !options)){
+            locEnable.setEnabled(false);
+        } else if (Objects.equals(noting, "auto_on") || Objects.equals(noting, "info_on")){
+            if (Objects.equals(noting, "info_on") && (!options)){
+                locEnable.setEnabled(false);
+                privacy_text.setVisibility(View.INVISIBLE);
+            } else {
+                locEnable.setEnabled(true);
+            }
+        }
+    }
+
 
     /**
      * confirm permission and launch finding user location
@@ -475,6 +467,34 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
     }
 
     /**
+     * other than new mode show content to the fragment
+     * @param userName11 username
+     * @param  data data from firebase
+     * @see MapView
+     */
+    public void ActivityCallBack(String userName11,HashMap<String, Object> data){
+        // map page chage load info
+        Boolean LocE = (Boolean)data.get("LocationExist");
+
+        if (Boolean.FALSE.equals(LocE)){
+            // if not the creator disble change option
+            locEnable.setChecked(false);
+            switch_operations(gbview,"info_off",Objects.equals((String) data.get("user"), userName11));
+        } else {
+            locEnable.setChecked(true);
+            switch_operations(gbview,"info_on",Objects.equals((String) data.get("user"), userName11));
+            //load info
+            Double lat = (Double) data.get("LocationLatitude");
+            Double longit = (Double) data.get("LocationLongitude");
+            fillInAdress(gbview,(String) data.get("LocationName"),(String) data.get("LocationAddress"),longit,lat);
+            // draw map
+            MapView mapView=gbview.findViewById(R.id.qr_detail_location_content_map_view);
+            mapView.onCreate(getArguments());
+            mapView.getMapAsync(this);
+        }
+    }
+
+    /**
      * mapbox life cycle async
      * @see MapView
      */
@@ -551,75 +571,6 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
         mapView.onLowMemory();
     }
 
-    /**
-     * other than new mode show content to the fragment
-     * @param userName11 username
-     * @param  data data from firebase
-     * @see MapView
-     */
-    public void ActivityCallBack(String userName11,HashMap<String, Object> data){
-        // map page chage load info
-        Boolean LocE = (Boolean)data.get("LocationExist");
 
-        if (Boolean.FALSE.equals(LocE)){
-            // if not the creator disble change option
-            locEnable.setChecked(false);
-            locEnable.setEnabled(false);
-            poi_card.setVisibility(View.INVISIBLE);
-            poi_card.setVisibility(View.INVISIBLE);
-            map_card.setVisibility(View.INVISIBLE);
-        } else {
-            //load info
-            locEnable.setChecked(true);
-            if (Objects.equals((String) data.get("user"), userName11)) {
-                locEnable.setEnabled(true);
-                privacy_text.setVisibility(View.VISIBLE);
-            } else {
-                locEnable.setEnabled(false);
-                privacy_text.setVisibility(View.INVISIBLE);
-            }
-            TextView LocationName, address, latitude, longitude;
-            poi_card.setVisibility(View.VISIBLE);
-            map_card.setVisibility(View.VISIBLE);
-
-            Double lat = (Double) data.get("LocationLatitude");
-            Double longit = (Double) data.get("LocationLongitude");
-            LocationName = gbview.findViewById(R.id.qr_detail_loacation_name);
-            address = gbview.findViewById(R.id.qr_detail_loacation_address);
-            address.setVisibility(View.VISIBLE);
-            latitude = gbview.findViewById(R.id.qr_detail_loacation_latitude);
-            latitude.setVisibility(View.VISIBLE);
-            longitude = gbview.findViewById(R.id.qr_detail_loacation_longtiude);
-            longitude.setVisibility(View.VISIBLE);
-            LocationName.setText((String) data.get("LocationName"));
-            latitude.setText("Latitude" + lat);
-            longitude.setText("Longitude" + longit);
-            address.setText((String) data.get("LocationAddress"));
-
-
-            // draw map
-            MapView mapView=gbview.findViewById(R.id.qr_detail_location_content_map_view);
-            mapView.getMapAsync(new OnMapReadyCallback() {
-                                @Override
-                                public void onMapReady(@NonNull MapboxMap mapboxMap1) {
-                                    mapboxMap1.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
-                                        @Override
-                                        public void onStyleLoaded(@NonNull Style style) {
-                                            style.addImage("red-pin", BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_red_dot)));
-                                            style.addLayer(new SymbolLayer("icon-layer-id","icon-source-id").withProperties(
-                                                    iconImage("red-pin"),
-                                                    iconIgnorePlacement(true),
-                                                    iconAllowOverlap(true),
-                                                    iconOffset(new Float[]{0f,-0f})
-                                            ));
-                                        }
-                                    });
-                                    // ccis
-                                    CameraPosition position = new CameraPosition.Builder().target(new LatLng(lat, longit)).zoom(15).tilt(20).build();
-                                    mapboxMap1.animateCamera(CameraUpdateFactory.newCameraPosition(position), null);
-                                }
-                            });
-        }
-    }
 
 }

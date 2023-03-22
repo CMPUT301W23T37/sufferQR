@@ -51,12 +51,10 @@ import java.util.Objects;
 public class QRDetailImageFragment extends Fragment {
 
     private OnFragmentInteractionListener listener;
-    TextInputEditText qrcodeText;
     TextView t_info;
     SwitchMaterial imgEnable;
     Bundle myImageBundle;
-    TextView pic_text;
-    CardView text_card,qr_card;
+    CardView qr_card;
     String mode;
     Uri imageUri;
     ImageButton qrbt;
@@ -75,10 +73,7 @@ public class QRDetailImageFragment extends Fragment {
         if (mode.equals("new")){
             String imageU = myImageBundle.getString("QRpath");
             imageUri = Uri.parse(imageU);
-
         }
-
-
     }
 
     /**
@@ -86,7 +81,6 @@ public class QRDetailImageFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener{
         void onImageUpdate(Boolean imageOn);
-
     }
 
     /**
@@ -97,7 +91,6 @@ public class QRDetailImageFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     /**
@@ -126,11 +119,8 @@ public class QRDetailImageFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_q_r_detail_image, container, false);
         gbview = view;
-        qrcodeText = view.findViewById(R.id.qr_detail_image_textfield);
         imgEnable = view.findViewById(R.id.qr_detail_image_enable_switch);
         qr_card = view.findViewById(R.id.qr_detail_image_qrimage_cardview);
-        text_card = view.findViewById(R.id.qr_detail_image_qrtext_cardview);
-        pic_text = view.findViewById(R.id.qr_detail_image_qrimage_notification_bottom);
         qrbt = view.findViewById(R.id.qr_detail_image_qrimage_button);
         t_info= view.findViewById(R.id.qr_detail_image_privacy_text);
 
@@ -170,13 +160,10 @@ public class QRDetailImageFragment extends Fragment {
 
 
         // image page chage load info
-        TextInputEditText QRcontent;
         SwitchMaterial imgEnable;
-        QRcontent = iView.findViewById(R.id.qr_detail_image_textfield);
         imgEnable = iView.findViewById(R.id.qr_detail_image_enable_switch);
         Boolean imgE = (Boolean) data.get("imageExist");
 
-        CardView c1= iView.findViewById(R.id.qr_detail_image_qrtext_cardview);
         CardView c2= iView.findViewById(R.id.qr_detail_image_qrimage_cardview);
         TextView t1= iView.findViewById(R.id.qr_detail_image_privacy_text);
 
@@ -186,11 +173,9 @@ public class QRDetailImageFragment extends Fragment {
             imgEnable.setEnabled(false);
 
             t1.setVisibility(View.INVISIBLE);
-            c1.setVisibility(View.INVISIBLE);
             c2.setVisibility(View.INVISIBLE);
         } else {
             // since image exist load content
-            c1.setVisibility(View.VISIBLE);
             c2.setVisibility(View.VISIBLE);
             imgEnable.setChecked(true);
             if (userName11.equals((String) data.get("user"))){
@@ -200,7 +185,6 @@ public class QRDetailImageFragment extends Fragment {
                 imgEnable.setEnabled(false);
                 t1.setVisibility(View.INVISIBLE);
             }
-            QRcontent.setText((String) data.get("QRtext"));
             // conect firebase storage
             imageFetchFirestone(iView,(String) data.get("QRpath"));
         }

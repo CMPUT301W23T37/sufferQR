@@ -250,18 +250,14 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
     @Override
     public void onLocationUpdate(MapboxMap mapboxMap,Boolean btOn, Double longitude, Double latitude, String name, String address) {
         mapboxMapGlobal = mapboxMap;
-        if(mode.equals("new")){
-            HashMapValidate("LocationExist",btOn);
-
-            if (btOn){
-                HashMapValidate("LocationLatitude",latitude);
-                HashMapValidate("LocationLongitude",longitude);
-                HashMapValidate("LocationName",name);
-                HashMapValidate("LocationAddress",address);
-            }
-        }else{
-            HashMapValidate("LocationExist",btOn);
+        HashMapValidate("LocationExist",btOn);
+        if (btOn){
+            HashMapValidate("LocationLatitude",latitude);
+            HashMapValidate("LocationLongitude",longitude);
+            HashMapValidate("LocationName",name);
+            HashMapValidate("LocationAddress",address);
         }
+
     }
 
 
