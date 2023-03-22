@@ -151,6 +151,7 @@
         </androidx.cardview.widget.CardView>
 
         <ListView
+            android:divider="@null"
             android:id="@+id/ranks_listview"
             android:layout_width="409dp"
             android:layout_height="459dp"
