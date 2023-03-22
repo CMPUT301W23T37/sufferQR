@@ -22,6 +22,8 @@ public class LeaderBoard extends DrawerBase {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         activityLeaderBoardBinding = ActivityLeaderBoardBinding.inflate(getLayoutInflater());
         setContentView(activityLeaderBoardBinding.getRoot());
@@ -31,6 +33,8 @@ public class LeaderBoard extends DrawerBase {
         viewPager2 = findViewById(R.id.LeaderBoardViewPager);
         leaderPageAdapter = new LeaderPageAdapter(this);
         viewPager2.setAdapter(leaderPageAdapter);
+        setTitle("Leader Board");
+
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
