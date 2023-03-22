@@ -70,9 +70,11 @@ public class UserProfile extends DrawerBase {
         userEmail = findViewById(R.id.userEmail_UserProfile);
         userQRid = findViewById(R.id.userQRid_UserProfile);
         highScore = findViewById(R.id.highestScore_UserProfile);
-        lowScore = findViewById(R.id.lowestScore_UserProfile);
-        sumScore = findViewById(R.id.sumScore_UserProfile);
-        qrCount = findViewById(R.id.totalQR_UserProfile);
+        lowScore = findViewById(R.id.lowestScore_otherProfile);
+        sumScore = findViewById(R.id.sumScore_otherProfile);
+        qrCount = findViewById(R.id.totalQR_otherProfile);
+
+
 
         // Get AAID and give it to the db
         String android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -121,6 +123,8 @@ public class UserProfile extends DrawerBase {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(UserProfile.this, EditProfile.class);
+                String name = userName.getText().toString();
+                i.putExtra("username", name);
                 startActivity(i);
             }
         });
