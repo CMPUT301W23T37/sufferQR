@@ -140,5 +140,8 @@ dependencies {
     // For control over item selection of both touch and mouse driven selection
     implementation "androidx.recyclerview:recyclerview-selection:1.1.0"
 
+    // string to QR code
+    implementation 'com.journeyapps:zxing-android-embedded:4.1.0'
+
 
 }

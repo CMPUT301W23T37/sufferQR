@@ -12,12 +12,12 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginTop="30sp"
-        android:layout_marginStart="70sp"
+        android:layout_marginStart="20sp"
         android:layout_marginEnd="20sp"
         android:layout_marginBottom="20sp">
 
         <ImageView
-            android:id="@+id/userQRImage_UserProfile"
+            android:id="@+id/userQRImage_otherProfile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -32,7 +32,7 @@
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/userQRImage_UserProfile"
+
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
@@ -87,7 +87,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:chipIcon="@drawable/highest"
-            android:textSize="16sp"/>
+            android:textSize="16sp"
+            android:clickable="false"/>
 
         <com.google.android.material.chip.Chip
             android:id="@+id/lowest_otherProfile"
@@ -99,7 +100,8 @@
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginEnd="20sp"
             app:chipIcon="@drawable/lowest"
-            android:textSize="16sp"/>
+            android:textSize="16sp"
+            android:clickable="false"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -119,7 +121,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:chipIcon="@drawable/sum"
-            android:textSize="16sp"/>
+            android:textSize="16sp"
+            android:clickable="false"/>
 
         <com.google.android.material.chip.Chip
             android:id="@+id/number_of_code_otherProfile"
@@ -131,7 +134,8 @@
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginEnd="20sp"
             app:chipIcon="@drawable/number"
-            android:textSize="16sp"/>
+            android:textSize="16sp"
+            android:clickable="false"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
