@@ -28,6 +28,7 @@
 
 <!--        Input container for username (input type -> text)     -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/userName_register_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Username"
