@@ -1,6 +1,8 @@
 package com.example.sufferqr;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -17,6 +19,11 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import org.w3c.dom.Text;
 
@@ -24,6 +31,7 @@ public class OtherUser extends DrawerBase {
 
     ActivityOtherUserLayoutBinding activityOtherUserLayoutBinding;
 
+    ImageView userCode_otherProfile;
     TextView userName_otherProfile;
     TextView userEmail_otherProfile;
     TextView userQrId_otherProfile;
@@ -83,6 +91,20 @@ public class OtherUser extends DrawerBase {
 
             }
         });
+
+        // generate qr code
+        userCode_otherProfile = findViewById(R.id.userQRImage_otherProfile);
+        String qrCode = userQrId_otherProfile.getText().toString().trim() + name;
+        MultiFormatWriter mWriter = new MultiFormatWriter();
+        try {
+            //BitMatrix class to encode entered text and set Width & Height
+            BitMatrix mMatrix = mWriter.encode(qrCode, BarcodeFormat.QR_CODE, 400,400);
+            BarcodeEncoder mEncoder = new BarcodeEncoder();
+            Bitmap mBitmap = mEncoder.createBitmap(mMatrix);//creating bitmap of code
+            userCode_otherProfile.setImageBitmap(mBitmap);//Setting generated QR code to imageView
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
 
     }
 }
