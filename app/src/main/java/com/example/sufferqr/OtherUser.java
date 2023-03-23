@@ -71,6 +71,8 @@ public class OtherUser extends DrawerBase {
         lowest_otherProfile = findViewById(R.id.lowest_otherProfile);
         sum_otherProfile = findViewById(R.id.sum_otherProfile);
         code_otherProfile = findViewById(R.id.number_of_code_otherProfile);
+        userCode_otherProfile = findViewById(R.id.userQRImage_otherProfile);
+        qrCode_otherProfile=findViewById(R.id.other_user_profile_list);
 
         Bundle value = getIntent().getExtras();
         String name = value.getString("username");
@@ -88,25 +90,46 @@ public class OtherUser extends DrawerBase {
                 }
 
                 DocumentSnapshot doc = value.getDocuments().get(0);
+                User u = doc.toObject(User.class);
+                assert u != null;
 
-                userName_otherProfile.setText(String.valueOf(doc.get("name")));
-                userEmail_otherProfile.setText(String.valueOf(doc.get("email")));
-                userQrId_otherProfile.setText(String.valueOf(doc.get("qrid")));
+                userName_otherProfile.setText(u.getName());
 
-                String highest_text = "Highest: " + doc.get("highestScore");
-                highest_otherProfile.setText(highest_text);
-                String lowest_text = "Lowest: " + doc.get("lowestScore");
-                lowest_otherProfile.setText(lowest_text);
-                String sum_text = "Sum: " + doc.get("sumScore");
-                sum_otherProfile.setText(sum_text);
-                String code_text = "Code: " + doc.get("qrcount");
-                code_otherProfile.setText(code_text);
+                if(u.getAllowViewEmail()){
+                    userEmail_otherProfile.setText(u.getEmail());
+                } else {
+                    userEmail_otherProfile.setText("");
+                }
+
+                if(u.getAllowViewQrid()){
+                    userQrId_otherProfile.setText(u.getQRid());
+                } else{
+                    userQrId_otherProfile.setText("");
+                }
+
+                if(u.getAllowViewScanRecord()){
+                    String highest_text = "Highest: " + doc.get("highestScore");
+                    highest_otherProfile.setText(highest_text);
+                    String lowest_text = "Lowest: " + doc.get("lowestScore");
+                    lowest_otherProfile.setText(lowest_text);
+                    String sum_text = "Sum: " + doc.get("sumScore");
+                    sum_otherProfile.setText(sum_text);
+                    String code_text = "Code: " + doc.get("qrcount");
+                    code_otherProfile.setText(code_text);
+                } else{
+                    highest_otherProfile.setText("N/A");
+                    lowest_otherProfile.setText("N/A");
+                    sum_otherProfile.setText("N/A");
+                    code_otherProfile.setText("N/A");
+                    qrCode_otherProfile.setVisibility(View.INVISIBLE);
+                }
+
 
             }
         });
 
         // generate qr code
-        userCode_otherProfile = findViewById(R.id.userQRImage_otherProfile);
+
         String qrCode = userQrId_otherProfile.getText().toString().trim() + name;
         MultiFormatWriter mWriter = new MultiFormatWriter();
         try {
@@ -121,7 +144,6 @@ public class OtherUser extends DrawerBase {
 
         // list
         db = FirebaseFirestore.getInstance();
-        qrCode_otherProfile=findViewById(R.id.other_user_profile_list);
 
         qrDataList = new ArrayList<>();
 

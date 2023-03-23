@@ -102,6 +102,9 @@ public class EditProfile extends AppCompatActivity {
         });
 
         email = findViewById(R.id.userEmail_editProfile);
+        allowEmail = findViewById(R.id.allow_email);
+        allowQrid = findViewById(R.id.allow_qrid);
+        allowScanRecord = findViewById(R.id.allow_scan_record);
 
         // Get AAID and give it to the db
         String android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -114,6 +117,9 @@ public class EditProfile extends AppCompatActivity {
 
                 username.setText((String) document.get("name"));
                 email.setText((String) document.get("email"));
+                allowEmail.setChecked((Boolean) document.get("allowViewEmail"));
+                allowQrid.setChecked((Boolean) document.get("allowViewQrid"));
+                allowScanRecord.setChecked((Boolean) document.get("allowViewScanRecord"));
 
             }
         });
@@ -127,9 +133,6 @@ public class EditProfile extends AppCompatActivity {
             }
         });
 
-        allowEmail = findViewById(R.id.allow_email);
-        allowQrid = findViewById(R.id.allow_qrid);
-        allowScanRecord = findViewById(R.id.allow_scan_record);
 
         // apply change action
         applyButton = findViewById(R.id.applyButton_editProfile);

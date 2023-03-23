@@ -41,6 +41,7 @@ public class User {
         this.QRid = qrid;
     }
 
+    public User(){}
 
 
     public String getName(){
