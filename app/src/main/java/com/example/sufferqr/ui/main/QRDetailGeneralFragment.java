@@ -61,7 +61,7 @@ public class QRDetailGeneralFragment extends Fragment{
         }
         if (mode.equals("new")){
             QRpoints=myGeneralBudle.getString("points");
-            QRvisual=myGeneralBudle.getString("QVisual");
+            QRvisual=myGeneralBudle.getString("QRVisual");
         }
         if (mode.equals("modified")){
             oldName=myGeneralBudle.getString("qrID");
@@ -215,7 +215,7 @@ public class QRDetailGeneralFragment extends Fragment{
         Object pt = data.get("points");
         points.setText(String.valueOf(pt));
         textView.setText((String)data.get("date"));
-        visual.setText((String)data.get("QVisual"));
+        visual.setText((String)data.get("QRVisual"));
         TextInputLayout ttl = gView.findViewById(R.id.qr_detail_general_qrtext_name_layout);
 
         if (Objects.equals((String) data.get("user"), userName11)){
