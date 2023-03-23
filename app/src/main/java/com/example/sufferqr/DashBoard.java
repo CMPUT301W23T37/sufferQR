@@ -131,7 +131,7 @@ public class DashBoard extends DrawerBase {
 
                             // set percentage that point increased
                             long sumBefore = 0;
-                            int pPercent = 0;
+                            float pPercent;
                             for (int i = 0; i < length - 1; i++) {
                                 sumBefore += scoresList.get(i);
                             }
@@ -139,7 +139,7 @@ public class DashBoard extends DrawerBase {
                             if (sumBefore == 0) {
                                 pPercent = 0;
                             } else {
-                                pPercent = (int) ((scoresList.get(length - 1) / sumBefore) * 100);
+                                pPercent = (float) ((scoresList.get(length - 1) / sumBefore) * 100);
                             }
                             pointPercent.setText(getString(R.string.point_percent, String.valueOf(pPercent)));
 
