@@ -29,8 +29,9 @@ public class User {
         this.scores = scores;
     }
 
-    public User(String name){
+    public User(String name, String qrid){
         this.username = name;
+        this.QRid = qrid;
     }
 
 
