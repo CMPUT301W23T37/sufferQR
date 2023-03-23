@@ -1,5 +1,9 @@
 package com.example.sufferqr;
 
+import com.google.maps.android.clustering.ClusterItem;
+import com.google.maps.android.clustering.ClusterManager;
+
+
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -44,6 +48,35 @@ import java.util.ArrayList;
  * when the marker is clicked, the QR code name and points are shown
  */
 public class MapsActivity extends DrawerBase implements OnMapReadyCallback {
+
+    public static class MyClusterItem implements ClusterItem {
+        private final LatLng position;
+        private final String title;
+        private final String snippet;
+
+        public MyClusterItem(double lat, double lng, String title, String snippet) {
+            this.position = new LatLng(lat, lng);
+            this.title = title;
+            this.snippet = snippet;
+        }
+
+        @Override
+        public LatLng getPosition() {
+            return position;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getSnippet() {
+            return snippet;
+        }
+    }
+
+    private ClusterManager<MyClusterItem> clusterManager;
+
+
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
 
@@ -91,11 +124,20 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback {
             mMap.setMyLocationEnabled(true);
         }
 
+        setUpClusterManager();
+
         // move camera to current location
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+        //if location is null, finish the activity
+        if (location == null) {
+            finish();
+            Toast.makeText(this, "Please check device's statue", Toast.LENGTH_SHORT).show();
+        }
+
         LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16));
 
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -120,30 +162,34 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback {
                         String id = document.getId();
                         String points = (String) document.getData().get("points").toString();
 
-
                         if (latitude != null && longitude != null) {
                             latitudeList.add(latitude);
                             longitudeList.add(longitude);
                             ids.add(id);
                             scores.add(points);
-
                         }
                     }
-            
+
                     // add markers if they are within 1km of the current location
                     for (int i = 0; i < latitudeList.size(); i++) {
                         LatLng latLng = new LatLng(latitudeList.get(i), longitudeList.get(i));
                         if (isWithinOneKilometer(currentLocation, latLng)) {
-                            //if score is not null, add marker
-                            if (scores.get(i) != null) {
-                                mMap.addMarker(new MarkerOptions().position(latLng).title(ids.get(i)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)).snippet("Points: " + scores.get(i) + ""));
-                            }}
+                            String id = ids.get(i);
+                            String points = scores.get(i);
+                            MyClusterItem clusterItem = new MyClusterItem(latLng.latitude, latLng.longitude, id, "Points: " + points);
+                            clusterManager.addItem(clusterItem);
+                        }
                     }
+
+                    // Force the cluster manager to render the clusters
+                    clusterManager.cluster();
+
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
                 }
             }
         });
+
 
 
 
@@ -158,6 +204,8 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback {
                 startActivity(intent);
             }
         });
+
+
 
 
 
@@ -180,6 +228,13 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback {
         double distance = R * c * 1000; // convert to meters
         return distance <= 1000; // return true if distance is less than or equal to 1km
     }
+
+    private void setUpClusterManager() {
+        clusterManager = new ClusterManager<>(this, mMap);
+        mMap.setOnCameraIdleListener(clusterManager);
+        mMap.setOnMarkerClickListener(clusterManager);
+    }
+
 
 }
 
