@@ -188,7 +188,7 @@
             android:divider="@null"
             android:id="@+id/ranks_listview"
             android:layout_width="409dp"
-            android:layout_height="459dp"
+            android:layout_height="420dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

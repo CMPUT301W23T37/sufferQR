@@ -33,7 +33,7 @@ public class LeaderBoard extends DrawerBase {
         viewPager2 = findViewById(R.id.LeaderBoardViewPager);
         leaderPageAdapter = new LeaderPageAdapter(this);
         viewPager2.setAdapter(leaderPageAdapter);
-        setTitle("Leader Board");
+
 
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
