@@ -164,7 +164,6 @@ public class DashBoard extends DrawerBase {
                             hScore.setText(String.valueOf(scoresSorted.get(0)));
                         }
                     }
-
                 } else {
                     Log.d(TAG, "failed with ", task.getException());
                 }
