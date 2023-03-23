@@ -29,6 +29,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import timber.log.Timber;
+
 /**
  * This class is the dash board of the application
  * it will have a short cut to camera, the total number of the score collected
@@ -127,21 +129,28 @@ public class DashBoard extends DrawerBase {
                         // check if there is any code record
                         if (length != 0) {
                             // set last scan
-                            lScan.setText(getString(R.string.last_scan_number, String.valueOf(scoresList.get(length - 1))));
+                            lScan.setText(getString(R.string.last_scan_number, String.valueOf(scoresList.get(0))));
 
                             // set percentage that point increased
                             long sumBefore = 0;
-                            float pPercent;
-                            for (int i = 0; i < length - 1; i++) {
+                            double pPercent;
+                            for (int i = 1; i < length; i++) {
                                 sumBefore += scoresList.get(i);
                             }
 
-                            if (sumBefore == 0) {
-                                pPercent = 0;
-                            } else {
-                                pPercent = (float) ((scoresList.get(length - 1) / sumBefore) * 100);
-                            }
-                            pointPercent.setText(getString(R.string.point_percent, String.valueOf(pPercent)));
+                            String sum = String.valueOf(userInfo.get("sumScore"));
+
+//                            if (sumBefore == 0) {
+//                                pPercent = 0;
+//                            } else {
+//                                pPercent = (double) ((scoresList.get(0) / sumBefore * 100);
+//                            }
+
+                            pPercent = (scoresList.get(0)/(Double.parseDouble(sum)-scoresList.get(0))) * 100;
+
+                            pointPercent.setText(getString(R.string.point_percent, pPercent));
+
+
 
                             // sort the score list in reverse order
                             List<Long> scoresSorted = scoresList.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
