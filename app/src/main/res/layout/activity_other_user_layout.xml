@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -154,7 +154,7 @@
         android:id="@+id/other_user_profile_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="270sp"
+        android:layout_marginTop="10sp"
         android:layout_gravity="bottom"
         android:divider="@null"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -163,4 +163,4 @@
         app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

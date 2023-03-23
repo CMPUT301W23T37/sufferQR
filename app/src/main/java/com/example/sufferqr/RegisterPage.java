@@ -164,11 +164,14 @@ public class RegisterPage extends AppCompatActivity {
                     int sum = 0;
                     List<Long> scores = new ArrayList<Long>();
                     scores.add(0L);
+                    boolean allowEmail = true;
+                    boolean allowQrid = true;
+                    boolean allowScan = true;
 
                     // Get AAID
                     String android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
-                    User user = new User(usernameEntered, emailEntered, qrIdGenerated, QRcount, highest, lowest, sum, scores);
+                    User user = new User(usernameEntered, emailEntered, qrIdGenerated, QRcount, highest, lowest, sum, scores, allowEmail, allowQrid, allowScan);
                     db.collection("Player").document(android_id).set(user);
                     finish();
                 } else{
