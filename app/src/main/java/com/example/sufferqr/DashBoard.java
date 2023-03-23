@@ -139,7 +139,7 @@ public class DashBoard extends DrawerBase {
                             if (sumBefore == 0) {
                                 pPercent = 0;
                             } else {
-                                pPercent = (int) ((scoresList.get(length - 1) * 100) / (sumBefore * 100));
+                                pPercent = (int) ((scoresList.get(length - 1) / sumBefore) * 100);
                             }
                             pointPercent.setText(getString(R.string.point_percent, String.valueOf(pPercent)));
 
@@ -164,7 +164,6 @@ public class DashBoard extends DrawerBase {
                             hScore.setText(String.valueOf(scoresSorted.get(0)));
                         }
                     }
-
                 } else {
                     Log.d(TAG, "failed with ", task.getException());
                 }
