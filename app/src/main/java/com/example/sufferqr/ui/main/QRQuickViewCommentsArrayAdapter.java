@@ -27,7 +27,7 @@ public class QRQuickViewCommentsArrayAdapter extends ArrayAdapter<QRQuickViewCom
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View view;
         if (convertView == null) {
-            view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_q_r_quick_view_comments,
+            view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_q_r_quick_view_comments_context,
                     parent, false);
         } else {
             view = convertView;

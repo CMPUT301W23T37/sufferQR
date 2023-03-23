@@ -1,9 +1,13 @@
 package com.example.sufferqr.ui.main;
 
+import static android.content.ContentValues.TAG;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -15,15 +19,25 @@ import androidx.fragment.app.DialogFragment;
 
 
 import com.example.sufferqr.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Source;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class QRQuickViewCommentsDialog extends DialogFragment implements Serializable {
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    String userName;
+
+
     private AddCommentDialogListener listener;
 
-    interface AddCommentDialogListener {
+    public interface AddCommentDialogListener {
         void addComment(QRQuickViewComment newCom);
         void editComment(String comContent, int position);
         void deleteComment(int i);
@@ -37,6 +51,19 @@ public class QRQuickViewCommentsDialog extends DialogFragment implements Seriali
         } else {
             throw new RuntimeException(context + " must implement AddCityDialogListener");
         }
+        String android_id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        DocumentReference userAAID = db.collection("Player").document(android_id);
+        userAAID.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot userInfo = task.getResult();
+                    userName = (String) userInfo.get("name");
+                } else {
+                    Log.d(TAG, "failed with ", task.getException());
+                }
+            }
+        });
     }
 
     @NonNull
@@ -44,8 +71,6 @@ public class QRQuickViewCommentsDialog extends DialogFragment implements Seriali
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_q_r_quick_view_comments_dialog, null);
 
-        TextView userName = view.findViewById(R.id.quick_view_comment_dialog_user);
-        TextView date = view.findViewById(R.id.quick_view_comment_dialog_time);
         EditText comment = view.findViewById(R.id.quick_view_comment_dialog_comment);
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
@@ -60,10 +85,8 @@ public class QRQuickViewCommentsDialog extends DialogFragment implements Seriali
                     .setTitle("Add A Comment")
                     .setNegativeButton("Cancel", null)
                     .setPositiveButton("Add", (dialog, which) -> {
-                        String uName = userName.getText().toString();
                         String comm = comment.getText().toString();
-
-                        listener.addComment(new QRQuickViewComment(uName, realDate, comm));
+                        listener.addComment(new QRQuickViewComment(userName, realDate, comm));
                     })
                     .create();
         }
@@ -72,8 +95,6 @@ public class QRQuickViewCommentsDialog extends DialogFragment implements Seriali
             QRQuickViewComment passedComm = (QRQuickViewComment) editable.getSerializable("Comment");
 
             // set the text field with corresponding content
-            userName.setText(passedComm.getUserName());
-            date.setText(passedComm.getCDate());
             comment.setText(passedComm.getComment());
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -95,7 +116,7 @@ public class QRQuickViewCommentsDialog extends DialogFragment implements Seriali
         }
     }
 
-    static QRQuickViewCommentsDialog newInstance(QRQuickViewComment com, int position){
+    public static QRQuickViewCommentsDialog newInstance(QRQuickViewComment com, int position){
         Bundle args = new Bundle();
         args.putSerializable("Comment", com);
         args.putSerializable("Pos", position);
