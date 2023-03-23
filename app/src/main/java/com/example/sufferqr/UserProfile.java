@@ -3,10 +3,13 @@ package com.example.sufferqr;
 import androidx.annotation.NonNull;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,6 +20,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.util.Comparator;
 import java.util.List;
@@ -70,9 +78,10 @@ public class UserProfile extends DrawerBase {
         userEmail = findViewById(R.id.userEmail_UserProfile);
         userQRid = findViewById(R.id.userQRid_UserProfile);
         highScore = findViewById(R.id.highestScore_UserProfile);
-        lowScore = findViewById(R.id.lowestScore_UserProfile);
-        sumScore = findViewById(R.id.sumScore_UserProfile);
-        qrCount = findViewById(R.id.totalQR_UserProfile);
+        lowScore = findViewById(R.id.lowestScore_otherProfile);
+        sumScore = findViewById(R.id.sumScore_otherProfile);
+        qrCount = findViewById(R.id.totalQR_otherProfile);
+
 
         // Get AAID and give it to the db
         String android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -117,10 +126,27 @@ public class UserProfile extends DrawerBase {
         });
 
         profileToEdit = findViewById(R.id.changeToEditProfile_UserProfile);
+
+        // generate qr code from qrId
+        userQRImage = findViewById(R.id.userQRImage_UserProfile);
+        String qrCode = userQRid.getText().toString().trim() + "SufferQr";
+        MultiFormatWriter mWriter = new MultiFormatWriter();
+        try {
+            //BitMatrix class to encode entered text and set Width & Height
+            BitMatrix mMatrix = mWriter.encode(qrCode, BarcodeFormat.QR_CODE, 400,400);
+            BarcodeEncoder mEncoder = new BarcodeEncoder();
+            Bitmap mBitmap = mEncoder.createBitmap(mMatrix);//creating bitmap of code
+            userQRImage.setImageBitmap(mBitmap);//Setting generated QR code to imageView
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
+
         profileToEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(UserProfile.this, EditProfile.class);
+                String name = userName.getText().toString();
+                i.putExtra("username", name);
                 startActivity(i);
             }
         });

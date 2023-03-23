@@ -80,40 +80,20 @@
             app:cardCornerRadius="10sp"
             app:cardMaxElevation="5sp">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/fragment_q_r_quick_view_general_textfield"
+            <TextView
+                android:id="@+id/fragment_q_r_quick_view_general_general_visual_text"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:inputType="textMultiLine"
-                android:textSize="6sp"
-                android:hint="@string/qr_detail_general_visual_text_tittle"
-
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="parent"
-                app:startIconContentDescription="content"
-                >
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/fragment_q_r_quick_view_general_general_visual_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:inputType="textMultiLine"
-                    android:enabled="false"
-                    android:focusable="false"
-                    android:text="@string/qr_detail_general_visual_text_startup_msg"
-                    android:gravity="center"
-                    />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
+                android:text="@string/qr_detail_general_visual_text_startup_msg"
+                android:typeface="monospace"
+                android:gravity="center"
+            />
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/fragment_q_r_quick_view_general_location_info_cardView"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="150dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="10sp"
@@ -130,7 +110,7 @@
 
                 <TextView
                     android:id="@+id/fragment_q_r_quick_view_general_location_address_name"
-                    android:layout_width="wrap_content"
+                    android:layout_width="250sp"
                     android:layout_height="wrap_content"
                     android:text="address name"
                     android:textSize="20dp"

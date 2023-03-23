@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Total">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/first3_cardview"
+            android:layout_width="match_parent"
+            android:layout_height="270sp"
+            app:cardBackgroundColor="#87CEFF"
+            android:orientation="vertical"
+            app:cardCornerRadius="10sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageButton
+                    android:id="@+id/total_second_qr"
+                    android:layout_width="77dp"
+                    android:layout_height="74dp"
+                    android:layout_marginStart="24dp"
+                    android:background="@drawable/qr_code_profile"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/total_first_qr"
+                    app:layout_constraintHorizontal_bias="0.064"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageButton
+                    android:id="@+id/total_first_qr"
+                    android:layout_width="85dp"
+                    android:layout_height="90dp"
+                    android:background="@drawable/qr_code_profile"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.844" />
+
+                <ImageButton
+                    android:id="@+id/total_thrid_qr"
+                    android:layout_width="77dp"
+                    android:layout_height="74dp"
+                    android:background="@drawable/qr_code_profile"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.686"
+                    app:layout_constraintStart_toEndOf="@+id/total_first_qr"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.397" />
+
+                <TextView
+                    android:textSize="20dp"
+                    android:id="@+id/total_first_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="first user"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/total_first_qr"
+                    app:layout_constraintEnd_toEndOf="@+id/total_first_qr"
+                    app:layout_constraintHorizontal_bias="0.482"
+                    app:layout_constraintStart_toStartOf="@+id/total_first_qr"
+                    app:layout_constraintTop_toTopOf="parent"
+
+                    app:layout_constraintVertical_bias="1.0" />
+
+                <TextView
+                    android:id="@+id/total_first_score"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1000"
+                    android:textSize="20dp"
+                    android:textStyle="bold"
+
+                    app:layout_constraintEnd_toEndOf="@+id/total_first_qr"
+                    app:layout_constraintStart_toStartOf="@+id/total_first_qr"
+                    app:layout_constraintTop_toBottomOf="@+id/total_first_qr" />
+
+                <TextView
+                    android:textSize="15dp"
+                    android:id="@+id/total_second_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="second name"
+                    app:layout_constraintBottom_toTopOf="@+id/total_second_qr"
+                    app:layout_constraintEnd_toEndOf="@+id/total_second_qr"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@+id/total_second_qr"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.98"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/total_second_score"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="900"
+                    android:textSize="15dp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/total_second_qr"
+                    app:layout_constraintHorizontal_bias="0.384"
+                    app:layout_constraintStart_toStartOf="@+id/total_second_qr"
+                    app:layout_constraintTop_toBottomOf="@+id/total_second_qr"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <TextView
+                    android:id="@+id/total_third_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="third name"
+                    android:textSize="15dp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/total_thrid_qr"
+                    app:layout_constraintEnd_toEndOf="@+id/total_thrid_qr"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@+id/total_thrid_qr"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="1.0" />
+
+                <TextView
+                    android:textSize="15dp"
+                    android:id="@+id/total_third_score"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="800"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/total_thrid_qr"
+                    app:layout_constraintHorizontal_bias="0.528"
+                    app:layout_constraintStart_toStartOf="@+id/total_thrid_qr"
+                    app:layout_constraintTop_toBottomOf="@+id/total_thrid_qr"
+                    app:layout_constraintVertical_bias="0.0"
+                    android:textStyle="bold"/>
+
+                <ImageView
+                    android:id="@+id/rank1"
+                    android:layout_width="70dp"
+                    android:layout_height="73dp"
+                    android:layout_marginBottom="4dp"
+                    app:layout_constraintBottom_toTopOf="@+id/total_first_name"
+                    app:layout_constraintEnd_toEndOf="@+id/total_first_qr"
+                    app:layout_constraintHorizontal_bias="0.466"
+                    app:layout_constraintStart_toStartOf="@+id/total_first_qr"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="1.0"
+                    android:src="@drawable/rank1_image" />
+
+                <ImageView
+                    android:id="@+id/rank2"
+                    android:layout_width="62dp"
+                    android:layout_height="59dp"
+                    android:src="@drawable/rank2_image"
+                    app:layout_constraintBottom_toTopOf="@+id/total_second_name"
+                    app:layout_constraintEnd_toEndOf="@+id/total_second_qr"
+                    app:layout_constraintHorizontal_bias="0.466"
+                    app:layout_constraintStart_toStartOf="@+id/total_second_qr"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.888" />
+
+                <ImageView
+                    android:id="@+id/rank3"
+                    android:layout_width="53dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/rank3_image"
+                    app:layout_constraintBottom_toTopOf="@+id/total_third_name"
+                    app:layout_constraintEnd_toEndOf="@+id/total_thrid_qr"
+                    app:layout_constraintHorizontal_bias="0.375"
+                    app:layout_constraintStart_toStartOf="@+id/total_thrid_qr" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <ListView
+            android:divider="@null"
+            android:id="@+id/ranks_listview"
+            android:layout_width="409dp"
+            android:layout_height="420dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/first3_cardview" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

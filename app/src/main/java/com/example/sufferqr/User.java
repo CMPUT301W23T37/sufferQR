@@ -18,11 +18,10 @@ public class User {
     private int sumScore;
     private List<Long> scores;
 
-    public User(String name, String email, String QRid, String Region, int QRcount, int highestScore, int lowestScore, int sumScore, List<Long> scores){
+    public User(String name, String email, String QRid, int QRcount, int highestScore, int lowestScore, int sumScore, List<Long> scores){
         this.username = name;
         this.email = email;
         this.QRid = QRid;
-        this.region = Region;
         this.QRcount = QRcount;
         this.highestScore = highestScore;
         this.lowestScore = lowestScore;
@@ -30,7 +29,12 @@ public class User {
         this.scores = scores;
     }
 
-    public User(){}
+    public User(String name, String qrid){
+        this.username = name;
+        this.QRid = qrid;
+    }
+
+
 
     public String getName(){
         return username;
@@ -51,13 +55,6 @@ public class User {
     }
     public void setQRid(String QRid){
         this.QRid = QRid;
-    }
-
-    public String getRegion(){
-        return region;
-    }
-    public void setRegion(String region){
-        this.region = region;
     }
 
     public int getQRcount(){

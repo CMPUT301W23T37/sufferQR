@@ -147,13 +147,13 @@
                     android:textAppearance="?attr/textAppearanceBodyMedium"
                     android:textSize="14sp"
                     android:textStyle="bold"
-                    app:layout_constraintBottom_toTopOf="@+id/lowestScore_UserProfile"
+                    app:layout_constraintBottom_toTopOf="@+id/lowestScore_otherProfile"
                     app:layout_constraintEnd_toStartOf="@+id/guideline4"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/lowestScore_UserProfile"
+                    android:id="@+id/lowestScore_otherProfile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
@@ -208,13 +208,13 @@
                     android:textAppearance="?attr/textAppearanceBodyMedium"
                     android:textSize="14sp"
                     android:textStyle="bold"
-                    app:layout_constraintBottom_toTopOf="@id/sumScore_UserProfile"
+                    app:layout_constraintBottom_toTopOf="@id/sumScore_otherProfile"
                     app:layout_constraintEnd_toStartOf="@+id/guideline5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/sumScore_UserProfile"
+                    android:id="@+id/sumScore_otherProfile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
@@ -261,13 +261,13 @@
                     android:textAppearance="?attr/textAppearanceBodyMedium"
                     android:textSize="14sp"
                     android:textStyle="bold"
-                    app:layout_constraintBottom_toTopOf="@+id/totalQR_UserProfile"
+                    app:layout_constraintBottom_toTopOf="@+id/totalQR_otherProfile"
                     app:layout_constraintEnd_toStartOf="@+id/guideline6"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/totalQR_UserProfile"
+                    android:id="@+id/totalQR_otherProfile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/temp_0"

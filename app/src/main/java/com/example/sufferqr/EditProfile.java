@@ -1,9 +1,13 @@
 package com.example.sufferqr;
 
-import android.app.Activity;
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -15,9 +19,15 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.MetadataChanges;
+import com.google.firebase.firestore.QuerySnapshot;
 
 /**
  * allow user to edit their profile
@@ -25,6 +35,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class EditProfile extends AppCompatActivity {
 
     private TextInputEditText username;
+    TextInputLayout userName_editProfile_layout;
     private TextInputEditText email;
 
     private Button delButton;
@@ -38,7 +49,56 @@ public class EditProfile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_profile);
 
+        Bundle extras = getIntent().getExtras();
+        String oldName = extras.getString("username");
+
         username = findViewById(R.id.userName_editProfile);
+        userName_editProfile_layout = findViewById(R.id.userName_editProfile_layout);
+        username.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if(editable.length() > 0){
+                    final CollectionReference collectionReference = db.collection("Player");
+                    collectionReference.whereNotEqualTo("name", null).addSnapshotListener(MetadataChanges.INCLUDE, new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                            if (error != null){
+                                System.err.println("Listen failed: " + error);
+                            }
+                            String ms = editable.toString();
+                            for (DocumentSnapshot doc : value.getDocuments()){
+//                                Log.d(TAG, "name: " + doc.get("name"));
+                                if(!ms.equals(doc.get("name")) || ms.equals(oldName)){
+                                    Log.d(TAG, "not find");
+                                    userName_editProfile_layout.setErrorEnabled(false);
+                                    userName_editProfile_layout.setError("");
+                                    userName_editProfile_layout.setHelperText("Username looks Good!");
+                                } else {
+                                    userName_editProfile_layout.setErrorEnabled(true);
+                                    userName_editProfile_layout.setError("Username already exists");
+                                    break;
+                                }
+                            }
+                        }
+                    });
+                } else{
+                    userName_editProfile_layout.setError("Username cannot be empty");
+                }
+            }
+        });
+
+
+
         email = findViewById(R.id.userEmail_editProfile);
 
         // Get AAID and give it to the db
