@@ -94,6 +94,13 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback {
         // move camera to current location
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+        //if location is null, finish the activity
+        if (location == null) {
+            finish();
+            Toast.makeText(this, "Please check device's statue", Toast.LENGTH_SHORT).show();
+        }
+
         LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
 
@@ -129,11 +136,13 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback {
 
                         }
                     }
-            
+
+
                     // add markers if they are within 1km of the current location
                     for (int i = 0; i < latitudeList.size(); i++) {
                         LatLng latLng = new LatLng(latitudeList.get(i), longitudeList.get(i));
                         if (isWithinOneKilometer(currentLocation, latLng)) {
+                            Log.d("win", "onComplete: "+ids.get(i));
                             //if score is not null, add marker
                             if (scores.get(i) != null) {
                                 mMap.addMarker(new MarkerOptions().position(latLng).title(ids.get(i)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)).snippet("Points: " + scores.get(i) + ""));
