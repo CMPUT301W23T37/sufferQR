@@ -103,6 +103,7 @@ public class DashBoard extends DrawerBase {
         TextView pointPercent = findViewById(R.id.point_percent);
         TextView hScore = findViewById(R.id.highest_score_number);
         TextView lScan = findViewById(R.id.last_scan_number);
+
         // Get AAID
         String android_id = Settings.Secure.getString(getContentResolver(), Secure.ANDROID_ID);
         DocumentReference userAAID = db.collection("Player").document(android_id);
