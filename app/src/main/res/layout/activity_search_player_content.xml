@@ -20,11 +20,13 @@
             android:layout_height="match_parent">
 
             <ImageView
+                android:id="@+id/search_qr"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_qr_code"
                 android:layout_gravity="center"
-                android:layout_marginStart="20sp"/>
+                android:layout_marginStart="20sp"
+                android:scaleType="fitCenter"/>
 
             <TextView
                 android:id="@+id/search_name"
@@ -33,7 +35,8 @@
                 android:layout_gravity="center"
                 android:text="Sample"
                 android:layout_marginStart="40sp"
-                android:textSize="18sp"/>
+                android:textSize="18sp"
+                android:textColor="@color/black"/>
 
 
         </androidx.appcompat.widget.LinearLayoutCompat>
