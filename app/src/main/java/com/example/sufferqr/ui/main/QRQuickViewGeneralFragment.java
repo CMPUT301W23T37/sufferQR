@@ -181,7 +181,7 @@ public class QRQuickViewGeneralFragment extends Fragment  implements OnMapReadyC
 
         points.setText(bundle.getString("points","0")+" Points");
         date.setText(bundle.getString("date","1970-01-01"));
-        visual.setText(bundle.getString("QVisual"));
+        visual.setText(bundle.getString("QRVisual"));
 
         boolean b1= Boolean.parseBoolean(bundle.getString("LocationExist"));
         if (!b1){

@@ -189,7 +189,7 @@ public class ScanCode extends DrawerBase {
 
         Bundle bundle = new Bundle();
         bundle.putString("QRhash",hashed);
-        bundle.putString("QVisual",face);
+        bundle.putString("QRVisual",face);
         bundle.putString("points",String.valueOf(points));
         bundle.putString("user",userName);
         bundle.putString("QRpath",surrounds.toString());

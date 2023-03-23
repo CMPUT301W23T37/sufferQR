@@ -1,5 +1,7 @@
 package com.example.sufferqr;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 
@@ -75,7 +77,7 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback {
     }
 
     private ClusterManager<MyClusterItem> clusterManager;
-
+    private FusedLocationProviderClient fusedLocationClient;
 
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
@@ -98,6 +100,8 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback {
             isPermissionGranted = true;
         }
 
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         //map open if permission granted, else close
         if (isPermissionGranted) {
             // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -127,68 +131,77 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback {
         setUpClusterManager();
 
         // move camera to current location
-        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-        //if location is null, finish the activity
-        if (location == null) {
-            finish();
-            Toast.makeText(this, "Please check device's statue", Toast.LENGTH_SHORT).show();
-        }
-
-        LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16));
+//        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+//        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//        LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16));
 
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference collectionRef = db.collection("GameQrCode");
+        // Get the last known location using the FusedLocationProviderClient
+        fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
+            if (location != null) {
+                LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16));
 
-        ArrayList<Double> latitudeList = new ArrayList<>();
-        ArrayList<Double> longitudeList = new ArrayList<>();
-        ArrayList<String> ids = new ArrayList<>();
-        // arraylist of scores
-        ArrayList<String> scores = new ArrayList<>();
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                CollectionReference collectionRef = db.collection("GameQrCode");
 
+                ArrayList<Double> latitudeList = new ArrayList<>();
+                ArrayList<Double> longitudeList = new ArrayList<>();
+                ArrayList<String> ids = new ArrayList<>();
+                // arraylist of scores
+                ArrayList<String> scores = new ArrayList<>();
 
 
 
-        collectionRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Double latitude = document.getDouble("LocationLatitude");
-                        Double longitude = document.getDouble("LocationLongitude");
-                        String id = document.getId();
-                        String points = (String) document.getData().get("points").toString();
 
-                        if (latitude != null && longitude != null) {
-                            latitudeList.add(latitude);
-                            longitudeList.add(longitude);
-                            ids.add(id);
-                            scores.add(points);
+                collectionRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Double latitude = document.getDouble("LocationLatitude");
+                                Double longitude = document.getDouble("LocationLongitude");
+                                String id = document.getId();
+                                String points = (String) document.getData().get("points").toString();
+
+                                if (latitude != null && longitude != null) {
+                                    latitudeList.add(latitude);
+                                    longitudeList.add(longitude);
+                                    ids.add(id);
+                                    scores.add(points);
+                                }
+                            }
+
+                            // add markers if they are within 1km of the current location
+                            for (int i = 0; i < latitudeList.size(); i++) {
+                                LatLng latLng = new LatLng(latitudeList.get(i), longitudeList.get(i));
+                                if (isWithinOneKilometer(currentLocation, latLng)) {
+                                    String id = ids.get(i);
+                                    String points = scores.get(i);
+                                    MyClusterItem clusterItem = new MyClusterItem(latLng.latitude, latLng.longitude, id, "Points: " + points);
+                                    clusterManager.addItem(clusterItem);
+                                }
+                            }
+
+                            // Force the cluster manager to render the clusters
+                            clusterManager.cluster();
+
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
                         }
                     }
-
-                    // add markers if they are within 1km of the current location
-                    for (int i = 0; i < latitudeList.size(); i++) {
-                        LatLng latLng = new LatLng(latitudeList.get(i), longitudeList.get(i));
-                        if (isWithinOneKilometer(currentLocation, latLng)) {
-                            String id = ids.get(i);
-                            String points = scores.get(i);
-                            MyClusterItem clusterItem = new MyClusterItem(latLng.latitude, latLng.longitude, id, "Points: " + points);
-                            clusterManager.addItem(clusterItem);
-                        }
-                    }
-
-                    // Force the cluster manager to render the clusters
-                    clusterManager.cluster();
-
-                } else {
-                    Log.d(TAG, "Error getting documents: ", task.getException());
-                }
+                });
+            } else {
+                finish();
             }
         });
+
+
+
+
+
+
 
 
 
