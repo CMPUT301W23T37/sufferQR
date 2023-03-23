@@ -422,7 +422,7 @@ public class GameQrRecordDB {
      */
     public void PlayerProfileUpdate(String userName){
         final CollectionReference collectionReference = db.collection("Player");
-        final Query qrCodeQuery= db.collection("GameQrCode").whereEqualTo("user",userName);
+        final Query qrCodeQuery= db.collection("GameQrCode").whereEqualTo("user",userName).orderBy("time", Query.Direction.DESCENDING);
 
         // fetching original player profile
         collectionReference.document(userName).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
