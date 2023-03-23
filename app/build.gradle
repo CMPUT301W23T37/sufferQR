@@ -143,6 +143,7 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview-selection:1.1.0"
 
     // string to QR code
+    implementation 'com.google.zxing:core:3.4.0'
     implementation 'com.journeyapps:zxing-android-embedded:4.1.0'
 
 
