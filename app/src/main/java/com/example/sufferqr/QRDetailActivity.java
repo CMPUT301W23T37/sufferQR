@@ -213,7 +213,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                   if (document.exists()) {
                       HashMapValidate("userName",(String)document.get("name"));
                       HashMapValidate("email",(String)document.get("email"));
-                      HashMapValidate("allowViewScanRecord",(String)document.get("allowViewScanRecord"));
+                      HashMapValidate("allowViewScanRecord",(Boolean)document.get("allowViewScanRecord"));
                   } else {
                       // record not exost exit
                       Toast.makeText(getApplicationContext(), "Record does not exist", Toast.LENGTH_SHORT).show();
