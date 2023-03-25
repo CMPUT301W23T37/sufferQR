@@ -164,6 +164,7 @@
                     android:layout_height="match_parent"
                     android:inputType="textMultiLine"
                     android:enabled="false"
+                    android:typeface="monospace"
                     android:focusable="false"
                     android:text="@string/qr_detail_general_visual_text_startup_msg"
                     android:gravity="center"

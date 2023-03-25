@@ -61,7 +61,7 @@ public class QRDetailGeneralFragment extends Fragment{
         }
         if (mode.equals("new")){
             QRpoints=myGeneralBudle.getString("points");
-            QRvisual=myGeneralBudle.getString("QVisual");
+            QRvisual=myGeneralBudle.getString("QRVisual");
         }
         if (mode.equals("modified")){
             oldName=myGeneralBudle.getString("qrID");
@@ -74,8 +74,6 @@ public class QRDetailGeneralFragment extends Fragment{
      * sync input to QRdetial class
      */
     public interface OnFragmentInteractionListener{
-        void onGeneralUpdate(String QRcodename,String today);
-
         void onGeneralUpdate(Boolean delreq);
 
         void onGeneralUpdate(String Newname);
@@ -134,7 +132,7 @@ public class QRDetailGeneralFragment extends Fragment{
             textView.setText(myDate);
             visual.setText(QRvisual);
             points.setText(QRpoints);
-            listener.onGeneralUpdate("",myDate);
+            listener.onGeneralUpdate("");
             name.setEnabled(true);
         } else if (Objects.equals(mode, "modified")) {
             name.setEnabled(true);
@@ -154,7 +152,7 @@ public class QRDetailGeneralFragment extends Fragment{
             public void afterTextChanged(Editable s) {
                 if (Objects.equals(mode, "new" )|| mode.equals("modified")){
                     if (Objects.equals(mode, "new" )){
-                        listener.onGeneralUpdate(s.toString(),myDate);
+                        listener.onGeneralUpdate(s.toString());
                     } else {
                         listener.onGeneralUpdate(s.toString());
                     }
@@ -217,7 +215,7 @@ public class QRDetailGeneralFragment extends Fragment{
         Object pt = data.get("points");
         points.setText(String.valueOf(pt));
         textView.setText((String)data.get("date"));
-        visual.setText((String)data.get("QVisual"));
+        visual.setText((String)data.get("QRVisual"));
         TextInputLayout ttl = gView.findViewById(R.id.qr_detail_general_qrtext_name_layout);
 
         if (Objects.equals((String) data.get("user"), userName11)){
