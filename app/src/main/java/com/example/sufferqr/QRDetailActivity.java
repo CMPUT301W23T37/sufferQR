@@ -6,11 +6,15 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 
 import com.example.sufferqr.databinding.ActivityQrdetailBinding;
@@ -19,6 +23,7 @@ import com.example.sufferqr.ui.main.QRDetailGeneralFragment;
 import com.example.sufferqr.ui.main.QRDetailImageFragment;
 import com.example.sufferqr.ui.main.QRDetailLocationFragment;
 import com.example.sufferqr.ui.main.QRDetailSectionsPagerAdapter;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -36,6 +41,7 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * qr code details reviewing,including location,image,name,points.etc
@@ -45,23 +51,21 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
           {
 
     private ActivityQrdetailBinding binding;
-
-    private FirebaseStorage storage;
     MapboxMap mapboxMapGlobal; // mapbox in location
 
     private FirebaseFirestore db;
 
     private HashMap <String,Object> data; // data that sent to collection
     String mode,userName,QRname,OrginalName; // remember some of the name setiings
-
     Uri imageUri; // at new mode, record local image location
 
     Button CancelBt,ConfirmBt; // listener for bottom button
     Bundle infoBundle; //tabs transit information
 
-    ProgressDialog progressDialog;
-
     QRDetailSectionsPagerAdapter qrDetailSectionsPagerAdapter;
+    RelativeLayout relativeLayout;
+    CircularProgressIndicator loading;
+
 
 
   /**
@@ -76,8 +80,10 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         // object or in the same activity which contains the mapview.
         binding = ActivityQrdetailBinding.inflate(getLayoutInflater());
         Mapbox.getInstance(getApplicationContext(), getResources().getString(R.string.mapbox_access_token));
-        storage = FirebaseStorage.getInstance();
         setContentView(binding.getRoot());
+
+        relativeLayout = findViewById(R.id.activity_qr_detail_progress_layout);
+        loading = findViewById(R.id.activity_qr_detail_progress);
 
         // intent that comefrom drawer class load it in to activity
         Intent myNewIntent = getIntent();
@@ -108,6 +114,8 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
             // set up package to each tab
             infoBundle.putString("mode",mode);
             infoBundle.putString("imageUri",imageUri.toString());
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
         }
 
         // setup tabAdaper
@@ -138,7 +146,14 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
             finish();
         });
         ConfirmBt.setOnClickListener(v -> {
-            Boolean success=false;
+            viewPager.setVisibility(View.INVISIBLE);
+            // set loading screen
+            relativeLayout.setVisibility(View.VISIBLE);
+            loading.setVisibility(View.VISIBLE);
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+            boolean success=false;
             GameQrRecordDB DBconnect = new GameQrRecordDB();
             if (Objects.equals(mode, "new")) {
                 success = DBconnect.NewPreProcessing(getBaseContext(),data,userName,getContentResolver());
@@ -146,9 +161,29 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                 success = DBconnect.ChangePreProcessing(data,QRname,OrginalName);
             }
             if (success){
-                finish();
-            }
+                relativeLayout.setVisibility(View.VISIBLE);
+                loading.setVisibility(View.VISIBLE);
 
+//                try {
+//                    TimeUnit.SECONDS.sleep(2);
+//                } catch (Exception ignored){
+//
+//                }
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        // Actions to do after 5 seconds
+                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                        finish();
+                    }
+                }, 1500);
+
+            } else {
+                viewPager.setVisibility(View.VISIBLE);
+                relativeLayout.setVisibility(View.VISIBLE);
+                loading.setVisibility(View.VISIBLE);
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            }
 
         });
 
@@ -165,6 +200,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd ", Locale.CANADA);
             HashMapValidate("date",dateFormat.format(madeDate));
         }
+
 
     }
 
@@ -275,13 +311,31 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
     public void onGeneralUpdate(Boolean delreq) {
         // delte request
         if (Objects.equals((String) data.get("user"), userName)){
+            CustomNoDragViewPager viewPager = findViewById(R.id.qrdetail_view_pager);
+            viewPager.setVisibility(View.INVISIBLE);
+            relativeLayout.setVisibility(View.VISIBLE);
+            loading.setVisibility(View.VISIBLE);
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+
             GameQrRecordDB DBconnect = new GameQrRecordDB();
             String s1 = (String) data.get("QRpath");
             if (!Objects.equals(s1, "")){
                 DBconnect.imageDelFirestone(s1);
             }
             DBconnect.DelteQrInfo(QRname,data);
-            finish();
+
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    // Actions to do after 5 seconds
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                    finish();
+                }
+            }, 1500);
+
+
         }
     }
 
