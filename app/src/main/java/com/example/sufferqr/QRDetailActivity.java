@@ -176,7 +176,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                         finish();
                     }
-                }, 1500);
+                }, 2000);
 
             } else {
                 viewPager.setVisibility(View.VISIBLE);
@@ -333,7 +333,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                     getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                     finish();
                 }
-            }, 1500);
+            }, 2000);
 
 
         }
