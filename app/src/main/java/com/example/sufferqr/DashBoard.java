@@ -132,25 +132,13 @@ public class DashBoard extends DrawerBase {
                             lScan.setText(getString(R.string.last_scan_number, String.valueOf(scoresList.get(0))));
 
                             // set percentage that point increased
-                            long sumBefore = 0;
                             double pPercent;
-                            for (int i = 1; i < length; i++) {
-                                sumBefore += scoresList.get(i);
-                            }
 
                             String sum = String.valueOf(userInfo.get("sumScore"));
-
-//                            if (sumBefore == 0) {
-//                                pPercent = 0;
-//                            } else {
-//                                pPercent = (double) ((scoresList.get(0) / sumBefore * 100);
-//                            }
 
                             pPercent = (scoresList.get(0)/(Double.parseDouble(sum)-scoresList.get(0))) * 100;
 
                             pointPercent.setText(getString(R.string.point_percent, pPercent));
-
-
 
                             // sort the score list in reverse order
                             List<Long> scoresSorted = scoresList.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());

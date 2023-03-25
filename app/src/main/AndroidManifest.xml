@@ -101,7 +101,7 @@
             android:exported="true" />
         <activity android:name=".EditProfile" />
         <activity
-            android:name=".CommentForOwn"
+            android:name=".CommentPage"
             android:exported="true" />
 
         <meta-data
