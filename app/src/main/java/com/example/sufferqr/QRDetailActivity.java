@@ -51,8 +51,6 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
           {
 
     private ActivityQrdetailBinding binding;
-
-    private FirebaseStorage storage;
     MapboxMap mapboxMapGlobal; // mapbox in location
 
     private FirebaseFirestore db;
@@ -82,7 +80,6 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
         // object or in the same activity which contains the mapview.
         binding = ActivityQrdetailBinding.inflate(getLayoutInflater());
         Mapbox.getInstance(getApplicationContext(), getResources().getString(R.string.mapbox_access_token));
-        storage = FirebaseStorage.getInstance();
         setContentView(binding.getRoot());
 
         relativeLayout = findViewById(R.id.activity_qr_detail_progress_layout);
