@@ -1,12 +1,14 @@
 package com.example.sufferqr;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -17,6 +19,7 @@ import com.example.sufferqr.databinding.ActivityUserProfileBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -42,6 +45,8 @@ public class UserProfile extends DrawerBase {
     ActivityUserProfileBinding activityUserProfileBinding;
 
     final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private static boolean RUN_ONCE = true;
+
 
     private ImageView userQRImage;
     private TextView userName;
@@ -52,6 +57,10 @@ public class UserProfile extends DrawerBase {
     private TextView sumScore;
     private TextView qrCount;
     private FloatingActionButton profileToEdit;
+
+    CircularProgressIndicator loading;
+
+    ConstraintLayout mainLayout;
 
     /**
      * This method is called at the creation state of the activity
@@ -65,7 +74,30 @@ public class UserProfile extends DrawerBase {
         activityUserProfileBinding = ActivityUserProfileBinding.inflate(getLayoutInflater());
         setContentView(activityUserProfileBinding.getRoot());
         allocateActivityTitle("Profile");
-        fillContent();
+
+        loading = findViewById(R.id.loading_userProfile);
+        mainLayout = findViewById(R.id.main_layout_userProfile);
+
+        if(RUN_ONCE){
+            RUN_ONCE = false;
+            loading.setVisibility(View.VISIBLE);
+            mainLayout.setVisibility(View.INVISIBLE);
+            fillContent();
+
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    // Do something after 5s = 5000ms
+                    mainLayout.setVisibility(View.VISIBLE);
+                    loading.setVisibility(View.GONE);
+                }
+            }, 10000);
+        }else {
+            fillContent();
+            loading.setVisibility(View.GONE);
+        }
+
     }
 
     /**
