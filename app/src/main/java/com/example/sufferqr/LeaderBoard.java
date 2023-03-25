@@ -4,7 +4,10 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Bundle;
 
+import com.example.sufferqr.databinding.ActivityLeaderBoardBinding;
 import com.google.android.material.tabs.TabLayout;
+
+import org.checkerframework.checker.units.qual.A;
 
 /**
  * leadboard
@@ -14,15 +17,24 @@ public class LeaderBoard extends DrawerBase {
     ViewPager2 viewPager2;
     LeaderPageAdapter leaderPageAdapter;
 
+    ActivityLeaderBoardBinding activityLeaderBoardBinding;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_leader_board);
+        activityLeaderBoardBinding = ActivityLeaderBoardBinding.inflate(getLayoutInflater());
+        setContentView(activityLeaderBoardBinding.getRoot());
+        allocateActivityTitle("Leader Board");
+
         tabLayout = findViewById(R.id.LeaderBoardTabLayout);
         viewPager2 = findViewById(R.id.LeaderBoardViewPager);
         leaderPageAdapter = new LeaderPageAdapter(this);
         viewPager2.setAdapter(leaderPageAdapter);
+
+
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override

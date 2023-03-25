@@ -1,9 +1,13 @@
 package com.example.sufferqr;
 
-import android.app.Activity;
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -14,10 +18,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.MetadataChanges;
+import com.google.firebase.firestore.QuerySnapshot;
 
 /**
  * allow user to edit their profile
@@ -25,12 +36,16 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class EditProfile extends AppCompatActivity {
 
     private TextInputEditText username;
+    TextInputLayout userName_editProfile_layout;
     private TextInputEditText email;
 
     private Button delButton;
     private Button cancelButton;
     private Button applyButton;
 
+    SwitchMaterial allowEmail;
+    SwitchMaterial allowQrid;
+    SwitchMaterial allowScanRecord;
     final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
@@ -38,8 +53,58 @@ public class EditProfile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_profile);
 
+        Bundle extras = getIntent().getExtras();
+        String oldName = extras.getString("username");
+
         username = findViewById(R.id.userName_editProfile);
+        userName_editProfile_layout = findViewById(R.id.userName_editProfile_layout);
+        username.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if(editable.length() > 0){
+                    final CollectionReference collectionReference = db.collection("Player");
+                    collectionReference.whereNotEqualTo("name", null).addSnapshotListener(MetadataChanges.INCLUDE, new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                            if (error != null){
+                                System.err.println("Listen failed: " + error);
+                            }
+                            String ms = editable.toString();
+                            for (DocumentSnapshot doc : value.getDocuments()){
+//                                Log.d(TAG, "name: " + doc.get("name"));
+                                if(!ms.equals(doc.get("name")) || ms.equals(oldName)){
+                                    Log.d(TAG, "not find");
+                                    userName_editProfile_layout.setErrorEnabled(false);
+                                    userName_editProfile_layout.setError("");
+                                    userName_editProfile_layout.setHelperText("Username looks Good!");
+                                } else {
+                                    userName_editProfile_layout.setErrorEnabled(true);
+                                    userName_editProfile_layout.setError("Username already exists");
+                                    break;
+                                }
+                            }
+                        }
+                    });
+                } else{
+                    userName_editProfile_layout.setError("Username cannot be empty");
+                }
+            }
+        });
+
         email = findViewById(R.id.userEmail_editProfile);
+        allowEmail = findViewById(R.id.allow_email);
+        allowQrid = findViewById(R.id.allow_qrid);
+        allowScanRecord = findViewById(R.id.allow_scan_record);
 
         // Get AAID and give it to the db
         String android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -52,6 +117,9 @@ public class EditProfile extends AppCompatActivity {
 
                 username.setText((String) document.get("name"));
                 email.setText((String) document.get("email"));
+                allowEmail.setChecked((Boolean) document.get("allowViewEmail"));
+                allowQrid.setChecked((Boolean) document.get("allowViewQrid"));
+                allowScanRecord.setChecked((Boolean) document.get("allowViewScanRecord"));
 
             }
         });
@@ -64,6 +132,7 @@ public class EditProfile extends AppCompatActivity {
                 finish();
             }
         });
+
 
         // apply change action
         applyButton = findViewById(R.id.applyButton_editProfile);
@@ -79,6 +148,9 @@ public class EditProfile extends AppCompatActivity {
                         User u = documentSnapshot.toObject(User.class);
                         u.setName(changedUserName_editProfile);
                         u.setEmail(changedUserEmail_editProfile);
+                        u.setAllowViewEmail(allowEmail.isChecked());
+                        u.setAllowViewQrid(allowQrid.isChecked());
+                        u.setAllowViewScanRecord(allowScanRecord.isChecked());
                         db.collection("Player").document(android_id).set(u);
                     }
                 });

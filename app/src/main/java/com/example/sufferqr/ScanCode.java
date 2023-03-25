@@ -189,7 +189,7 @@ public class ScanCode extends DrawerBase {
 
         Bundle bundle = new Bundle();
         bundle.putString("QRhash",hashed);
-        bundle.putString("QVisual",face);
+        bundle.putString("QRVisual",face);
         bundle.putString("points",String.valueOf(points));
         bundle.putString("user",userName);
         bundle.putString("QRpath",surrounds.toString());
@@ -264,9 +264,6 @@ public class ScanCode extends DrawerBase {
                     @SuppressLint("ResourceAsColor")
                     @Override
                     public void onSuccess(List<Barcode> barcodes) {
-                        TextInputEditText ttv = findViewById(R.id.qr_detail_image_textfield);
-                        // Task completed successfully
-                        // ...
                         int Counts = 0;
                         String codes="";
                         for (Barcode barcode: barcodes) {
@@ -277,7 +274,6 @@ public class ScanCode extends DrawerBase {
                             codes=codes + rawValue;
                             Counts++;
                         }
-
                         if (Counts>=1){
 //                          save umage in uri
                             QRstring = codes;

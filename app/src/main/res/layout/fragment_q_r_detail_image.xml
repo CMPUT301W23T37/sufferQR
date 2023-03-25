@@ -64,56 +64,7 @@
             app:layout_constraintTop_toBottomOf="@+id/qr_detail_image_constraintLayout"
             tools:ignore="SmallSp" />
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/qr_detail_image_qrtext_cardview"
-            android:layout_width="match_parent"
-            android:layout_height="170sp"
-            android:layout_marginLeft="17sp"
-            android:layout_marginTop="70sp"
-            android:layout_marginRight="17sp"
-            android:layout_marginBottom="5sp"
-            android:orientation="vertical"
-            app:cardCornerRadius="10sp"
-            app:layout_constraintBottom_toTopOf="@+id/qr_detail_image_qrimage_cardview"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/qr_detail_image_textfield_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="5sp"
-                    android:hint="@string/qrdetail_image_sign"
-                    android:inputType="textMultiLine"
-                    android:textSize="13sp"
-
-
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:startIconContentDescription="content">
-                    >
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/qr_detail_image_textfield"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:enabled="false"
-                        android:gravity="top"
-                        android:inputType="textMultiLine" />
-
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </androidx.cardview.widget.CardView>
 
         <!-- qr code location dusplay -->
 
@@ -122,7 +73,7 @@
             android:id="@+id/qr_detail_image_qrimage_cardview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="260sp"
+            android:layout_marginTop="60sp"
             android:layout_marginLeft="17sp"
             android:layout_marginRight="17sp"
             android:layout_marginBottom="80sp"
@@ -137,18 +88,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/ic_qr_code_example"
-                android:scaleType="centerInside" />
+                android:scaleType="centerInside"
+                android:text="@string/surrounding_qrcode"
+                />
 
         </androidx.cardview.widget.CardView>
 
-        <TextView
-            android:id="@+id/qr_detail_image_qrimage_notification_bottom"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/qr_detail_image_qrimage_cardview"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:text="Click the QR code to select photo"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
