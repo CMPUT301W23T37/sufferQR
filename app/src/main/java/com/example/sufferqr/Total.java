@@ -44,7 +44,7 @@ public class Total extends Fragment {
         ArrayList<HighScorePlayer> Data = new ArrayList<>();
 
 
-        Query query = db.collection("Player").orderBy("sumScore", Query.Direction.DESCENDING).limit(5);
+        Query query = db.collection("Player").orderBy("sumScore", Query.Direction.DESCENDING).limit(10);
 
         query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -74,16 +74,16 @@ public class Total extends Fragment {
                     }
                     else if (i > 3) {
                         Data.add(new HighScorePlayer(rank,name,intScore));
+                        HighScorePlayerList adapter = new HighScorePlayerList(requireContext(), Data);
+                        highScorePlayerArrayList = view.findViewById(R.id.ranks_listview);
+                        highScorePlayerArrayList.setAdapter(adapter);
                     }
                 }
-                HighScorePlayerList adapter = new HighScorePlayerList(requireContext(), Data);
-                highScorePlayerArrayList = view.findViewById(R.id.ranks_listview);
-                highScorePlayerArrayList.setAdapter(adapter);
+
             }
         });
 
         return view;
-
 
     }
 }
