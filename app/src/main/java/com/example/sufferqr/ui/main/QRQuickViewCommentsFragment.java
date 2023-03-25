@@ -3,21 +3,41 @@ package com.example.sufferqr.ui.main;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import com.example.sufferqr.CommentForOwn;
-import com.example.sufferqr.R;
+import android.widget.ListView;
+import android.widget.TextView;
 
+import com.example.sufferqr.CommentPage;
+import com.example.sufferqr.R;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.protobuf.Value;
+
+import java.util.ArrayList;
 
 
 public class QRQuickViewCommentsFragment extends Fragment {
 
     Bundle bundle;
     View view;
+    String qrName;
+    ListView commentsList;
+    ArrayList<QRQuickViewComment> dataList;
+    ArrayAdapter<QRQuickViewComment> commentsAdapter;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public QRQuickViewCommentsFragment(Bundle myBundle) {
         // Required empty public constructor
@@ -41,12 +61,38 @@ public class QRQuickViewCommentsFragment extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_q_r_quick_view_comments, container, false);
 
+        FloatingActionButton fab = view.findViewById(R.id.add_comment_fragment);
 
-        Button goComment = view.findViewById(R.id.go_to_comment_button);
-        goComment.setOnClickListener(new View.OnClickListener() {
+        commentsList = view.findViewById(R.id.comment_list);
+        dataList = new ArrayList<>();
+        commentsAdapter = new QRQuickViewCommentsArrayAdapter(requireContext(), dataList);
+        commentsList.setAdapter(commentsAdapter);
+
+        qrName = bundle.getString("QRname");
+        Intent in = new Intent(requireContext(), CommentPage.class);
+        in.putExtra("QRName", qrName);
+
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(requireContext(), CommentForOwn.class));
+                startActivity(in);
+            }
+        });
+
+        CollectionReference comRef = db.collection("GameQrCode").document(qrName).collection("Comment");
+        comRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                dataList.clear();
+                for (QueryDocumentSnapshot doc: value) {
+                    Log.d("Comments", String.valueOf(doc.getData().get("comment")));
+                    String androidId = (String) doc.getData().get("androidId");
+                    String date = (String) doc.getData().get("cdate");
+                    String comment = (String) doc.getData().get("comment");
+                    String uName = (String) doc.getData().get("userName");
+                    dataList.add(new QRQuickViewComment(uName, date, comment, androidId));
+                }
+                commentsAdapter.notifyDataSetChanged();
             }
         });
 
