@@ -279,21 +279,27 @@ public class QRQuickViewGeneralFragment extends Fragment  implements OnMapReadyC
                             mapData.clear();
                             chipGroup.removeAllViews();
                             for (DocumentSnapshot doc : value.getDocuments()) {
-                                boolean qrTrue = (boolean) doc.getData().get("allowViewScanRecord");
-                                String qrName = String.valueOf(doc.getData().get("QRname"));
-                                if (Boolean.TRUE == qrTrue && !qrName.equals(myQRname)){
-                                    mapData.put(qrName,doc.getData());
+                                Map<String,Object> map= doc.getData();
+                                if (map==null){
+                                    continue;
+                                }
+                                if (map.get("allowViewScanRecord") != null){
+                                    boolean qrTrue = (boolean) map.get("allowViewScanRecord");
+                                    String qrName = String.valueOf(doc.getData().get("QRname"));
+                                    if (Boolean.TRUE == qrTrue && !qrName.equals(myQRname)){
+                                        mapData.put(qrName,doc.getData());
 
-                                    Chip chip = new Chip(getContext());
-                                    chip.setText(qrName);
-                                    chip.setGravity(5);
-                                    chip.setChipIcon(null);
-                                    chip.setCheckable(true);
-                                    chip.setChipBackgroundColorResource(R.color.app_main_blue);
-                                    chip.setTextColor(getResources().getColor(R.color.white));
-                                    chip.setTextSize(12);
+                                        Chip chip = new Chip(getContext());
+                                        chip.setText(qrName);
+                                        chip.setGravity(5);
+                                        chip.setChipIcon(null);
+                                        chip.setCheckable(true);
+                                        chip.setChipBackgroundColorResource(R.color.app_main_blue);
+                                        chip.setTextColor(getResources().getColor(R.color.white));
+                                        chip.setTextSize(12);
 
-                                    chipGroup.addView(chip);
+                                        chipGroup.addView(chip);
+                                    }
                                 }
                             }
                         } else {

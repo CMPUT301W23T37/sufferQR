@@ -185,7 +185,8 @@
             app:cardCornerRadius="10sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/fragment_q_r_quick_view_general_location_map_cardView"
-            android:visibility="invisible"
+            android:visibility="gone"
+
            >
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/fragment_q_r_quick_view_general_same_qr_code"
