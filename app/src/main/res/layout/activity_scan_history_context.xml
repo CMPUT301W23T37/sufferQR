@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="100sp"
+    android:layout_height="110sp"
     >
 
     <androidx.cardview.widget.CardView
@@ -40,17 +40,16 @@
                 android:layout_width="250sp"
                 android:layout_height="20sp"
                 android:layout_marginStart="12sp"
-                android:layout_marginBottom="20sp"
-                android:text="YYYY:MM:DD"
                 android:gravity="center_vertical"
+                android:text="YYYY:MM:DD"
                 android:textSize="11sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                app:layout_constraintBottom_toTopOf="@+id/scan_activity_content_qraddress"
+                app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
                 android:id="@+id/scan_activity_content_qraddress"
-                android:layout_width="300sp"
-                android:layout_height="20sp"
+                android:layout_width="350sp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="12sp"
                 android:layout_marginBottom="3sp"
                 android:text="near earth"

@@ -11,6 +11,7 @@ import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
@@ -32,7 +33,9 @@ import android.util.Log;
 import android.util.Size;
 import android.view.OrientationEventListener;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +43,7 @@ import com.example.sufferqr.databinding.ActivityScanCodeBinding;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.mlkit.vision.barcode.BarcodeScanner;
@@ -84,6 +88,10 @@ public class ScanCode extends DrawerBase {
 
     ProgressDialog progressDialog;
 
+    RelativeLayout relativeLayout;
+    CircularProgressIndicator loading;
+    CardView cardView;
+
     /**
      * create view
      */
@@ -99,6 +107,9 @@ public class ScanCode extends DrawerBase {
         Go = findViewById(R.id.scan_code_go_button);
         Back = findViewById(R.id.scan_code_return_button);
         other = findViewById(R.id.scan_code_lib_button);
+        relativeLayout = findViewById(R.id.activity_scan_code_progress_layout);
+        loading = findViewById(R.id.activity_scan_code_progress);
+        cardView = findViewById(R.id.scan_code_camera_card);
 
         Intent myNewIntent = getIntent();
         userName = myNewIntent.getStringExtra("user");
@@ -169,6 +180,13 @@ public class ScanCode extends DrawerBase {
     }
 
     private void calculation(Bitmap bitmapImage){
+
+        relativeLayout.setVisibility(View.VISIBLE);
+        loading.setVisibility(View.VISIBLE);
+        cardView.setVisibility(View.INVISIBLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
         Uri surrounds = saveImage(bitmapImage);
         String hashed = "";
         String face="";
