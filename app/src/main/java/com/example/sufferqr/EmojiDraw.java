@@ -1,7 +1,13 @@
 package com.example.sufferqr;
 
+
 import java.util.Random;
-import android.util.Log;
+import android.content.Context;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
+import androidx.core.content.ContextCompat;
+import android.graphics.Color;
 
 /**
  * Draws the visual representation of th QRcode
@@ -10,14 +16,17 @@ public class EmojiDraw {
     private final String qrhash;
     private final String[][] face;
 
+    private final Context context;
+
     /**
      * stars the class by taking qrhash as input and generating a face
      * @param qrhash the hash value
      */
     //input
-    public EmojiDraw(String qrhash) {
+    public EmojiDraw(String qrhash,Context context) {
         this.qrhash = qrhash;
         this.face = generateFace();
+        this.context = context;
     }
 
     /**
@@ -38,7 +47,7 @@ public class EmojiDraw {
         }
 
         // print each row with leading spaces
-        StringBuilder output= new StringBuilder();
+        StringBuilder output = new StringBuilder();
         for (int i = 0; i < sizeY; i++) {
             int numLeadingSpaces = longestRowLength - face[i].length;
             for (int j = 0; j < numLeadingSpaces; j++) {
@@ -46,9 +55,10 @@ public class EmojiDraw {
                 System.out.print(" ");
             }
             for (int j = 0; j < sizeX; j++) {
-                String sa= face[i][j];
-                output.append(sa);
-                System.out.print(face[i][j]);
+                String sa = face[i][j];
+                int color = getRandomColor();
+                output.append(String.format("<font color='%06X'>%s</font>", color, sa));
+                System.out.print(sa);
             }
             System.out.println();
             output.append("\n");
@@ -302,20 +312,14 @@ public class EmojiDraw {
 
         }
 
-
-        // add color to features (fruitloops)
-//        String[] colors = {"RED", "GREEN", "YELLOW", "BLUE", "MAGENTA", "CYAN"};
-//        for (int i = 0; i < sizeY; i++) {
-//            for (int j = 0; j < sizeX; j++) {
-//                String feature = face[i][j];
-//                if (!feature.equals(" ")) {
-//                    String color = colors[random.nextInt(colors.length - 1)];
-//                    face[i][j] = color + feature + colors[colors.length - 1];
-//                }
-//            }
-//        }
-
         return face;
+    }
+
+    private int getRandomColor() {
+        int[] colorArray = {R.color.emojicolor1, R.color.emojicolor2, R.color.emojicolor3, R.color.emojicolor4, R.color.emojicolor5, R.color.emojicolor6, R.color.emojicolor7, R.color.emojicolor8, R.color.emojicolor9, R.color.emojicolor10, R.color.emojicolor11, R.color.emojicolor12, R.color.emojicolor13, R.color.emojicolor14, R.color.emojicolor15};
+        int randomIndex = new Random().nextInt(colorArray.length);
+        int colorRes = colorArray[randomIndex];
+        return context.getResources().getColor(colorRes, null);
     }
 }
 

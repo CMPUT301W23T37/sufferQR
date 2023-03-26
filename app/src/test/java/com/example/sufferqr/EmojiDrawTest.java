@@ -1,10 +1,15 @@
 package com.example.sufferqr;
 
+import android.content.Context;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+
+
 /**
- * Tests the EmojiDraw class to make sure it functions properlu
+ * Tests the EmojiDraw class to make sure it functions properly
  */
 public class EmojiDrawTest {
 
@@ -13,7 +18,8 @@ public class EmojiDrawTest {
      */
     @Test
     void testDraw() {
-        EmojiDraw emojiDraw = new EmojiDraw("test");
+        Context context = ApplicationProvider.getApplicationContext();
+        EmojiDraw emojiDraw = new EmojiDraw("test", context);
         String emoji = emojiDraw.draw();
         assertNotNull(emoji);
         assertFalse(emoji.isEmpty());
@@ -26,7 +32,8 @@ public class EmojiDrawTest {
     @Test
     public void testUnique() {
         String qrhash = "rickroll";
-        EmojiDraw emojiDraw = new EmojiDraw(qrhash);
+        Context context = ApplicationProvider.getApplicationContext();
+        EmojiDraw emojiDraw = new EmojiDraw(qrhash, context);
         String expectedOutput =
                         "OOOOOOOOOOOOOOOOOOOOO\n" +
                         "O                   O\n" +
@@ -46,6 +53,4 @@ public class EmojiDrawTest {
                         "OOOOOOOOOOOOOOOOOOOOO\n";
         assertEquals(expectedOutput, emojiDraw.draw());
     }
-
-
 }
