@@ -22,6 +22,7 @@
         android:textColor="@color/white"/>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/scan_code_camera_card"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="7sp"
@@ -78,5 +79,20 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <RelativeLayout
+        android:id="@+id/activity_scan_code_progress_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        >
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/activity_scan_code_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:layout_centerInParent="true"/>
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
