@@ -86,6 +86,7 @@
                 android:layout_height="match_parent"
                 android:text="@string/qr_detail_general_visual_text_startup_msg"
                 android:typeface="monospace"
+                android:textSize="12sp"
                 android:gravity="center"
             />
         </androidx.cardview.widget.CardView>
@@ -160,7 +161,6 @@
             app:cardCornerRadius="10sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/fragment_q_r_quick_view_general_location_info_cardView">
 
             <com.mapbox.mapboxsdk.maps.MapView
@@ -172,8 +172,33 @@
 
         </androidx.cardview.widget.CardView>
 
+        <androidx.cardview.widget.CardView
+            android:id="@+id/fragment_q_r_quick_view_general_same_qr_card"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="10sp"
+            android:layout_marginTop="10sp"
+            android:layout_marginEnd="10sp"
+            android:layout_marginBottom="17sp"
+            app:cardCornerRadius="10sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_q_r_quick_view_general_location_map_cardView"
+            android:visibility="invisible"
+           >
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/fragment_q_r_quick_view_general_same_qr_code"
+                android:layout_marginEnd="7sp"
+                android:layout_marginTop="7sp"
+                android:layout_marginBottom="7sp"
+                android:layout_marginStart="7sp"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"/>
 
 
+
+        </androidx.cardview.widget.CardView>
 
 
 
