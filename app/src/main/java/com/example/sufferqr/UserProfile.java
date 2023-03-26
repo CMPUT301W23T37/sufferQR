@@ -1,22 +1,29 @@
 package com.example.sufferqr;
 
+import static android.content.ContentValues.TAG;
+
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.sufferqr.databinding.ActivityUserProfileBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -30,6 +37,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import timber.log.Timber;
+
 /**
  * This class contains all the user information, the total number of the score collected
  * the total number of code been scanned, the highest score ever, and the lowest score
@@ -42,6 +51,8 @@ public class UserProfile extends DrawerBase {
     ActivityUserProfileBinding activityUserProfileBinding;
 
     final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private static boolean RUN_ONCE = true;
+
 
     private ImageView userQRImage;
     private TextView userName;
@@ -52,6 +63,12 @@ public class UserProfile extends DrawerBase {
     private TextView sumScore;
     private TextView qrCount;
     private FloatingActionButton profileToEdit;
+
+    CircularProgressIndicator loading;
+
+    ConstraintLayout mainLayout;
+
+    String name;
 
     /**
      * This method is called at the creation state of the activity
@@ -65,7 +82,30 @@ public class UserProfile extends DrawerBase {
         activityUserProfileBinding = ActivityUserProfileBinding.inflate(getLayoutInflater());
         setContentView(activityUserProfileBinding.getRoot());
         allocateActivityTitle("Profile");
-        fillContent();
+
+        loading = findViewById(R.id.loading_userProfile);
+        mainLayout = findViewById(R.id.main_layout_userProfile);
+
+        if(RUN_ONCE){
+            RUN_ONCE = false;
+            loading.setVisibility(View.VISIBLE);
+            mainLayout.setVisibility(View.INVISIBLE);
+            fillContent();
+
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    // Do something after 5s = 5000ms
+                    mainLayout.setVisibility(View.VISIBLE);
+                    loading.setVisibility(View.GONE);
+                }
+            }, 5000);
+        }else {
+            fillContent();
+            loading.setVisibility(View.GONE);
+        }
+
     }
 
     /**
@@ -93,6 +133,8 @@ public class UserProfile extends DrawerBase {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 DocumentSnapshot document = task.getResult();
+                User u = document.toObject(User.class);
+                name = u.getName();
                 userName.setText((String) document.get("name"));
                 userEmail.setText((String) document.get("email"));
                 userQRid.setText((String) document.get("qrid"));
@@ -122,24 +164,24 @@ public class UserProfile extends DrawerBase {
                     qrCount.setText(String.valueOf(sortedList.size()));
                 }
 
+                // generate qr code from qrId
+                userQRImage = findViewById(R.id.userQRImage_UserProfile);
+                String qrCode = userQRid.getText().toString().trim() + name  ;
+                MultiFormatWriter mWriter = new MultiFormatWriter();
+                try {
+                    //BitMatrix class to encode entered text and set Width & Height
+                    BitMatrix mMatrix = mWriter.encode(qrCode, BarcodeFormat.QR_CODE, 400,400);
+                    BarcodeEncoder mEncoder = new BarcodeEncoder();
+                    Bitmap mBitmap = mEncoder.createBitmap(mMatrix);//creating bitmap of code
+                    userQRImage.setImageBitmap(mBitmap);//Setting generated QR code to imageView
+                } catch (WriterException e) {
+                    e.printStackTrace();
+                }
+
             }
         });
 
         profileToEdit = findViewById(R.id.changeToEditProfile_UserProfile);
-
-        // generate qr code from qrId
-        userQRImage = findViewById(R.id.userQRImage_UserProfile);
-        String qrCode = userQRid.getText().toString().trim() + "SufferQr";
-        MultiFormatWriter mWriter = new MultiFormatWriter();
-        try {
-            //BitMatrix class to encode entered text and set Width & Height
-            BitMatrix mMatrix = mWriter.encode(qrCode, BarcodeFormat.QR_CODE, 400,400);
-            BarcodeEncoder mEncoder = new BarcodeEncoder();
-            Bitmap mBitmap = mEncoder.createBitmap(mMatrix);//creating bitmap of code
-            userQRImage.setImageBitmap(mBitmap);//Setting generated QR code to imageView
-        } catch (WriterException e) {
-            e.printStackTrace();
-        }
 
         profileToEdit.setOnClickListener(new View.OnClickListener() {
             @Override
