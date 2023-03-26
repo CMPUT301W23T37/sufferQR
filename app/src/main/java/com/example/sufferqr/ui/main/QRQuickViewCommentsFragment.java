@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -75,6 +76,16 @@ public class QRQuickViewCommentsFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                in.putExtra("title", "Add Comment");
+                startActivity(in);
+            }
+        });
+
+        commentsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                in.putExtra("title", "Delete Comment");
+                in.putExtra("commentContent", dataList.get(i).getComment());
                 startActivity(in);
             }
         });
@@ -90,11 +101,13 @@ public class QRQuickViewCommentsFragment extends Fragment {
                     String date = (String) doc.getData().get("cdate");
                     String comment = (String) doc.getData().get("comment");
                     String uName = (String) doc.getData().get("userName");
+                    //String docId = doc.getId();
                     dataList.add(new QRQuickViewComment(uName, date, comment, androidId));
                 }
                 commentsAdapter.notifyDataSetChanged();
             }
         });
+
 
         return view;
     }
