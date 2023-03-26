@@ -3,6 +3,7 @@ package com.example.sufferqr;
 import static android.content.ContentValues.TAG;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -14,7 +15,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.MetadataChanges;
 
 import android.provider.Settings;
 import android.provider.Settings.Secure;
@@ -29,7 +33,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import timber.log.Timber;
 
 /**
  * This class is the dash board of the application
@@ -109,12 +112,72 @@ public class DashBoard extends DrawerBase {
         // Get AAID
         String android_id = Settings.Secure.getString(getContentResolver(), Secure.ANDROID_ID);
         DocumentReference userAAID = db.collection("Player").document(android_id);
-        userAAID.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @SuppressLint("StringFormatInvalid")
+//        userAAID.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//            @SuppressLint("StringFormatInvalid")
+//            @Override
+//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                if(task.isSuccessful()){
+//                    DocumentSnapshot userInfo = task.getResult();
+//                    if(!userInfo.exists()){
+//                        Intent i = new Intent(DashBoard.this, RegisterPage.class);
+//                        startActivity(i);
+//                    }
+//                    else {
+//                        // get the score list
+//                        List<Long> scoresList = (List<Long>) userInfo.get("scores");
+//                        int length = 0;
+//                        if (scoresList.size() != 0) {
+//                            length = scoresList.size();
+//                        }
+//                        // check if there is any code record
+//                        if (length != 0) {
+//                            // set last scan
+//                            lScan.setText(getString(R.string.last_scan_number, String.valueOf(scoresList.get(0))));
+//
+//                            // set percentage that point increased
+//                            double pPercent;
+//
+//                            String sum = String.valueOf(userInfo.get("sumScore"));
+//
+//                            pPercent = (scoresList.get(0)/(Double.parseDouble(sum)-scoresList.get(0))) * 100;
+//
+//                            pointPercent.setText(getString(R.string.point_percent, pPercent));
+//
+//                            // sort the score list in reverse order
+//                            List<Long> scoresSorted = scoresList.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
+//
+//                            // set total qr code scanned
+//                            if (length == 1 && scoresSorted.get(0) == 0) {
+//                                totalQR.setText(String.valueOf(0));
+//                            } else {
+//                                totalQR.setText(String.valueOf(length));
+//                            }
+//
+//                            // set total points
+//                            long sumScores = 0;
+//                            for (int i = 0; i < length; i++) {
+//                                sumScores += scoresList.get(i);
+//                            }
+//                            totalPoint.setText(String.valueOf(sumScores));
+//
+//                            // set highest score
+//                            hScore.setText(String.valueOf(scoresSorted.get(0)));
+//                        }
+//                    }
+//                } else {
+//                    Log.d(TAG, "failed with ", task.getException());
+//                }
+//            }
+//        });
+        userAAID.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()){
-                    DocumentSnapshot userInfo = task.getResult();
+            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.w(TAG, "Listen failed.", error);
+                    return;
+                }
+                DocumentSnapshot userInfo = value;
+                if (value != null && value.exists()) {
                     if(!userInfo.exists()){
                         Intent i = new Intent(DashBoard.this, RegisterPage.class);
                         startActivity(i);
@@ -132,25 +195,13 @@ public class DashBoard extends DrawerBase {
                             lScan.setText(getString(R.string.last_scan_number, String.valueOf(scoresList.get(0))));
 
                             // set percentage that point increased
-                            long sumBefore = 0;
                             double pPercent;
-                            for (int i = 1; i < length; i++) {
-                                sumBefore += scoresList.get(i);
-                            }
 
                             String sum = String.valueOf(userInfo.get("sumScore"));
-
-//                            if (sumBefore == 0) {
-//                                pPercent = 0;
-//                            } else {
-//                                pPercent = (double) ((scoresList.get(0) / sumBefore * 100);
-//                            }
 
                             pPercent = (scoresList.get(0)/(Double.parseDouble(sum)-scoresList.get(0))) * 100;
 
                             pointPercent.setText(getString(R.string.point_percent, pPercent));
-
-
 
                             // sort the score list in reverse order
                             List<Long> scoresSorted = scoresList.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
@@ -174,8 +225,9 @@ public class DashBoard extends DrawerBase {
                         }
                     }
                 } else {
-                    Log.d(TAG, "failed with ", task.getException());
+                    Log.d(TAG, "Current data: null");
                 }
+
             }
         });
 

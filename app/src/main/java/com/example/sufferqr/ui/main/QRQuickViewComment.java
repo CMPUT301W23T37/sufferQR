@@ -6,11 +6,14 @@ public class QRQuickViewComment implements Serializable {
     private String userName;
     private String cDate;
     private String comment;
+    private String androidId;
 
-    public QRQuickViewComment(String user, String dat, String com) {
+
+    public QRQuickViewComment(String user, String dat, String com, String androidId) {
         this.userName = user;
         this.cDate = dat;
         this.comment = com;
+        this.androidId = androidId;
     }
 
     public String getUserName() {
@@ -51,4 +54,18 @@ public class QRQuickViewComment implements Serializable {
     public void setComment(String comment) {
         this.comment = comment;
     }
+
+    public String getAndroidId() {
+        if (androidId == null) {
+            return "";
+        }
+        else {
+            return androidId;
+        }
+    }
+
+    public void setAndroidId(String androidId) {
+        this.androidId = androidId;
+    }
+
 }
