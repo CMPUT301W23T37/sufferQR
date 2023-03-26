@@ -1,10 +1,13 @@
 package com.example.sufferqr;
 
+import android.graphics.Bitmap;
+import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -17,6 +20,11 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.util.ArrayList;
 
@@ -24,6 +32,7 @@ import java.util.ArrayList;
 public class Highest extends Fragment {
     FirebaseFirestore db;
     private ListView highScorePlayerArrayList;
+    private ImageView userIdQrImage;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -51,30 +60,46 @@ public class Highest extends Fragment {
                 //Data.clear();
                 int i = 0;
                 for(QueryDocumentSnapshot doc: value) {
-                    Log.d("Sample", String.valueOf(doc.getData().get("user")));
+                    Log.d("Sample", String.valueOf(doc.getData().get("QRname")));
                     Log.d("Sample", String.valueOf(doc.getData().get("points")));
-                    String name = (String) doc.getData().get("user");
+                    Log.d("Sample", String.valueOf(doc.getData().get("qrid")));
+                    String name = (String) doc.getData().get("QRname");
                     String score = (String) doc.getData().get("points").toString();
                     int intScore = Integer.valueOf(score);
                     i += 1;
                     int rank = i;
+                    String userQRid = (String) doc.getData().get("qrid");
                     if (i == 1) {
                         FirstUsername.setText(name);
                         FirstScore.setText(score);
+                        userIdQrImage = view.findViewById(R.id.total_first_qr);
                     }
                     else if (i == 2) {
                         SecondUsername.setText(name);
                         SecondScore.setText(score);
+                        userIdQrImage = view.findViewById(R.id.total_second_qr);
                     }
                     else if (i == 3) {
                         ThirdUsername.setText(name);
                         ThirdScore.setText(score);
+                        userIdQrImage = view.findViewById(R.id.total_thrid_qr);
                     }
                     else if (i > 3) {
-                        Data.add(new HighScorePlayer(rank,name,intScore));
+                        Data.add(new HighScorePlayer(rank,name,intScore,userQRid));
                         HighScorePlayerList adapter = new HighScorePlayerList(requireContext(), Data);
                         highScorePlayerArrayList = view.findViewById(R.id.ranks_listview);
                         highScorePlayerArrayList.setAdapter(adapter);
+                    }
+                    String qrCode = userQRid + name;
+                    MultiFormatWriter mWriter = new MultiFormatWriter();
+                    try {
+                        //BitMatrix class to encode entered text and set Width & Height
+                        BitMatrix mMatrix = mWriter.encode(qrCode, BarcodeFormat.QR_CODE, 400,400);
+                        BarcodeEncoder mEncoder = new BarcodeEncoder();
+                        Bitmap mBitmap = mEncoder.createBitmap(mMatrix);//creating bitmap of code
+                        userIdQrImage.setImageBitmap(mBitmap);//Setting generated QR code to imageView
+                    } catch (WriterException e) {
+                        e.printStackTrace();
                     }
                 }
             }
