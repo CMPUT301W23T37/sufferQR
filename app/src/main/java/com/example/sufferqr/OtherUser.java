@@ -1,15 +1,26 @@
 package com.example.sufferqr;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.sufferqr.DrawerBase;
+import com.example.sufferqr.QRQuickViewScrollingActivity;
+import com.example.sufferqr.R;
+import com.example.sufferqr.User;
 import com.example.sufferqr.databinding.ActivityOtherUserLayoutBinding;
+import com.example.sufferqr.ui.main.ScanHistoryCustomList;
+import com.example.sufferqr.ui.main.ScanHistoryQRRecord;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.chip.Chip;
@@ -18,6 +29,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.MetadataChanges;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
@@ -26,6 +39,9 @@ import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import org.w3c.dom.Text;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 public class OtherUser extends DrawerBase {
 
@@ -41,7 +57,8 @@ public class OtherUser extends DrawerBase {
     Chip code_otherProfile;
 
     ListView qrCode_otherProfile;
-
+    ArrayAdapter<ScanHistoryQRRecord> qrAdapter;
+    ArrayList<ScanHistoryQRRecord> qrDataList;
     FirebaseFirestore db;
 
     @Override
@@ -58,6 +75,8 @@ public class OtherUser extends DrawerBase {
         lowest_otherProfile = findViewById(R.id.lowest_otherProfile);
         sum_otherProfile = findViewById(R.id.sum_otherProfile);
         code_otherProfile = findViewById(R.id.number_of_code_otherProfile);
+        userCode_otherProfile = findViewById(R.id.userQRImage_otherProfile);
+        qrCode_otherProfile=findViewById(R.id.other_user_profile_list);
 
         Bundle value = getIntent().getExtras();
         String name = value.getString("username");
@@ -75,25 +94,46 @@ public class OtherUser extends DrawerBase {
                 }
 
                 DocumentSnapshot doc = value.getDocuments().get(0);
+                User u = doc.toObject(User.class);
+                assert u != null;
 
-                userName_otherProfile.setText(String.valueOf(doc.get("name")));
-                userEmail_otherProfile.setText(String.valueOf(doc.get("email")));
-                userQrId_otherProfile.setText(String.valueOf(doc.get("qrid")));
+                userName_otherProfile.setText(u.getName());
 
-                String highest_text = "Highest: " + doc.get("highestScore");
-                highest_otherProfile.setText(highest_text);
-                String lowest_text = "Lowest: " + doc.get("lowestScore");
-                lowest_otherProfile.setText(lowest_text);
-                String sum_text = "Sum: " + doc.get("sumScore");
-                sum_otherProfile.setText(sum_text);
-                String code_text = "Code: " + doc.get("qrcount");
-                code_otherProfile.setText(code_text);
+                if(u.getAllowViewEmail()){
+                    userEmail_otherProfile.setText(u.getEmail());
+                } else {
+                    userEmail_otherProfile.setText("");
+                }
+
+                if(u.getAllowViewQrid()){
+                    userQrId_otherProfile.setText(u.getQRid());
+                } else{
+                    userQrId_otherProfile.setText("");
+                }
+
+                if(u.getAllowViewScanRecord()){
+                    String highest_text = "Highest: " + doc.get("highestScore");
+                    highest_otherProfile.setText(highest_text);
+                    String lowest_text = "Lowest: " + doc.get("lowestScore");
+                    lowest_otherProfile.setText(lowest_text);
+                    String sum_text = "Sum: " + doc.get("sumScore");
+                    sum_otherProfile.setText(sum_text);
+                    String code_text = "Code: " + doc.get("qrcount");
+                    code_otherProfile.setText(code_text);
+                } else{
+                    highest_otherProfile.setText("N/A");
+                    lowest_otherProfile.setText("N/A");
+                    sum_otherProfile.setText("N/A");
+                    code_otherProfile.setText("N/A");
+                    qrCode_otherProfile.setVisibility(View.INVISIBLE);
+                }
+
 
             }
         });
 
         // generate qr code
-        userCode_otherProfile = findViewById(R.id.userQRImage_otherProfile);
+
         String qrCode = userQrId_otherProfile.getText().toString().trim() + name;
         MultiFormatWriter mWriter = new MultiFormatWriter();
         try {
@@ -105,6 +145,60 @@ public class OtherUser extends DrawerBase {
         } catch (WriterException e) {
             e.printStackTrace();
         }
+
+        // list
+        db = FirebaseFirestore.getInstance();
+
+        qrDataList = new ArrayList<>();
+
+        qrAdapter = new ScanHistoryCustomList(this,qrDataList);
+
+        qrCode_otherProfile.setAdapter(qrAdapter);
+
+        qrCode_otherProfile.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                ScanHistoryQRRecord hsq = (ScanHistoryQRRecord) adapterView.getItemAtPosition(position);
+
+                Intent scanIntent = new Intent(getApplicationContext(), QRQuickViewScrollingActivity.class);
+                scanIntent.putExtra("user",name);
+                scanIntent.putExtra("qrID",hsq.getName());
+
+                Bundle bundle = new Bundle();
+                for (Map.Entry<String, Object> entry : hsq.getMap().entrySet()) {
+                    bundle.putString(entry.getKey(),String.valueOf(entry.getValue()));
+                }
+
+                scanIntent.putExtra("MapData",bundle);
+                startActivity(scanIntent);
+
+                overridePendingTransition(0,0);
+            }
+        });
+        final CollectionReference qr_collectionReference = db.collection("GameQrCode");
+        qr_collectionReference.whereEqualTo("userName",name).orderBy("time", Query.Direction.DESCENDING)
+                .addSnapshotListener(MetadataChanges.INCLUDE, new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if (error != null){
+                            System.err.println("Listen failed: " + error);
+                        }
+                        if (value != null && !value.isEmpty()){
+                            qrDataList.clear();
+                            for (DocumentSnapshot doc : value.getDocuments()) {
+                                String qrName = String.valueOf(doc.getData().get("QRname"));
+                                String points = String.valueOf(doc.getData().get("points"));
+                                String sDate = String.valueOf(doc.getData().get("date"));
+                                String sAddress = String.valueOf(doc.getData().get("LocationName"));
+                                qrDataList.add(new ScanHistoryQRRecord(qrName, points,sDate,sAddress,doc.getData())); // Adding the cities and provinces from FireStore
+                            }
+                            System.out.println("sioze"+qrDataList.size());
+                            qrAdapter.notifyDataSetChanged();
+                        } else {
+                            Toast toast = Toast.makeText(getApplicationContext(),"no result", Toast.LENGTH_SHORT);
+                        }
+                    }
+                });
 
     }
 }

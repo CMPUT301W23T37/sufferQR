@@ -1,14 +1,11 @@
 package com.example.sufferqr;
 
-import static android.content.ContentValues.TAG;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -79,14 +76,15 @@ public class SearchPlayer extends DrawerBase {
                             // loop through the document, record all names
                             for(DocumentSnapshot doc : value.getDocuments()){
                                 allMemberName.add(String.valueOf(doc.get("name")));
+                                allMemberQrId.add(String.valueOf(doc.get("qrid")));
 //                        Log.d(TAG, "Size: "+allMemberName.size());
                             }
 
                             // loop through all names find result
                             for (int i = 0; i < allMemberName.size(); i++){
                                 if(allMemberName.get(i).contains(text)){
-                                    Log.d(TAG, "Samimilar; "+allMemberName.get(i));
-                                    User resultUser = new User(allMemberName.get(i));
+//                                    Log.d(TAG, "Samimilar; "+allMemberName.get(i));
+                                    User resultUser = new User(allMemberName.get(i), allMemberQrId.get(i));
                                     userList.add(resultUser);
                                 }
                             }
@@ -97,7 +95,7 @@ public class SearchPlayer extends DrawerBase {
                             searchContent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                 @Override
                                 public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
-                                    Log.d(TAG, "name: " + userList.get(pos).getName());
+//                                    Log.d(TAG, "name: " + userList.get(pos).getName());
                                     Intent i = new Intent(SearchPlayer.this, OtherUser.class);
                                     i.putExtra("username", userList.get(pos).getName());
                                     startActivity(i);
@@ -110,6 +108,7 @@ public class SearchPlayer extends DrawerBase {
                 return true;
             }
         });
+
 
 
 

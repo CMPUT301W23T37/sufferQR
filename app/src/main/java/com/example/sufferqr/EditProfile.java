@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.CollectionReference;
@@ -42,6 +43,9 @@ public class EditProfile extends AppCompatActivity {
     private Button cancelButton;
     private Button applyButton;
 
+    SwitchMaterial allowEmail;
+    SwitchMaterial allowQrid;
+    SwitchMaterial allowScanRecord;
     final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
@@ -97,9 +101,10 @@ public class EditProfile extends AppCompatActivity {
             }
         });
 
-
-
         email = findViewById(R.id.userEmail_editProfile);
+        allowEmail = findViewById(R.id.allow_email);
+        allowQrid = findViewById(R.id.allow_qrid);
+        allowScanRecord = findViewById(R.id.allow_scan_record);
 
         // Get AAID and give it to the db
         String android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -112,6 +117,9 @@ public class EditProfile extends AppCompatActivity {
 
                 username.setText((String) document.get("name"));
                 email.setText((String) document.get("email"));
+                allowEmail.setChecked((Boolean) document.get("allowViewEmail"));
+                allowQrid.setChecked((Boolean) document.get("allowViewQrid"));
+                allowScanRecord.setChecked((Boolean) document.get("allowViewScanRecord"));
 
             }
         });
@@ -124,6 +132,7 @@ public class EditProfile extends AppCompatActivity {
                 finish();
             }
         });
+
 
         // apply change action
         applyButton = findViewById(R.id.applyButton_editProfile);
@@ -139,6 +148,9 @@ public class EditProfile extends AppCompatActivity {
                         User u = documentSnapshot.toObject(User.class);
                         u.setName(changedUserName_editProfile);
                         u.setEmail(changedUserEmail_editProfile);
+                        u.setAllowViewEmail(allowEmail.isChecked());
+                        u.setAllowViewQrid(allowQrid.isChecked());
+                        u.setAllowViewScanRecord(allowScanRecord.isChecked());
                         db.collection("Player").document(android_id).set(u);
                     }
                 });

@@ -6,31 +6,44 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacem
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconOffset;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
+import android.provider.Settings;
 import android.text.Annotation;
 import android.text.Layout;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.sufferqr.QRQuickViewScrollingActivity;
 import com.example.sufferqr.R;
+import com.google.android.gms.common.util.ScopeUtil;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.MetadataChanges;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
@@ -49,6 +62,10 @@ import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.mapboxsdk.utils.BitmapUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 
@@ -63,6 +80,9 @@ public class QRQuickViewGeneralFragment extends Fragment  implements OnMapReadyC
     CardView location_card,map_card;
     Button go_button;
     View gbView;
+    Map<String,Map<String,Object>> mapData;
+    ChipGroup chipGroup;
+    String locUser;
 
 
     public QRQuickViewGeneralFragment(Bundle myBundle) {
@@ -100,12 +120,14 @@ public class QRQuickViewGeneralFragment extends Fragment  implements OnMapReadyC
         go_button = view.findViewById(R.id.fragment_q_r_quick_view_general_go_elevatedButton);
 
         map_card = view.findViewById(R.id.fragment_q_r_quick_view_general_location_map_cardView);
+        chipGroup = view.findViewById(R.id.fragment_q_r_quick_view_general_same_qr_code);
 
         //mapView= view.findViewById(R.id.qr_detail_location_content_map_view);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
         if (bundle!=null){
             loadInfo();
+            //sameQr();
         } else {
 
         }
@@ -172,6 +194,7 @@ public class QRQuickViewGeneralFragment extends Fragment  implements OnMapReadyC
     }
 
     public void loadInfo(){
+        locUser = bundle.getString("localUser");
         String ss = bundle.getString("userName","author");
         if (!Objects.equals(ss, "author") && ss.length()>1){
             author.setText(ss);
@@ -181,7 +204,7 @@ public class QRQuickViewGeneralFragment extends Fragment  implements OnMapReadyC
 
         points.setText(bundle.getString("points","0")+" Points");
         date.setText(bundle.getString("date","1970-01-01"));
-        visual.setText(bundle.getString("QVisual"));
+        visual.setText(bundle.getString("QRVisual"));
 
         boolean b1= Boolean.parseBoolean(bundle.getString("LocationExist"));
         if (!b1){
@@ -196,6 +219,95 @@ public class QRQuickViewGeneralFragment extends Fragment  implements OnMapReadyC
             longtitude = Double.parseDouble(bundle.getString("LocationLongitude"));
 
         }
+
+    }
+
+    public void sameQr(){
+        // add
+        //chipGroup.addView();
+
+        // clear
+        //chipGroup.removeAllViews();
+        mapData = new HashMap<>();
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String QRhash = bundle.getString("QRhash","");
+        final String myQRname = bundle.getString("QRname");
+        @SuppressLint("HardwareIds") final String myUser = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);;
+
+
+
+        chipGroup.setOnCheckedStateChangeListener(new ChipGroup.OnCheckedStateChangeListener() {
+            @Override
+            public void onCheckedChanged(@NonNull ChipGroup group, @NonNull List<Integer> checkedIds) {
+                System.out.println("dsajhfaksjdbvjfdk");
+                List<Integer> checkdd= chipGroup.getCheckedChipIds();
+                if (checkedIds.size()!=0){
+                    int checked = checkdd.get(0)-1;
+                    Chip chip = (Chip) chipGroup.getChildAt(checked);
+                    String qrName = (String) chip.getText();
+                    Map<String,Object> tempMap = mapData.get(qrName);
+                    chipGroup.clearCheck();
+                    if (tempMap!= null){
+                        Intent scanIntent = new Intent(getApplicationContext(), QRQuickViewScrollingActivity.class);
+                        scanIntent.putExtra("localUser",myUser);
+                        scanIntent.putExtra("qrID",qrName);
+                        Bundle bundle = new Bundle();
+                        for (Map.Entry<String, Object> entry : tempMap.entrySet()) {
+                            bundle.putString(entry.getKey(), String.valueOf(entry.getValue()));
+                        }
+                        scanIntent.putExtra("MapData",bundle);
+                        startActivity(scanIntent);
+                    } else {
+                        System.out.println("map null");
+                    }
+                }
+            }
+        });
+
+
+
+        final CollectionReference collectionReference = db.collection("GameQrCode");
+        collectionReference.whereEqualTo("QRhash",QRhash).orderBy("points", Query.Direction.DESCENDING)
+                .addSnapshotListener(MetadataChanges.INCLUDE, new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if (error != null){
+                            System.err.println("Listen failed: " + error);
+                        }
+                        if (value != null && !value.isEmpty()){
+                            mapData.clear();
+                            chipGroup.removeAllViews();
+                            for (DocumentSnapshot doc : value.getDocuments()) {
+                                Map<String,Object> map= doc.getData();
+                                if (map==null){
+                                    continue;
+                                }
+                                if (map.get("allowViewScanRecord") != null){
+                                    boolean qrTrue = (boolean) map.get("allowViewScanRecord");
+                                    String qrName = String.valueOf(doc.getData().get("QRname"));
+                                    if (Boolean.TRUE == qrTrue && !qrName.equals(myQRname)){
+                                        mapData.put(qrName,doc.getData());
+
+                                        Chip chip = new Chip(getContext());
+                                        chip.setText(qrName);
+                                        chip.setGravity(5);
+                                        chip.setChipIcon(null);
+                                        chip.setCheckable(true);
+                                        chip.setChipBackgroundColorResource(R.color.app_main_blue);
+                                        chip.setTextColor(getResources().getColor(R.color.white));
+                                        chip.setTextSize(12);
+
+                                        chipGroup.addView(chip);
+                                    }
+                                }
+                            }
+                        } else {
+                            Toast toast = Toast.makeText(getApplicationContext(),"no result", Toast.LENGTH_SHORT);
+                        }
+                    }
+                });
+
 
     }
 

@@ -18,7 +18,11 @@ public class User {
     private int sumScore;
     private List<Long> scores;
 
-    public User(String name, String email, String QRid, int QRcount, int highestScore, int lowestScore, int sumScore, List<Long> scores){
+    private Boolean allowViewEmail;
+    private Boolean allowViewQrid;
+    private Boolean allowViewScanRecord;
+
+    public User(String name, String email, String QRid, int QRcount, int highestScore, int lowestScore, int sumScore, List<Long> scores, boolean allowEmail, boolean allowQrid, boolean allowScan){
         this.username = name;
         this.email = email;
         this.QRid = QRid;
@@ -27,12 +31,17 @@ public class User {
         this.lowestScore = lowestScore;
         this.sumScore = sumScore;
         this.scores = scores;
+        this.allowViewEmail = allowEmail;
+        this.allowViewQrid = allowQrid;
+        this.allowViewScanRecord = allowScan;
     }
 
-    public User(String name){
+    public User(String name, String qrid){
         this.username = name;
+        this.QRid = qrid;
     }
 
+    public User(){}
 
 
     public String getName(){
@@ -87,4 +96,27 @@ public class User {
     public List<Long> getScores(){return scores;}
     public void addScores(long score){scores.add(score);}
 
+    public Boolean getAllowViewEmail() {
+        return allowViewEmail;
+    }
+
+    public Boolean getAllowViewQrid() {
+        return allowViewQrid;
+    }
+
+    public Boolean getAllowViewScanRecord() {
+        return allowViewScanRecord;
+    }
+
+    public void setAllowViewEmail(Boolean allowViewEmail) {
+        this.allowViewEmail = allowViewEmail;
+    }
+
+    public void setAllowViewQrid(Boolean allowViewQrid) {
+        this.allowViewQrid = allowViewQrid;
+    }
+
+    public void setAllowViewScanRecord(Boolean allowViewScanRecord) {
+        this.allowViewScanRecord = allowViewScanRecord;
+    }
 }

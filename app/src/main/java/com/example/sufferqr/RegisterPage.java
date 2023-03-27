@@ -76,7 +76,7 @@ public class RegisterPage extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable editable) {
                 if(editable.length() > 0){
-                    final CollectionReference collectionReference = db.collection("Player");
+                    CollectionReference collectionReference = db.collection("Player");
                     collectionReference.whereNotEqualTo("name", null).addSnapshotListener(MetadataChanges.INCLUDE, new EventListener<QuerySnapshot>() {
                         @Override
                         public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -115,7 +115,23 @@ public class RegisterPage extends AppCompatActivity {
 
         // set up qr id
         qrIdGenerated = randomString();
-        changeQrIdButton.setText(qrIdGenerated);
+        CollectionReference collectionReference = db.collection("Player");
+        collectionReference.whereNotEqualTo("qrid", null).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null){
+                    System.err.println("Listen failed: " + error);
+                }
+
+                for (DocumentSnapshot doc : value.getDocuments()){
+                    if(!qrIdGenerated.equals(doc.get("qrid"))){
+                        changeQrIdButton.setText(qrIdGenerated);
+                    } else{
+                        qrIdGenerated = randomString();
+                    }
+                }
+            }
+        });
 
         // qr id choice
         changeQrIdButton.setOnClickListener(new View.OnClickListener() {
@@ -148,11 +164,14 @@ public class RegisterPage extends AppCompatActivity {
                     int sum = 0;
                     List<Long> scores = new ArrayList<Long>();
                     scores.add(0L);
+                    boolean allowEmail = true;
+                    boolean allowQrid = true;
+                    boolean allowScan = true;
 
                     // Get AAID
                     String android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
-                    User user = new User(usernameEntered, emailEntered, qrIdGenerated, QRcount, highest, lowest, sum, scores);
+                    User user = new User(usernameEntered, emailEntered, qrIdGenerated, QRcount, highest, lowest, sum, scores, allowEmail, allowQrid, allowScan);
                     db.collection("Player").document(android_id).set(user);
                     finish();
                 } else{
