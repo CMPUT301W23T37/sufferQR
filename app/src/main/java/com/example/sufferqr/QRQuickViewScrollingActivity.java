@@ -70,6 +70,7 @@ public class QRQuickViewScrollingActivity extends AppCompatActivity {
         user = myIntent.getStringExtra("localUser");
         qrID = myIntent.getStringExtra("qrID");
         data = myIntent.getBundleExtra("MapData");
+        data.putString("localUser",user);
         if (user == null || qrID == null || data == null){
             System.out.println(user+qrID+data);
             Toast.makeText(getBaseContext(),"document required but ull",Toast.LENGTH_LONG).show();
