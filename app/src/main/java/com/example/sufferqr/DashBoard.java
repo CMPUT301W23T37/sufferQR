@@ -225,7 +225,8 @@ public class DashBoard extends DrawerBase {
                         }
                     }
                 } else {
-                    Log.d(TAG, "Current data: null");
+                    Intent i = new Intent(DashBoard.this, RegisterPage.class);
+                    startActivity(i);
                 }
 
             }
