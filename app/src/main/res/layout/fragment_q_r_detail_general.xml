@@ -87,6 +87,24 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
+                    android:id="@+id/qr_detail_general_qrtext_estimate_ranking"
+                    android:layout_width="150sp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="130dp"
+                    android:layout_marginEnd="200dp"
+                    android:layout_marginBottom="60dp"
+                    android:gravity="start"
+                    android:visibility="invisible"
+                    android:text="#"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+
+                <TextView
                     android:id="@+id/qr_detail_general_qrtext_date"
                     android:layout_width="150sp"
                     android:layout_height="wrap_content"

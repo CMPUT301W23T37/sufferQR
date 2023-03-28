@@ -14,6 +14,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.sufferqr.DrawerBase;
+import com.example.sufferqr.QRQuickViewScrollingActivity;
+import com.example.sufferqr.R;
+import com.example.sufferqr.User;
 import com.example.sufferqr.databinding.ActivityOtherUserLayoutBinding;
 import com.example.sufferqr.ui.main.ScanHistoryCustomList;
 import com.example.sufferqr.ui.main.ScanHistoryQRRecord;
@@ -156,7 +160,7 @@ public class OtherUser extends DrawerBase {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 ScanHistoryQRRecord hsq = (ScanHistoryQRRecord) adapterView.getItemAtPosition(position);
 
-                Intent scanIntent = new Intent(getApplicationContext(),QRQuickViewScrollingActivity.class);
+                Intent scanIntent = new Intent(getApplicationContext(), QRQuickViewScrollingActivity.class);
                 scanIntent.putExtra("user",name);
                 scanIntent.putExtra("qrID",hsq.getName());
 
