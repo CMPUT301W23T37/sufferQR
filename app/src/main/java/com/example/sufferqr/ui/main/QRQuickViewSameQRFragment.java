@@ -46,6 +46,7 @@ public class QRQuickViewSameQRFragment extends Fragment {
 
     public QRQuickViewSameQRFragment(Bundle myBundle) {
         bundle = myBundle;
+        UserName = bundle.getString("localUser");
     }
 
     @Override
@@ -55,10 +56,6 @@ public class QRQuickViewSameQRFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         qrList = view.findViewById(R.id.scan_same_recycleView);
         // Check if the fragment arguments are not null before calling getString("user")
-        Bundle args = getArguments();
-        if (args != null) {
-            UserName = args.getString("user");
-        }
 
         qrDataList = new ArrayList<>();
         qrAdapter = new ScanHistoryCustomList(getActivity(), qrDataList);
@@ -69,7 +66,7 @@ public class QRQuickViewSameQRFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 ScanHistoryQRRecord hsq = (ScanHistoryQRRecord) adapterView.getItemAtPosition(position);
                 Intent scanIntent = new Intent(getActivity(), QRQuickViewScrollingActivity.class);
-                scanIntent.putExtra("user", UserName);
+                scanIntent.putExtra("localUser", UserName);
                 scanIntent.putExtra("qrID", hsq.getName());
 
                 Bundle bundle = new Bundle();
@@ -85,7 +82,7 @@ public class QRQuickViewSameQRFragment extends Fragment {
         });
 
         final CollectionReference collectionReference = db.collection("GameQrCode");
-        collectionReference.whereEqualTo("QRhash", bundle.getString("qrHash"))
+        collectionReference.whereEqualTo("QRhash", bundle.getString("QRhash"))
                 .orderBy("points", Query.Direction.DESCENDING)
                 .addSnapshotListener(MetadataChanges.INCLUDE, new EventListener<QuerySnapshot>() {
                     @Override
