@@ -96,6 +96,7 @@ public class QRQuickViewSameQRFragment extends Fragment {
                             // Get the number of scans
 
                             qrDataList.clear();
+                            name.clear();
                             for (DocumentSnapshot doc : value.getDocuments()) {
                                 String qrName = String.valueOf(Objects.requireNonNull(doc.getData()).get("userName"));
                                 if (!name.contains(qrName)){
