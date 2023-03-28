@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="emojicolor1">#FF0000</color>
+    <color name="emojicolor2">#00FF00</color>
+    <color name="emojicolor3">#0000FF</color>
+    <color name="emojicolor4">#FFFF00</color>
+    <color name="emojicolor5">#FF00FF</color>
+    <color name="emojicolor6">#00FFFF</color>
+    <color name="emojicolor7">#C0C0C0</color>
+    <color name="emojicolor8">#800000</color>
+    <color name="emojicolor9">#808000</color>
+    <color name="emojicolor10">#008000</color>
+    <color name="emojicolor11">#800080</color>
+    <color name="emojicolor12">#008080</color>
+    <color name="emojicolor13">#FFA500</color>
+    <color name="emojicolor14">#F0E68C</color>
+    <color name="emojicolor15">#D2691E</color>
+</resources>
