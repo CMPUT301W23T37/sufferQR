@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -36,6 +37,7 @@ public class QRQuickViewSameQRFragment extends Fragment {
     Bundle bundle;
     ListView qrList;
 
+    TextView scanCountTextView;
     ArrayAdapter<ScanHistoryQRRecord> qrAdapter;
 
     ArrayList<ScanHistoryQRRecord> qrDataList;
@@ -55,6 +57,8 @@ public class QRQuickViewSameQRFragment extends Fragment {
 
         db = FirebaseFirestore.getInstance();
         qrList = view.findViewById(R.id.scan_same_recycleView);
+        // Initialize scanCountTextView
+        scanCountTextView = view.findViewById(R.id.scan_count_textview);
         // Check if the fragment arguments are not null before calling getString("user")
 
         qrDataList = new ArrayList<>();
@@ -92,6 +96,9 @@ public class QRQuickViewSameQRFragment extends Fragment {
                             return;
                         }
                         if (value != null && !value.isEmpty()) {
+                            // Get the number of scans
+                            int scanCount = value.size();
+                            scanCountTextView.setText("The Number of times this QRcode has been Scanned: " + scanCount);
                             qrDataList.clear();
                             for (DocumentSnapshot doc : value.getDocuments()) {
                                 String qrName = String.valueOf(doc.getData().get("QRname"));
