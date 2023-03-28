@@ -1,98 +1,115 @@
 package com.example.sufferqr.ui.main;
 
-
+import android.content.Intent;
 import android.os.Bundle;
-import android.widget.TextView;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
+import com.example.sufferqr.QRQuickViewScrollingActivity;
 import com.example.sufferqr.R;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.MetadataChanges;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class QRQuickViewSameQRFragment extends Fragment {
+    Bundle bundle;
+    ListView qrList;
 
-    private Bundle bundle;
-    private View view;
+    ArrayAdapter<ScanHistoryQRRecord> qrAdapter;
 
-    private String qrCodeUrl; // the URL of the scanned QR code
+    ArrayList<ScanHistoryQRRecord> qrDataList;
 
-    private List<String> players; // a list of players who scanned the same QR code
-    private int numScans; // the number of times the QR code was scanned
+    String UserName;
 
-    public QRQuickViewSameQRFragment(Bundle mybundle) {
-        // Required empty public constructor
-        bundle = mybundle;
-        qrCodeUrl = bundle.getString("qr_code_url");
+    FirebaseFirestore db;
+
+    public QRQuickViewSameQRFragment(Bundle myBundle) {
+        bundle = myBundle;
     }
 
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // bundle contain all document under this qrcode,however the query is created on database
-        // xml for this fragment is .ui.main.QRQuickViewSameQRFragment
-        // context suggest use requireContext()
-        // to get to a complement use view.findbyviewid(...)
-        // to see realtime updating list see scan-history
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_q_r_quick_view_same_q_r, container, false);
 
+        db = FirebaseFirestore.getInstance();
+        qrList = view.findViewById(R.id.scan_same_recycleView);
+        // Check if the fragment arguments are not null before calling getString("user")
+        Bundle args = getArguments();
+        if (args != null) {
+            UserName = args.getString("user");
+        }
 
-        // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_q_r_quick_view_same_q_r, container, false);
+        qrDataList = new ArrayList<>();
+        qrAdapter = new ScanHistoryCustomList(getActivity(), qrDataList);
+        qrList.setAdapter(qrAdapter);
 
+        qrList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                ScanHistoryQRRecord hsq = (ScanHistoryQRRecord) adapterView.getItemAtPosition(position);
+                Intent scanIntent = new Intent(getActivity(), QRQuickViewScrollingActivity.class);
+                scanIntent.putExtra("user", UserName);
+                scanIntent.putExtra("qrID", hsq.getName());
 
-        // Initialize the players list
-        players = new ArrayList<>();
+                Bundle bundle = new Bundle();
+                for (Map.Entry<String, Object> entry : hsq.getMap().entrySet()) {
+                    bundle.putString(entry.getKey(), String.valueOf(entry.getValue()));
+                }
 
-        // Query the Firestore database to retrieve all documents that have the same QR code URL
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("qr_scans")
-                .whereEqualTo("url", qrCodeUrl)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        // Count the number of documents returned by the query
-                        numScans = task.getResult().size();
+                scanIntent.putExtra("MapData", bundle);
+                startActivity(scanIntent);
 
-                        // Retrieve the names, dates, and times of the players who scanned the same QR code
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            String player = document.getString("player");
-                            Date date = document.getDate("date");
-                            String dateString = new SimpleDateFormat("MM/dd/yyyy").format(date);
-                            String timeString = new SimpleDateFormat("hh:mm a").format(date);
-                            String playerString = player + " " + dateString + " " + timeString;
-                            players.add(playerString);
+                getActivity().overridePendingTransition(0, 0);
+            }
+        });
+
+        final CollectionReference collectionReference = db.collection("GameQrCode");
+        collectionReference.whereEqualTo("QRhash", bundle.getString("qrHash"))
+                .orderBy("points", Query.Direction.DESCENDING)
+                .addSnapshotListener(MetadataChanges.INCLUDE, new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if (error != null) {
+                            System.err.println("Listen failed: " + error);
+                            return;
                         }
-
-
-                        // Display the number of times the QR code was scanned and the list of players who scanned it
-                        displayData();
+                        if (value != null && !value.isEmpty()) {
+                            qrDataList.clear();
+                            for (DocumentSnapshot doc : value.getDocuments()) {
+                                String qrName = String.valueOf(doc.getData().get("QRname"));
+                                String points = String.valueOf(doc.getData().get("points"));
+                                String sDate = String.valueOf(doc.getData().get("date"));
+                                String sAddress = String.valueOf(doc.getData().get("LocationName"));
+                                qrDataList.add(new ScanHistoryQRRecord(qrName, points, sDate, sAddress, doc.getData()));
+                            }
+                            qrAdapter.notifyDataSetChanged();
+                        } else {
+                            Toast.makeText(getActivity(), "no Other players have scanned this QRcode yet", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
 
         return view;
-
-    }
-
-
-    private void displayData() {
-        // Display the number of times the QR code was scanned by the current player
-        TextView playerScansTextView = view.findViewById(R.id.player_scans_text_view);
-        String playerScansText = "You have scanned this QR code " + numScans + " times.";
-        playerScansTextView.setText(playerScansText);
-
-        // Display the list of other players who have scanned the same QR code
-        TextView otherPlayersTextView = view.findViewById(R.id.other_players_text_view);
-        StringBuilder otherPlayersText = new StringBuilder();
-        for (String player : players) {
-            otherPlayersText.append(player).append("\n");
-        }
-        otherPlayersTextView.setText(otherPlayersText.toString());
     }
 }
