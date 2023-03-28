@@ -81,7 +81,7 @@ public class ScanHistory extends DrawerBase {
 
 
                 Intent scanIntent = new Intent(getApplicationContext(),QRQuickViewScrollingActivity.class);
-                scanIntent.putExtra("user",UserName);
+                scanIntent.putExtra("localUser",UserName);
                 scanIntent.putExtra("qrID",hsq.getName());
 
                 Bundle bundle = new Bundle();
