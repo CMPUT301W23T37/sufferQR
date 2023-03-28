@@ -40,10 +40,15 @@ public class QrCodeList extends ArrayAdapter<QrCode> {
         }
 
         QrCode qrCode = qrCodes.get(position);
-        TextView qrName = view.findViewById(R.id.QRname_text);
-        TextView pointsNum = view.findViewById(R.id.points_text);
+        TextView qrName = view.findViewById(R.id.nearbylist_qrname_text);
+        TextView pointsNum = view.findViewById(R.id.nearbylist_points_text);
+        TextView address = view.findViewById(R.id.nearbylist_address_text);
+        TextView date = view.findViewById(R.id.nearbylist_date_text);
+
         qrName.setText("QRname: " + qrCode.getQrName());
-        pointsNum.setText("points: " + qrCode.getPoints());
+        pointsNum.setText(qrCode.getPoints());
+        address.setText("Address: " + qrCode.getLocationAddress());
+        date.setText("Date: " + qrCode.getDate());
 
         return view;
 
