@@ -148,7 +148,7 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback {
 
                 ArrayList<Double> latitudeList = new ArrayList<>();
                 ArrayList<Double> longitudeList = new ArrayList<>();
-                ArrayList<String> ids = new ArrayList<>();
+                ArrayList<String> QRnames = new ArrayList<>();
                 // arraylist of scores
                 ArrayList<String> scores = new ArrayList<>();
 
@@ -162,13 +162,13 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Double latitude = document.getDouble("LocationLatitude");
                                 Double longitude = document.getDouble("LocationLongitude");
-                                String id = document.getId();
+                                String name = document.getString("QRname");
                                 String points = (String) document.getData().get("points").toString();
 
                                 if (latitude != null && longitude != null) {
                                     latitudeList.add(latitude);
                                     longitudeList.add(longitude);
-                                    ids.add(id);
+                                    QRnames.add(name);
                                     scores.add(points);
                                 }
                             }
@@ -177,7 +177,8 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback {
                             for (int i = 0; i < latitudeList.size(); i++) {
                                 LatLng latLng = new LatLng(latitudeList.get(i), longitudeList.get(i));
                                 if (isWithinOneKilometer(currentLocation, latLng)) {
-                                    String id = ids.get(i);
+
+                                    String id = QRnames.get(i);
                                     String points = scores.get(i);
                                     MyClusterItem clusterItem = new MyClusterItem(latLng.latitude, latLng.longitude, id, "Points: " + points);
                                     clusterManager.addItem(clusterItem);
