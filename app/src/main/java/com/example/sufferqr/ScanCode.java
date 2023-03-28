@@ -193,8 +193,7 @@ public class ScanCode extends DrawerBase {
         int points = 0;
         try {
             hashed =  QRHash.toHexString(QRHash.getSHA(QRstring));
-            Context context = progressDialog.getOwnerActivity();
-            EmojiDraw emojiDraw = new EmojiDraw(hashed,context);
+            EmojiDraw emojiDraw = new EmojiDraw(hashed);
             face = emojiDraw.draw(); //call to draw the visual respresentation
 
         } catch (NoSuchAlgorithmException e) {
