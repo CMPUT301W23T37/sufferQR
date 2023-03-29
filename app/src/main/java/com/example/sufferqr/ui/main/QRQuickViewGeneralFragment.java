@@ -32,6 +32,7 @@ import android.widget.Toast;
 import com.example.sufferqr.QRQuickViewScrollingActivity;
 import com.example.sufferqr.R;
 import com.google.android.gms.common.util.ScopeUtil;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -68,7 +69,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-
+/**
+ * When scanning on other user qr code this where see details
+ */
 public class QRQuickViewGeneralFragment extends Fragment  implements OnMapReadyCallback,MapboxMap.OnCameraIdleListener{
 
     // TODO: Rename parameter arguments, choose names that match
@@ -84,19 +87,38 @@ public class QRQuickViewGeneralFragment extends Fragment  implements OnMapReadyC
     ChipGroup chipGroup;
     String locUser;
 
-
+    /**
+     * launch class
+     * @param myBundle data tranfer
+     */
     public QRQuickViewGeneralFragment(Bundle myBundle) {
         // Required empty public constructor
         bundle = myBundle;
     }
 
 
-
+    /**
+     * create class
+     * @param savedInstanceState If the fragment is being re-created from
+     * a previous saved state, this is the state.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * launch view
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return view
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -135,6 +157,11 @@ public class QRQuickViewGeneralFragment extends Fragment  implements OnMapReadyC
         return view;
     }
 
+    /**
+     * launch map to see where scaned
+     * @param mapboxMap An instance of MapboxMap associated with the {@link MapFragment} or
+     *                  {@link MapView} that defines the callback.
+     */
     @Override
     public void onMapReady(@NonNull MapboxMap mapboxMap) {
         QRQuickViewGeneralFragment.this.mapboxMapGlobal = mapboxMap;
@@ -193,6 +220,10 @@ public class QRQuickViewGeneralFragment extends Fragment  implements OnMapReadyC
         mapboxMapGlobal=mapboxMap;
     }
 
+
+    /**
+     * load information of the page
+     */
     public void loadInfo(){
         locUser = bundle.getString("localUser");
         String ss = bundle.getString("userName","author");

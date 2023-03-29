@@ -1,7 +1,7 @@
 package com.example.sufferqr;
 
+
 import java.util.Random;
-import android.util.Log;
 
 /**
  * Draws the visual representation of th QRcode
@@ -9,6 +9,7 @@ import android.util.Log;
 public class EmojiDraw {
     private final String qrhash;
     private final String[][] face;
+
 
     /**
      * stars the class by taking qrhash as input and generating a face
@@ -55,6 +56,7 @@ public class EmojiDraw {
         }
         return output.toString();
     }
+
 
     /**
      * generates the face itself by using 2D arrays to combine alll the facial features into 1 2D list
@@ -302,21 +304,9 @@ public class EmojiDraw {
 
         }
 
-
-        // add color to features (fruitloops)
-//        String[] colors = {"RED", "GREEN", "YELLOW", "BLUE", "MAGENTA", "CYAN"};
-//        for (int i = 0; i < sizeY; i++) {
-//            for (int j = 0; j < sizeX; j++) {
-//                String feature = face[i][j];
-//                if (!feature.equals(" ")) {
-//                    String color = colors[random.nextInt(colors.length - 1)];
-//                    face[i][j] = color + feature + colors[colors.length - 1];
-//                }
-//            }
-//        }
-
         return face;
     }
+
 }
 
 

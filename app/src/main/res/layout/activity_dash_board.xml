@@ -258,6 +258,43 @@
                 android:fontFamily="@font/amaranth"
                 android:textColor="@color/black"
                 />
+
+            <TextView
+                android:id="@+id/user_highest_rank_str"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/highest_score_number"
+                app:layout_constraintBottom_toBottomOf="@id/blue_rec_m"
+                app:layout_constraintEnd_toStartOf="@id/user_highest_rank"
+                app:layout_constraintStart_toStartOf="@id/highest_score_string"
+                android:layout_marginTop= "8dp"
+                android:text="Your Rank:"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:fontFamily="@font/amaranth"
+                android:textColor="@color/black"
+                />
+
+            <TextView
+                android:id="@+id/user_highest_rank"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/user_highest_rank_str"
+                app:layout_constraintStart_toEndOf="@id/user_highest_rank_str"
+                app:layout_constraintBottom_toBottomOf="@id/user_highest_rank_str"
+                android:layout_marginStart="8dp"
+                android:text="@string/zero"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:fontFamily="@font/amaranth"
+                android:textColor="@color/black"
+            />
+
+
+
+
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
     <androidx.cardview.widget.CardView

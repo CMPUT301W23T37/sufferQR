@@ -161,7 +161,7 @@ public class OtherUser extends DrawerBase {
                 ScanHistoryQRRecord hsq = (ScanHistoryQRRecord) adapterView.getItemAtPosition(position);
 
                 Intent scanIntent = new Intent(getApplicationContext(), QRQuickViewScrollingActivity.class);
-                scanIntent.putExtra("user",name);
+                scanIntent.putExtra("localUser",name);
                 scanIntent.putExtra("qrID",hsq.getName());
 
                 Bundle bundle = new Bundle();
