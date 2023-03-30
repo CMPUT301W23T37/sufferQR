@@ -19,6 +19,12 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.MetadataChanges;
+import com.google.firebase.firestore.AggregateQuery;
+import com.google.firebase.firestore.AggregateQuerySnapshot;
+import com.google.firebase.firestore.AggregateSource;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import android.provider.Settings;
 import android.provider.Settings.Secure;
@@ -29,6 +35,7 @@ import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,12 +56,43 @@ public class DashBoard extends DrawerBase {
     final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
+
+    private void getUserRank(String userID, long userHighestScore,TextView highest_rank) {
+        db.collection("Player")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            int rank = 1;
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                List<Long> scoresList = (List<Long>) document.get("scores");
+                                if (scoresList != null && !scoresList.isEmpty()) {
+                                    long highestScore = Collections.max(scoresList);
+                                    if (highestScore > userHighestScore) {
+                                        rank++;
+                                    }
+                                }
+                            }
+                            highest_rank.setText(String.valueOf(rank));
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityDashBoardBinding = ActivityDashBoardBinding.inflate(getLayoutInflater());
         setContentView(activityDashBoardBinding.getRoot());
         allocateActivityTitle("Suffer QR");
+
+
+
+
 
         // click qr code icon to scan code
         ImageView qrScan = findViewById(R.id.qr_image);
@@ -108,6 +146,7 @@ public class DashBoard extends DrawerBase {
         TextView pointPercent = findViewById(R.id.point_percent);
         TextView hScore = findViewById(R.id.highest_score_number);
         TextView lScan = findViewById(R.id.last_scan_number);
+        TextView highest_rank = findViewById(R.id.user_highest_rank);
 
         // Get AAID
         String android_id = Settings.Secure.getString(getContentResolver(), Secure.ANDROID_ID);
@@ -221,7 +260,12 @@ public class DashBoard extends DrawerBase {
                             totalPoint.setText(String.valueOf(sumScores));
 
                             // set highest score
-                            hScore.setText(String.valueOf(scoresSorted.get(0)));
+                            long userHighestScore = scoresSorted.get(0);
+                            hScore.setText(String.valueOf(userHighestScore));
+
+                            // set highest rank
+                            getUserRank(android_id, userHighestScore,highest_rank);
+
                         }
                     }
                 } else {
@@ -231,6 +275,7 @@ public class DashBoard extends DrawerBase {
 
             }
         });
+
 
 
     }
