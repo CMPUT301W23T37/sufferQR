@@ -35,6 +35,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * a list where show the people who also scaned the qrcode
+ */
 public class QRQuickViewSameQRFragment extends Fragment {
     Bundle bundle;
     ListView qrList;
@@ -49,11 +52,27 @@ public class QRQuickViewSameQRFragment extends Fragment {
 
     FirebaseFirestore db;
 
+    /**
+     * datta passing and launch the class
+     * @param myBundle data transfer
+     */
     public QRQuickViewSameQRFragment(Bundle myBundle) {
         bundle = myBundle;
         UserName = bundle.getString("localUser");
     }
 
+    /**
+     * draw the view and resbonses
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_q_r_quick_view_same_q_r, container, false);
@@ -96,6 +115,7 @@ public class QRQuickViewSameQRFragment extends Fragment {
                             // Get the number of scans
 
                             qrDataList.clear();
+                            name.clear();
                             for (DocumentSnapshot doc : value.getDocuments()) {
                                 String qrName = String.valueOf(Objects.requireNonNull(doc.getData()).get("userName"));
                                 if (!name.contains(qrName)){

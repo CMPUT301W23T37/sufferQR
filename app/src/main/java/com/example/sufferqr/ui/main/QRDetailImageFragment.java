@@ -44,9 +44,7 @@ import java.util.HashMap;
 import java.util.Objects;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link QRDetailImageFragment} factory method to
- * create an instance of this fragment.
+ * showing surrounding image and settings
  */
 public class QRDetailImageFragment extends Fragment {
 
@@ -61,7 +59,7 @@ public class QRDetailImageFragment extends Fragment {
     View gbview;
 
     /**
-     * lauch class
+     * launch class
      * @param adapterImageBundle saveinstance state
      */
     public QRDetailImageFragment(Bundle adapterImageBundle) {

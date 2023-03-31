@@ -492,7 +492,12 @@ public class GameQrRecordDB {
 
     }
 
-    public void UserNameChange(String oldName,String newName){
+    /**
+     * change doc when info updated
+     * @param oldName old username
+     * @param newName new username
+     */
+    public void UserPrivcyChange(String oldName,String newName){
         final CollectionReference collectionReference = db.collection("GameQrCode");
         final Query query= collectionReference.whereEqualTo("user",oldName);
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -520,6 +525,15 @@ public class GameQrRecordDB {
         });
     }
 
+
+    /**
+     * data preprocessing
+     * @param context appcontext
+     * @param data1 mapp of ocument
+     * @param us username
+     * @param cr content resolver
+     * @return return data correctness
+     */
     public boolean NewPreProcessing(Context context,HashMap<String,Object> data1,String us,ContentResolver cr){
         data =data1;
         // if new push the image and then database
@@ -560,6 +574,13 @@ public class GameQrRecordDB {
         }
     }
 
+    /**
+     *  when editing submit data preprocessing
+     * @param data1 map of the data
+     * @param QRname name of the qrcode
+     * @param OrginalName if user name changed submit the change the docname
+     * @return return data correctness
+     */
     public boolean ChangePreProcessing(HashMap<String,Object> data1,String QRname,String OrginalName){
         data =data1;
         // check if change,something releated also need to change
