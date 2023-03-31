@@ -93,6 +93,7 @@ public class RegisterPage extends AppCompatActivity {
                                     usernameRegisterLayout.setError("");
                                     usernameRegisterLayout.setHelperText("Username looks Good!");
                                 } else {
+                                    confirmRegisterButton.setEnabled(false);
                                     usernameRegisterLayout.setErrorEnabled(true);
                                     usernameRegisterLayout.setError("Username already exists");
                                     break;

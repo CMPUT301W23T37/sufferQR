@@ -141,7 +141,9 @@ public class EditProfile extends AppCompatActivity {
             public void onClick(View view) {
                 String changedUserName_editProfile = username.getEditableText().toString();
                 String changedUserEmail_editProfile = email.getEditableText().toString();
-
+                // do not put this after profile update(uodateing Game Qr db)
+                GameQrRecordDB gdb = new GameQrRecordDB();
+                gdb.PlayerProfileChange(oldName,changedUserName_editProfile,allowScanRecord.isChecked());
                 userInfo.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -167,6 +169,8 @@ public class EditProfile extends AppCompatActivity {
         delButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                GameQrRecordDB gdb = new GameQrRecordDB();
+                gdb.PlayerProfileDelete(oldName);
                 userInfo.delete();
 
                 Intent i = new Intent(EditProfile.this, DashBoard.class);
