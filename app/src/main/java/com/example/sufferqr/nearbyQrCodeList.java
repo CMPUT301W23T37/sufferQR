@@ -112,6 +112,7 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
 
                     Map<String,Object> data = doc.getData();
 
+
                     double tempLat = (double) doc.getData().get("LocationLatitude");
                     double tempLon = (double) doc.getData().get("LocationLongitude");
                     double dis = isWithinOneKilometer(latitude, longitude, tempLat, tempLon);
@@ -143,6 +144,7 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
                 scanIntent.putExtra("qrID", selectQrCode.getQrName());
 
                 Bundle bundle = new Bundle();
+
                 for (Map.Entry<String, Object> entry : selectQrCode.getData().entrySet()) {
                     bundle.putString(entry.getKey(),String.valueOf(entry.getValue()));
                 }

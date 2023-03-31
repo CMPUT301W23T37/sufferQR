@@ -7,13 +7,16 @@ import java.util.Map;
  * saving qrcode clss for nearby 1km qr
  */
 public class QrCode {
+
     private  double dist;
     private Map<String,Object> doc;
+
 
     QrCode(double dis, Map<String,Object> data){
         this.dist = dis;
         this.doc = data;
     }
+
 
     String getLocationAddress(){ return (String) this.doc.get("LocationAddress"); }
     boolean getlocationExist(){ return (boolean) this.doc.get("LocationExist"); }

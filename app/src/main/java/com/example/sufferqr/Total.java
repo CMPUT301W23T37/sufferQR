@@ -98,7 +98,7 @@ public class Total extends Fragment {
                     MultiFormatWriter mWriter = new MultiFormatWriter();
                     try {
                         //BitMatrix class to encode entered text and set Width & Height
-                        BitMatrix mMatrix = mWriter.encode(qrCode, BarcodeFormat.QR_CODE, 400,400);
+                        BitMatrix mMatrix = mWriter.encode(qrCode, BarcodeFormat.QR_CODE, 300,300);
                         BarcodeEncoder mEncoder = new BarcodeEncoder();
                         Bitmap mBitmap = mEncoder.createBitmap(mMatrix);//creating bitmap of code
                         userIdQrImage.setImageBitmap(mBitmap);//Setting generated QR code to imageView

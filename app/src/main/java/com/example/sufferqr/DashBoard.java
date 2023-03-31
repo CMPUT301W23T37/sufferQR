@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 
 
@@ -25,6 +26,11 @@ import com.google.firebase.firestore.AggregateSource;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import android.provider.Settings;
 import android.provider.Settings.Secure;
@@ -147,6 +153,7 @@ public class DashBoard extends DrawerBase {
         TextView hScore = findViewById(R.id.highest_score_number);
         TextView lScan = findViewById(R.id.last_scan_number);
         TextView highest_rank = findViewById(R.id.user_highest_rank);
+        TextView total_rank = findViewById(R.id.your_rank_number);
 
         // Get AAID
         String android_id = Settings.Secure.getString(getContentResolver(), Secure.ANDROID_ID);
@@ -265,6 +272,27 @@ public class DashBoard extends DrawerBase {
 
                             // set highest rank
                             getUserRank(android_id, userHighestScore,highest_rank);
+
+                            // set total rank
+                            Query query = db.collection("Player").orderBy("sumScore", Query.Direction.DESCENDING);
+                            query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                @Override
+                                public void onEvent(@Nullable QuerySnapshot value, @Nullable
+                                FirebaseFirestoreException error) {
+                                    //Data.clear();
+                                    int i = 0;
+                                    for(QueryDocumentSnapshot doc: value) {
+                                        Log.d("Sample", String.valueOf(doc.getData().get("sumScore")));
+                                        String tempScore = (String) doc.getData().get("sumScore").toString();
+                                        int intScore = Integer.valueOf(tempScore);
+                                        i += 1;
+                                        int totalRank = i;
+                                        if (tempScore.equals(sum)){
+                                            total_rank.setText(String.valueOf(totalRank));
+                                        }
+                                    }
+                                }
+                            });
 
                         }
                     }

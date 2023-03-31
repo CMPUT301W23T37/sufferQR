@@ -4,41 +4,65 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
     <TextView
-        android:id="@+id/detail_Address_text"
+        android:id="@+id/detail_qrname_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="30dp"
-        android:text="Address"/>
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:layout_marginLeft="10dp"
+        android:text="QR Name: XXX"/>
 
     <TextView
-        android:id="@+id/detail_lat_text"
+        android:id="@+id/detail_username_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="30dp"
-        android:text="lat"/>
-
-    <TextView
-        android:id="@+id/detail_long_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="30dp"
-        android:text="long"/>
+        android:textSize="20sp"
+        android:layout_marginLeft="10dp"
+        android:text="User Name: XXX"/>
 
     <TextView
         android:id="@+id/detail_date_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="30dp"
-        android:text="date"/>
+        android:textSize="20dp"
+        android:layout_marginLeft="10dp"
+        android:text="Date: 2023.2.3"/>
 
     <TextView
         android:id="@+id/detail_points_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="30dp"
-        android:text="points"/>
+        android:textSize="20dp"
+        android:layout_marginLeft="10dp"
+        android:text="points: 666"/>
+
+
+    <TextView
+        android:id="@+id/detail_lat_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:layout_marginLeft="10dp"
+        android:text="Latitude: 12.345"/>
+
+    <TextView
+        android:id="@+id/detail_long_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:layout_marginLeft="10dp"
+        android:text="Longitude: 123.456"/>
+
+    <TextView
+        android:id="@+id/detail_Address_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:layout_marginLeft="10dp"
+        android:text="Address: *****************"/>
+
+
 
 
 
