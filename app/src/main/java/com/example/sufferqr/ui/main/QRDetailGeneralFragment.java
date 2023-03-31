@@ -239,6 +239,10 @@ public class QRDetailGeneralFragment extends Fragment{
         }
     }
 
+    /**
+     * get estimate ranking
+     * @param view get view component
+     */
     private void estmaterankging(View view){
         FirebaseFirestore db= FirebaseFirestore.getInstance();
         Query query = db.collection("GameQrCode").whereEqualTo("allowViewScanRecord",true)

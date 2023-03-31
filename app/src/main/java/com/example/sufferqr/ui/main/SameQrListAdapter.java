@@ -15,6 +15,9 @@ import com.example.sufferqr.R;
 import java.util.ArrayList;
 import java.util.Objects;
 
+/**
+ * Adapter for same QR user lists
+ */
 public class SameQrListAdapter extends ArrayAdapter<sameQrListContext> {
     private ArrayList<sameQrListContext> rec;
     private Context context;
