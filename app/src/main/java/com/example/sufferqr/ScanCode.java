@@ -21,6 +21,7 @@ import androidx.lifecycle.LifecycleOwner;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -32,6 +33,7 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.util.Log;
 import android.util.Size;
 import android.view.OrientationEventListener;
@@ -122,8 +124,7 @@ public class ScanCode extends DrawerBase {
         loading = findViewById(R.id.activity_scan_code_progress);
         cardView = findViewById(R.id.scan_code_camera_card);
 
-        Intent myNewIntent = getIntent();
-        userName = myNewIntent.getStringExtra("user");
+        userName = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         foundQR=false;
 
 
@@ -192,12 +193,6 @@ public class ScanCode extends DrawerBase {
 
     private void calculation(Bitmap bitmapImage){
 
-        relativeLayout.setVisibility(View.VISIBLE);
-        loading.setVisibility(View.VISIBLE);
-        cardView.setVisibility(View.INVISIBLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-
         Uri surrounds = saveImage(bitmapImage);
         String hashed = "";
         String face="";
@@ -244,7 +239,6 @@ public class ScanCode extends DrawerBase {
             }
         }
 
-
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference collectionRef = db.collection("GameQrCode");
         collectionRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -252,28 +246,80 @@ public class ScanCode extends DrawerBase {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     // Scan for same qrcode and remove them
+                    String forwardUserName="";
                     for (DocumentSnapshot document : task.getResult()) {
                         String hashed = document.getString("QRhash");
                         String thisUser = document.getString("user");
+                        // for detect user Qrcode purpose
+                        String thisUserQRID = document.getString("userQRid");
+                        String thisUserName = document.getString("userName");
+                        if (thisUserQRID==null){
+                            thisUserQRID="";
+                        }
                         if (hashcode.contains(hashed) && Objects.equals(thisUser, userName)){
                             System.out.println("something removed");
                             int index =  hashcode.indexOf(hashed);
                             codes.remove(index);
                             hashcode.remove(index);
                         }
+                        if (codes.contains(thisUserQRID+thisUserName) && !thisUserQRID.equals("")){
+                            forwardUserName=thisUserName;
+                        }
                     }
 
-                    if (hashcode.size()==0){
-                        Toast.makeText(getApplicationContext(),"no unique QRcode under your account",Toast.LENGTH_SHORT).show();
-                    } else if (hashcode.size()==1) {
-                        QRstring = codes.get(0);
-                        foundQR=true;
-                        Go.setText("take picture");
-                        textView.setText("take a picture of surrounds");
+                    final String QRusername = forwardUserName;
+
+                    relativeLayout.setVisibility(View.INVISIBLE);
+                    loading.setVisibility(View.INVISIBLE);
+                    cardView.setVisibility(View.VISIBLE);
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+                    // nubmer of qrcode
+                    if (hashcode.size()<=1){
+                        if (forwardUserName.length()>=1){
+                            AlertDialog.Builder builder = new AlertDialog.Builder(ScanCode.this);
+                            builder.setMessage("We found you may scan a user QRcode")
+                                    .setPositiveButton("Take me there", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            // START THE GAME!
+                                            Intent itt = new Intent(ScanCode.this, OtherUser.class);
+                                            itt.putExtra("username", QRusername);
+                                            startActivity(itt);
+                                            finish();
+                                        }
+                                    })
+                                    .setNegativeButton("Nah(Add QRCode)", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            // User cancelled the dialog
+                                            if (hashcode.size()==1) {
+                                                QRstring = codes.get(0);
+                                                foundQR=true;
+                                                Go.setText("take picture");
+                                                textView.setText("take a picture of surrounds");
+                                            } else {
+                                                Toast.makeText(getApplicationContext(),"no unique QRcode under your account",Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
+                            // Create the AlertDialog object and return it
+                            AlertDialog dialog =  builder.create();
+                            dialog.show();
+                        } else {
+                            if (hashcode.size()==1) {
+
+                                QRstring = codes.get(0);
+                                foundQR=true;
+                                Go.setText("take picture");
+                                textView.setText("take a picture of surrounds");
+
+                            } else {
+                                Toast.makeText(getApplicationContext(),"no unique QRcode under your account",Toast.LENGTH_SHORT).show();
+                            }
+                        }
                     } else {
                         System.out.println("more than one");
                         CharSequence[] cs = codes.toArray(new CharSequence[codes.size()]);
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getApplication());
+                        AlertDialog.Builder builder = new AlertDialog.Builder(ScanCode.this);
                         builder.setTitle("select your QRcode")
                                 .setCancelable(false)
                                 .setItems(cs, new DialogInterface.OnClickListener() {
@@ -286,7 +332,8 @@ public class ScanCode extends DrawerBase {
                                     }
                                 });
 
-                        builder.create();
+                        AlertDialog dialog =  builder.create();
+                        dialog.show();
                     }
 
                 } else {
@@ -294,9 +341,8 @@ public class ScanCode extends DrawerBase {
                 }
             }
         });
-
-
     }
+
 
     /**
      * qr analysis
@@ -327,6 +373,13 @@ public class ScanCode extends DrawerBase {
             @Override
             public void onClick(View v) {
                 Bitmap bitmap = previewView.getBitmap();
+                relativeLayout.setVisibility(View.VISIBLE);
+                loading.setVisibility(View.VISIBLE);
+                cardView.setVisibility(View.INVISIBLE);
+                getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                System.out.println(QRstring+"Validation");
+
                 if (!foundQR){
                     if(bitmap != null) {
                         InputImage image = InputImage.fromBitmap(bitmap, 0);
@@ -369,8 +422,13 @@ public class ScanCode extends DrawerBase {
                         }
                         if (qrcodes.size()>=1){
                             validation(qrcodes);
+                        } else {
+                            Toast.makeText(getApplicationContext(),"no QRcode found",Toast.LENGTH_SHORT).show();
+                            relativeLayout.setVisibility(View.INVISIBLE);
+                            loading.setVisibility(View.INVISIBLE);
+                            cardView.setVisibility(View.VISIBLE);
+                            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                         }
-
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

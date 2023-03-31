@@ -175,6 +175,10 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                     public void run() {
                         // Actions to do after 5 seconds
                         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                        if (Objects.equals(mode, "new")){
+                            Intent intent = new Intent(QRDetailActivity.this,DashBoard.class);
+                            startActivity(intent);
+                        }
                         finish();
                     }
                 }, 1500);
@@ -250,6 +254,7 @@ public class QRDetailActivity extends AppCompatActivity implements QRDetailLocat
                   if (document.exists()) {
                       HashMapValidate("userName",(String)document.get("name"));
                       HashMapValidate("email",(String)document.get("email"));
+                      HashMapValidate("userQRid",(String)document.get("qrid"));
                       HashMapValidate("allowViewScanRecord",(Boolean)document.get("allowViewScanRecord"));
                   } else {
                       // record not exost exit
