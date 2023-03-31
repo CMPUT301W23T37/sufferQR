@@ -96,10 +96,8 @@ public class QRQuickViewCommentsFragment extends Fragment {
 
                 if (Objects.equals(localUser, QROwner)) {
                     in.putExtra("Owner", "1");
-                    in.putExtra("localUser", localUser);
                 } else {
                     in.putExtra("Owner", "0");
-                    in.putExtra("localUser", localUser);
                 }
 
                 startActivity(in);

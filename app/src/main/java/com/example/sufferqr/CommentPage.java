@@ -34,16 +34,11 @@ import java.util.Objects;
 import timber.log.Timber;
 
 public class CommentPage extends AppCompatActivity {
-//    private ArrayList<QRQuickViewComment> dataList;
-//    private ListView commentsList;
-//    private QRQuickViewCommentsArrayAdapter commentsAdapter;
-
     String qrName;
     String uName;
     String comment;
     String comToDel;
     String ownerDel;
-    String localUser;
     String comOwner;
     Button saveComment;
     Button cancelComment;
@@ -51,6 +46,7 @@ public class CommentPage extends AppCompatActivity {
     EditText commentContent;
     TextView comTitle;
     TextView showCom;
+
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     DocumentReference ref;
@@ -66,18 +62,22 @@ public class CommentPage extends AppCompatActivity {
         deleteComment = findViewById(R.id.delete_comment_button);
         comTitle = findViewById(R.id.comment_page_title);
         showCom = findViewById(R.id.comment_to_be_delete);
+        String android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+
 
         // retrieve the qr code name
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             if (extras == null) {
                 qrName = null;
+                comToDel = null;
+                ownerDel = null;
+                comOwner = null;
             } else {
                 qrName = extras.getString("QRName");
                 comTitle.setText(extras.getString("title"));
                 comToDel = extras.getString("commentContent");
                 ownerDel = extras.getString("Owner");
-                localUser = extras.getString("localUser");
                 comOwner = extras.getString("commentOwner");
             }
         } else {
@@ -85,10 +85,8 @@ public class CommentPage extends AppCompatActivity {
             comTitle.setText((String) savedInstanceState.getSerializable("title"));
             comToDel = (String) savedInstanceState.getSerializable("commentContent");
             ownerDel = (String) savedInstanceState.getSerializable("Owner");
-            localUser = (String) savedInstanceState.getSerializable("localUser");
             comOwner = (String) savedInstanceState.getSerializable("commentOwner");
         }
-
 
         if ("Add Comment".equals(comTitle.getText().toString())) {
             deleteComment.setVisibility(View.INVISIBLE);
@@ -99,7 +97,7 @@ public class CommentPage extends AppCompatActivity {
                 commentContent.setVisibility(View.INVISIBLE);
                 showCom.setText(comToDel);
             } else {
-                if (Objects.equals(localUser, comOwner)) {
+                if (Objects.equals(android_id, comOwner)) {
                     saveComment.setVisibility(View.INVISIBLE);
                     commentContent.setVisibility(View.INVISIBLE);
                     showCom.setText(comToDel);
@@ -116,12 +114,10 @@ public class CommentPage extends AppCompatActivity {
 
         ref = db.collection("GameQrCode").document(qrName);
 
-
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
         String realDate = dateFormat.format(calendar.getTime());
 
-        String android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         DocumentReference userAAID = db.collection("Player").document(android_id);
         userAAID.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
