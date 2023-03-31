@@ -83,6 +83,8 @@ public class QRQuickViewScrollingActivity extends AppCompatActivity {
             Toast.makeText(getBaseContext(),"document required but ull",Toast.LENGTH_LONG).show();
             finish();
         }
+        data.putString("localUser",user);
+
         // toolbar
 
         Toolbar toolbar = binding.qRQuickViewToolbar;
