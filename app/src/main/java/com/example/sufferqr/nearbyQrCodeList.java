@@ -111,7 +111,7 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
                     Log.d("Sample", String.valueOf(doc.getData().get("date")));
                     Log.d("Sample", String.valueOf(doc.getData().get("imageExist")));
                     Log.d("Sample", String.valueOf(doc.getData().get("points")));
-                    Log.d("Sample", String.valueOf(doc.getData().get("user")));
+                    Log.d("Sample", String.valueOf(doc.getData().get("userName")));
 
                     String LocationAddress = (String) doc.getData().get("LocationAddress");
                     boolean LocationExist = (boolean) doc.getData().get("LocationExist");
@@ -123,7 +123,7 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
                     String date = (String) doc.getData().get("date");
                     boolean imageExist = (boolean) doc.getData().get("imageExist");
                     String points = (String) doc.getData().get("points").toString();
-                    String user = (String) doc.getData().get("user");
+                    String user = (String) doc.getData().get("userName");
 
                     double tempLat = (double) doc.getData().get("LocationLatitude");
                     double tempLon = (double) doc.getData().get("LocationLongitude");
@@ -151,6 +151,8 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
                 bundle.putString("key3",selectQrCode.getLocationLongitude());
                 bundle.putString("key4",selectQrCode.getDate());
                 bundle.putString("key5",selectQrCode.getPoints());
+                bundle.putString("key6",selectQrCode.getUserName());
+                bundle.putString("key7",selectQrCode.getQrName());
                 myFragment.setArguments(bundle);
                 myFragment.show(getSupportFragmentManager(),"Detail of QR");
             }

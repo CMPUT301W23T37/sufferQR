@@ -40,7 +40,6 @@
                 android:layout_width="75dp"
                 android:layout_height="72dp"
                 android:layout_marginStart="48dp"
-
                 android:src="@drawable/qr_code_profile"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
