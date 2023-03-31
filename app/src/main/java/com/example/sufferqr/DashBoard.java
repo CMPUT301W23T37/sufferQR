@@ -247,7 +247,12 @@ public class DashBoard extends DrawerBase {
 
                             pPercent = (scoresList.get(0)/(Double.parseDouble(sum)-scoresList.get(0))) * 100;
 
-                            pointPercent.setText(getString(R.string.point_percent, pPercent));
+                            if (scoresList.size() == 1){
+                                pointPercent.setText("+100%");
+                            } else{
+                                pointPercent.setText(getString(R.string.point_percent, pPercent));
+                            }
+
 
                             // sort the score list in reverse order
                             List<Long> scoresSorted = scoresList.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
