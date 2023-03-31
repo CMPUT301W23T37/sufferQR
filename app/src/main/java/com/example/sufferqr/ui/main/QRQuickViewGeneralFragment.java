@@ -72,7 +72,7 @@ import java.util.Objects;
 /**
  * When scanning on other user qr code this where see details
  */
-public class QRQuickViewGeneralFragment extends Fragment  implements OnMapReadyCallback,MapboxMap.OnCameraIdleListener{
+public class QRQuickViewGeneralFragment extends Fragment  implements OnMapReadyCallback{
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -253,95 +253,6 @@ public class QRQuickViewGeneralFragment extends Fragment  implements OnMapReadyC
 
     }
 
-    public void sameQr(){
-        // add
-        //chipGroup.addView();
-
-        // clear
-        //chipGroup.removeAllViews();
-        mapData = new HashMap<>();
-
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        String QRhash = bundle.getString("QRhash","");
-        final String myQRname = bundle.getString("QRname");
-        @SuppressLint("HardwareIds") final String myUser = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);;
-
-
-
-        chipGroup.setOnCheckedStateChangeListener(new ChipGroup.OnCheckedStateChangeListener() {
-            @Override
-            public void onCheckedChanged(@NonNull ChipGroup group, @NonNull List<Integer> checkedIds) {
-                System.out.println("dsajhfaksjdbvjfdk");
-                List<Integer> checkdd= chipGroup.getCheckedChipIds();
-                if (checkedIds.size()!=0){
-                    int checked = checkdd.get(0)-1;
-                    Chip chip = (Chip) chipGroup.getChildAt(checked);
-                    String qrName = (String) chip.getText();
-                    Map<String,Object> tempMap = mapData.get(qrName);
-                    chipGroup.clearCheck();
-                    if (tempMap!= null){
-                        Intent scanIntent = new Intent(getApplicationContext(), QRQuickViewScrollingActivity.class);
-                        scanIntent.putExtra("localUser",myUser);
-                        scanIntent.putExtra("qrID",qrName);
-                        Bundle bundle = new Bundle();
-                        for (Map.Entry<String, Object> entry : tempMap.entrySet()) {
-                            bundle.putString(entry.getKey(), String.valueOf(entry.getValue()));
-                        }
-                        scanIntent.putExtra("MapData",bundle);
-                        startActivity(scanIntent);
-                    } else {
-                        System.out.println("map null");
-                    }
-                }
-            }
-        });
-
-
-
-        final CollectionReference collectionReference = db.collection("GameQrCode");
-        collectionReference.whereEqualTo("QRhash",QRhash).orderBy("points", Query.Direction.DESCENDING)
-                .addSnapshotListener(MetadataChanges.INCLUDE, new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                        if (error != null){
-                            System.err.println("Listen failed: " + error);
-                        }
-                        if (value != null && !value.isEmpty()){
-                            mapData.clear();
-                            chipGroup.removeAllViews();
-                            for (DocumentSnapshot doc : value.getDocuments()) {
-                                Map<String,Object> map= doc.getData();
-                                if (map==null){
-                                    continue;
-                                }
-                                if (map.get("allowViewScanRecord") != null){
-                                    boolean qrTrue = (boolean) map.get("allowViewScanRecord");
-                                    String qrName = String.valueOf(doc.getData().get("QRname"));
-                                    if (Boolean.TRUE == qrTrue && !qrName.equals(myQRname)){
-                                        mapData.put(qrName,doc.getData());
-
-                                        Chip chip = new Chip(getContext());
-                                        chip.setText(qrName);
-                                        chip.setGravity(5);
-                                        chip.setChipIcon(null);
-                                        chip.setCheckable(true);
-                                        chip.setChipBackgroundColorResource(R.color.app_main_blue);
-                                        chip.setTextColor(getResources().getColor(R.color.white));
-                                        chip.setTextSize(12);
-
-                                        chipGroup.addView(chip);
-                                    }
-                                }
-                            }
-                        } else {
-                            Toast toast = Toast.makeText(getApplicationContext(),"no result", Toast.LENGTH_SHORT);
-                        }
-                    }
-                });
-
-
-    }
-
 
     /**
      * mapbox life cycle async
@@ -413,8 +324,4 @@ public class QRQuickViewGeneralFragment extends Fragment  implements OnMapReadyC
         mapView.onLowMemory();
     }
 
-    @Override
-    public void onCameraIdle() {
-
-    }
 }
