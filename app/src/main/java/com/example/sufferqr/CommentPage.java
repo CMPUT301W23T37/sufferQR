@@ -29,6 +29,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Objects;
 
 import timber.log.Timber;
 
@@ -41,6 +42,9 @@ public class CommentPage extends AppCompatActivity {
     String uName;
     String comment;
     String comToDel;
+    String ownerDel;
+    String localUser;
+    String comOwner;
     Button saveComment;
     Button cancelComment;
     Button deleteComment;
@@ -72,20 +76,42 @@ public class CommentPage extends AppCompatActivity {
                 qrName = extras.getString("QRName");
                 comTitle.setText(extras.getString("title"));
                 comToDel = extras.getString("commentContent");
+                ownerDel = extras.getString("Owner");
+                localUser = extras.getString("localUser");
+                comOwner = extras.getString("commentOwner");
             }
         } else {
             qrName = (String) savedInstanceState.getSerializable("QRName");
             comTitle.setText((String) savedInstanceState.getSerializable("title"));
             comToDel = (String) savedInstanceState.getSerializable("commentContent");
+            ownerDel = (String) savedInstanceState.getSerializable("Owner");
+            localUser = (String) savedInstanceState.getSerializable("localUser");
+            comOwner = (String) savedInstanceState.getSerializable("commentOwner");
         }
+
 
         if ("Add Comment".equals(comTitle.getText().toString())) {
             deleteComment.setVisibility(View.INVISIBLE);
             showCom.setVisibility(View.INVISIBLE);
         } else {
-            saveComment.setVisibility(View.INVISIBLE);
-            commentContent.setVisibility(View.INVISIBLE);
-            showCom.setText(comToDel);
+            if (Objects.equals(ownerDel, "1")){
+                saveComment.setVisibility(View.INVISIBLE);
+                commentContent.setVisibility(View.INVISIBLE);
+                showCom.setText(comToDel);
+            } else {
+                if (Objects.equals(localUser, comOwner)) {
+                    saveComment.setVisibility(View.INVISIBLE);
+                    commentContent.setVisibility(View.INVISIBLE);
+                    showCom.setText(comToDel);
+                } else {
+                    saveComment.setVisibility(View.INVISIBLE);
+                    commentContent.setVisibility(View.INVISIBLE);
+                    deleteComment.setVisibility(View.INVISIBLE);
+                    comTitle.setText("View Comment");
+                    showCom.setText(comToDel);
+                }
+            }
+
         }
 
         ref = db.collection("GameQrCode").document(qrName);
