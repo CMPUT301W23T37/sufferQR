@@ -34,7 +34,7 @@ public class QRQuickViewCommentsFragment extends Fragment {
 
     Bundle bundle;
     View view;
-    String qrName;
+    String qrName,localUser,QROwner;
     ListView commentsList;
     ArrayList<QRQuickViewComment> dataList;
     ArrayAdapter<QRQuickViewComment> commentsAdapter;
@@ -70,6 +70,11 @@ public class QRQuickViewCommentsFragment extends Fragment {
         commentsList.setAdapter(commentsAdapter);
 
         qrName = bundle.getString("QRname");
+
+        // android ID
+        localUser = bundle.getString("localUser");
+        QROwner = bundle.getString("user");
+
         Intent in = new Intent(requireContext(), CommentPage.class);
         in.putExtra("QRName", qrName);
 

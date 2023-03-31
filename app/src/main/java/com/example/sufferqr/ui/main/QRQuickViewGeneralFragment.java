@@ -32,6 +32,7 @@ import android.widget.Toast;
 import com.example.sufferqr.QRQuickViewScrollingActivity;
 import com.example.sufferqr.R;
 import com.google.android.gms.common.util.ScopeUtil;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -68,8 +69,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-
-public class QRQuickViewGeneralFragment extends Fragment  implements OnMapReadyCallback,MapboxMap.OnCameraIdleListener{
+/**
+ * When scanning on other user qr code this where see details
+ */
+public class QRQuickViewGeneralFragment extends Fragment  implements OnMapReadyCallback{
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -84,19 +87,38 @@ public class QRQuickViewGeneralFragment extends Fragment  implements OnMapReadyC
     ChipGroup chipGroup;
     String locUser;
 
-
+    /**
+     * launch class
+     * @param myBundle data tranfer
+     */
     public QRQuickViewGeneralFragment(Bundle myBundle) {
         // Required empty public constructor
         bundle = myBundle;
     }
 
 
-
+    /**
+     * create class
+     * @param savedInstanceState If the fragment is being re-created from
+     * a previous saved state, this is the state.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * launch view
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return view
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -135,6 +157,11 @@ public class QRQuickViewGeneralFragment extends Fragment  implements OnMapReadyC
         return view;
     }
 
+    /**
+     * launch map to see where scaned
+     * @param mapboxMap An instance of MapboxMap associated with the {@link MapFragment} or
+     *                  {@link MapView} that defines the callback.
+     */
     @Override
     public void onMapReady(@NonNull MapboxMap mapboxMap) {
         QRQuickViewGeneralFragment.this.mapboxMapGlobal = mapboxMap;
@@ -193,6 +220,10 @@ public class QRQuickViewGeneralFragment extends Fragment  implements OnMapReadyC
         mapboxMapGlobal=mapboxMap;
     }
 
+
+    /**
+     * load information of the page
+     */
     public void loadInfo(){
         locUser = bundle.getString("localUser");
         String ss = bundle.getString("userName","author");
@@ -219,95 +250,6 @@ public class QRQuickViewGeneralFragment extends Fragment  implements OnMapReadyC
             longtitude = Double.parseDouble(bundle.getString("LocationLongitude"));
 
         }
-
-    }
-
-    public void sameQr(){
-        // add
-        //chipGroup.addView();
-
-        // clear
-        //chipGroup.removeAllViews();
-        mapData = new HashMap<>();
-
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        String QRhash = bundle.getString("QRhash","");
-        final String myQRname = bundle.getString("QRname");
-        @SuppressLint("HardwareIds") final String myUser = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);;
-
-
-
-        chipGroup.setOnCheckedStateChangeListener(new ChipGroup.OnCheckedStateChangeListener() {
-            @Override
-            public void onCheckedChanged(@NonNull ChipGroup group, @NonNull List<Integer> checkedIds) {
-                System.out.println("dsajhfaksjdbvjfdk");
-                List<Integer> checkdd= chipGroup.getCheckedChipIds();
-                if (checkedIds.size()!=0){
-                    int checked = checkdd.get(0)-1;
-                    Chip chip = (Chip) chipGroup.getChildAt(checked);
-                    String qrName = (String) chip.getText();
-                    Map<String,Object> tempMap = mapData.get(qrName);
-                    chipGroup.clearCheck();
-                    if (tempMap!= null){
-                        Intent scanIntent = new Intent(getApplicationContext(), QRQuickViewScrollingActivity.class);
-                        scanIntent.putExtra("localUser",myUser);
-                        scanIntent.putExtra("qrID",qrName);
-                        Bundle bundle = new Bundle();
-                        for (Map.Entry<String, Object> entry : tempMap.entrySet()) {
-                            bundle.putString(entry.getKey(), String.valueOf(entry.getValue()));
-                        }
-                        scanIntent.putExtra("MapData",bundle);
-                        startActivity(scanIntent);
-                    } else {
-                        System.out.println("map null");
-                    }
-                }
-            }
-        });
-
-
-
-        final CollectionReference collectionReference = db.collection("GameQrCode");
-        collectionReference.whereEqualTo("QRhash",QRhash).orderBy("points", Query.Direction.DESCENDING)
-                .addSnapshotListener(MetadataChanges.INCLUDE, new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                        if (error != null){
-                            System.err.println("Listen failed: " + error);
-                        }
-                        if (value != null && !value.isEmpty()){
-                            mapData.clear();
-                            chipGroup.removeAllViews();
-                            for (DocumentSnapshot doc : value.getDocuments()) {
-                                Map<String,Object> map= doc.getData();
-                                if (map==null){
-                                    continue;
-                                }
-                                if (map.get("allowViewScanRecord") != null){
-                                    boolean qrTrue = (boolean) map.get("allowViewScanRecord");
-                                    String qrName = String.valueOf(doc.getData().get("QRname"));
-                                    if (Boolean.TRUE == qrTrue && !qrName.equals(myQRname)){
-                                        mapData.put(qrName,doc.getData());
-
-                                        Chip chip = new Chip(getContext());
-                                        chip.setText(qrName);
-                                        chip.setGravity(5);
-                                        chip.setChipIcon(null);
-                                        chip.setCheckable(true);
-                                        chip.setChipBackgroundColorResource(R.color.app_main_blue);
-                                        chip.setTextColor(getResources().getColor(R.color.white));
-                                        chip.setTextSize(12);
-
-                                        chipGroup.addView(chip);
-                                    }
-                                }
-                            }
-                        } else {
-                            Toast toast = Toast.makeText(getApplicationContext(),"no result", Toast.LENGTH_SHORT);
-                        }
-                    }
-                });
-
 
     }
 
@@ -382,8 +324,4 @@ public class QRQuickViewGeneralFragment extends Fragment  implements OnMapReadyC
         mapView.onLowMemory();
     }
 
-    @Override
-    public void onCameraIdle() {
-
-    }
 }

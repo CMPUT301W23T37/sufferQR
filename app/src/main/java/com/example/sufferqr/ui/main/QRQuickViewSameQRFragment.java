@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.sufferqr.OtherUser;
 import com.example.sufferqr.QRQuickViewScrollingActivity;
 import com.example.sufferqr.R;
 import com.google.firebase.firestore.CollectionReference;
@@ -32,25 +33,46 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
+/**
+ * a list where show the people who also scaned the qrcode
+ */
 public class QRQuickViewSameQRFragment extends Fragment {
     Bundle bundle;
     ListView qrList;
 
     TextView scanCountTextView;
-    ArrayAdapter<ScanHistoryQRRecord> qrAdapter;
+    ArrayAdapter<sameQrListContext> qrAdapter;
 
-    ArrayList<ScanHistoryQRRecord> qrDataList;
+    ArrayList<sameQrListContext> qrDataList;
+    ArrayList<String> name;
 
     String UserName;
 
     FirebaseFirestore db;
 
+    /**
+     * datta passing and launch the class
+     * @param myBundle data transfer
+     */
     public QRQuickViewSameQRFragment(Bundle myBundle) {
         bundle = myBundle;
         UserName = bundle.getString("localUser");
     }
 
+    /**
+     * draw the view and resbonses
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_q_r_quick_view_same_q_r, container, false);
@@ -62,23 +84,17 @@ public class QRQuickViewSameQRFragment extends Fragment {
         // Check if the fragment arguments are not null before calling getString("user")
 
         qrDataList = new ArrayList<>();
-        qrAdapter = new ScanHistoryCustomList(getActivity(), qrDataList);
+        name = new ArrayList<>();
+        qrAdapter = new SameQrListAdapter(getActivity(), qrDataList);
         qrList.setAdapter(qrAdapter);
 
         qrList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                ScanHistoryQRRecord hsq = (ScanHistoryQRRecord) adapterView.getItemAtPosition(position);
-                Intent scanIntent = new Intent(getActivity(), QRQuickViewScrollingActivity.class);
-                scanIntent.putExtra("localUser", UserName);
-                scanIntent.putExtra("qrID", hsq.getName());
+                sameQrListContext hsq = (sameQrListContext) adapterView.getItemAtPosition(position);
+                Intent scanIntent = new Intent(getActivity(), OtherUser.class);
+                scanIntent.putExtra("username", hsq.getName());
 
-                Bundle bundle = new Bundle();
-                for (Map.Entry<String, Object> entry : hsq.getMap().entrySet()) {
-                    bundle.putString(entry.getKey(), String.valueOf(entry.getValue()));
-                }
-
-                scanIntent.putExtra("MapData", bundle);
                 startActivity(scanIntent);
 
                 getActivity().overridePendingTransition(0, 0);
@@ -86,7 +102,7 @@ public class QRQuickViewSameQRFragment extends Fragment {
         });
 
         final CollectionReference collectionReference = db.collection("GameQrCode");
-        collectionReference.whereEqualTo("QRhash", bundle.getString("QRhash"))
+        collectionReference.whereEqualTo("QRhash", bundle.getString("QRhash")).whereEqualTo("allowViewScanRecord",true)
                 .orderBy("points", Query.Direction.DESCENDING)
                 .addSnapshotListener(MetadataChanges.INCLUDE, new EventListener<QuerySnapshot>() {
                     @Override
@@ -97,16 +113,18 @@ public class QRQuickViewSameQRFragment extends Fragment {
                         }
                         if (value != null && !value.isEmpty()) {
                             // Get the number of scans
-                            int scanCount = value.size();
-                            scanCountTextView.setText("The Number of times this QRcode has been Scanned: " + scanCount);
+
                             qrDataList.clear();
+                            name.clear();
                             for (DocumentSnapshot doc : value.getDocuments()) {
-                                String qrName = String.valueOf(doc.getData().get("QRname"));
-                                String points = String.valueOf(doc.getData().get("points"));
-                                String sDate = String.valueOf(doc.getData().get("date"));
-                                String sAddress = String.valueOf(doc.getData().get("LocationName"));
-                                qrDataList.add(new ScanHistoryQRRecord(qrName, points, sDate, sAddress, doc.getData()));
+                                String qrName = String.valueOf(Objects.requireNonNull(doc.getData()).get("userName"));
+                                if (!name.contains(qrName)){
+                                    name.add(qrName);
+                                    qrDataList.add(new sameQrListContext(qrName));
+                                }
                             }
+                            int scanCount = name.size();
+                            scanCountTextView.setText("The Number of user this QRcode has been Scanned: " + scanCount);
                             qrAdapter.notifyDataSetChanged();
                         } else {
                             Toast.makeText(getActivity(), "no Other players have scanned this QRcode yet", Toast.LENGTH_SHORT).show();

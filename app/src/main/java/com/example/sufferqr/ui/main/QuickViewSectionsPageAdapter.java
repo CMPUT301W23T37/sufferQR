@@ -13,6 +13,9 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.example.sufferqr.R;
 
+/**
+ * adapter showing existing qrcode record
+ */
 public class QuickViewSectionsPageAdapter extends FragmentPagerAdapter {
 
     @StringRes
@@ -27,7 +30,12 @@ public class QuickViewSectionsPageAdapter extends FragmentPagerAdapter {
 
     QRQuickViewSameQRFragment qrQuickViewSameQRFragment;
 
-
+    /**
+     * method for launch the class
+     * @param context applcation class
+     * @param fm fragment manager
+     * @param myBundle passing information
+     */
     public QuickViewSectionsPageAdapter(Context context, FragmentManager fm,Bundle myBundle) {
         super(fm);
         mContext = context;
@@ -35,6 +43,11 @@ public class QuickViewSectionsPageAdapter extends FragmentPagerAdapter {
     }
 
 
+    /**
+     * return page for different tabs
+     * @param position clicked position
+     * @return fragment
+     */
     @NonNull
     @Override
     public Fragment getItem(int position) {
@@ -53,7 +66,9 @@ public class QuickViewSectionsPageAdapter extends FragmentPagerAdapter {
     }
 
     /**
-     * return position
+     * page title name
+     * @param position The position of the title requested
+     * @return string of tittle
      */
     @Nullable
     @Override
@@ -61,6 +76,10 @@ public class QuickViewSectionsPageAdapter extends FragmentPagerAdapter {
         return mContext.getResources().getString(TAB_TITLES[position]);
     }
 
+    /**
+     * return number of page
+     * @return integer
+     */
     @Override
     public int getCount() {
         return 3;
