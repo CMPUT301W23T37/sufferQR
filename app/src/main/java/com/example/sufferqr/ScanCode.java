@@ -1,6 +1,8 @@
 package com.example.sufferqr;
 
 
+import static android.app.PendingIntent.getActivity;
+import static android.content.ContentValues.TAG;
 import static java.lang.Long.toHexString;
 
 import androidx.annotation.NonNull;
@@ -18,6 +20,7 @@ import androidx.lifecycle.LifecycleOwner;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -40,12 +43,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sufferqr.databinding.ActivityScanCodeBinding;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
@@ -60,6 +70,7 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -222,6 +233,71 @@ public class ScanCode extends DrawerBase {
         finish();
     }
 
+    private void validation(ArrayList<String> codes){
+        ArrayList<String> hashcode = new ArrayList<>();
+        // forum arraylist of hash
+        for (int i=0;i<codes.size();i++){
+            try {
+                hashcode.add(QRHash.toHexString(QRHash.getSHA(codes.get(i))));
+            } catch (Exception e) {
+                hashcode.add("error");
+            }
+        }
+
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference collectionRef = db.collection("GameQrCode");
+        collectionRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    // Scan for same qrcode and remove them
+                    for (DocumentSnapshot document : task.getResult()) {
+                        String hashed = document.getString("QRhash");
+                        String thisUser = document.getString("user");
+                        if (hashcode.contains(hashed) && Objects.equals(thisUser, userName)){
+                            System.out.println("something removed");
+                            int index =  hashcode.indexOf(hashed);
+                            codes.remove(index);
+                            hashcode.remove(index);
+                        }
+                    }
+
+                    if (hashcode.size()==0){
+                        Toast.makeText(getApplicationContext(),"no unique QRcode under your account",Toast.LENGTH_SHORT).show();
+                    } else if (hashcode.size()==1) {
+                        QRstring = codes.get(0);
+                        foundQR=true;
+                        Go.setText("take picture");
+                        textView.setText("take a picture of surrounds");
+                    } else {
+                        System.out.println("more than one");
+                        CharSequence[] cs = codes.toArray(new CharSequence[codes.size()]);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getApplication());
+                        builder.setTitle("select your QRcode")
+                                .setCancelable(false)
+                                .setItems(cs, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        QRstring = codes.get(which);
+                                        foundQR=true;
+                                        Go.setText("take picture");
+                                        textView.setText("take a picture of surrounds");
+                                    }
+                                });
+
+                        builder.create();
+                    }
+
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        });
+
+
+    }
+
     /**
      * qr analysis
      */
@@ -283,24 +359,16 @@ public class ScanCode extends DrawerBase {
                     @Override
                     public void onSuccess(List<Barcode> barcodes) {
                         int Counts = 0;
-                        String codes="";
+                        ArrayList<String> qrcodes=new ArrayList<>();
                         for (Barcode barcode: barcodes) {
                             Rect bounds = barcode.getBoundingBox();
                             Point[] corners = barcode.getCornerPoints();
                             String rawValue = barcode.getRawValue();
 
-                            codes=codes + rawValue;
-                            Counts++;
+                            qrcodes.add(rawValue);
                         }
-                        if (Counts>=1){
-//                          save umage in uri
-                            QRstring = codes;
-//                            new/modified/viewer
-//                             remember change ScanCode.class
-                            foundQR=true;
-                            Go.setText("take picture");
-                            textView.setText("take a picture of surrounds");
-
+                        if (qrcodes.size()>=1){
+                            validation(qrcodes);
                         }
 
                     }
