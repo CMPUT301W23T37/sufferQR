@@ -14,11 +14,11 @@ public class QrCode {
     private String date;
     private boolean imageExist;
     private String points;
-    private String user;
+    private String userName;
 
     QrCode(String locationAddress, boolean locationExist, String locationLatitude,
            String locationLongitude, String locationName, String QrName, String QrText,
-           String date, boolean imageExist, String points, String user){
+           String date, boolean imageExist, String points, String userName){
         this.locationAddress = locationAddress;
         this.locationExist = locationExist;
         this.locationLatitude = locationLatitude;
@@ -29,7 +29,7 @@ public class QrCode {
         this.date = date;
         this.imageExist = imageExist;
         this.points = points;
-        this.user = user;
+        this.userName = userName;
 
     }
 
@@ -43,7 +43,7 @@ public class QrCode {
     String getDate(){ return this.date; }
     boolean getImageExist(){ return this.imageExist; }
     String getPoints(){ return this.points; }
-    String getUser(){ return this.user; }
+    String getUserName(){ return this.userName; }
 
 }
 

@@ -51,7 +51,7 @@ public class Highest extends Fragment {
         ArrayList<HighScorePlayer> Data = new ArrayList<>();
 
 
-        Query query = db.collection("GameQrCode").orderBy("points", Query.Direction.DESCENDING).limit(10);
+        Query query = db.collection("Player").orderBy("highestScore", Query.Direction.DESCENDING).limit(10);
 
         query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -60,11 +60,11 @@ public class Highest extends Fragment {
                 //Data.clear();
                 int i = 0;
                 for(QueryDocumentSnapshot doc: value) {
-                    Log.d("Sample", String.valueOf(doc.getData().get("QRname")));
-                    Log.d("Sample", String.valueOf(doc.getData().get("points")));
+                    Log.d("Sample", String.valueOf(doc.getData().get("name")));
+                    Log.d("Sample", String.valueOf(doc.getData().get("highestScore")));
                     Log.d("Sample", String.valueOf(doc.getData().get("qrid")));
-                    String name = (String) doc.getData().get("QRname");
-                    String score = (String) doc.getData().get("points").toString();
+                    String name = (String) doc.getData().get("name");
+                    String score = (String) doc.getData().get("highestScore").toString();
                     int intScore = Integer.valueOf(score);
                     i += 1;
                     int rank = i;
@@ -94,7 +94,7 @@ public class Highest extends Fragment {
                     MultiFormatWriter mWriter = new MultiFormatWriter();
                     try {
                         //BitMatrix class to encode entered text and set Width & Height
-                        BitMatrix mMatrix = mWriter.encode(qrCode, BarcodeFormat.QR_CODE, 400,400);
+                        BitMatrix mMatrix = mWriter.encode(qrCode, BarcodeFormat.QR_CODE, 300,300);
                         BarcodeEncoder mEncoder = new BarcodeEncoder();
                         Bitmap mBitmap = mEncoder.createBitmap(mMatrix);//creating bitmap of code
                         userIdQrImage.setImageBitmap(mBitmap);//Setting generated QR code to imageView

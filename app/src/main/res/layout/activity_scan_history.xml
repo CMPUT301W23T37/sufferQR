@@ -15,8 +15,4 @@
         android:dividerHeight="0dp"
         />
 
-
-
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -331,6 +331,17 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
         });
     }
 
+    /**
+     * new data result callback
+     * @param requestCode The integer request code originally supplied to
+     *                    startActivityForResult(), allowing you to identify who this
+     *                    result came from.
+     * @param resultCode The integer result code returned by the child activity
+     *                   through its setResult().
+     * @param data An Intent, which can return result data to the caller
+     *               (various data can be attached to Intent "extras").
+     *
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -348,6 +359,14 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
         }
     }
 
+    /**
+     * fill in the poi information on the screen
+     * @param myView view
+     * @param AddressName poi tittle
+     * @param Address adress name
+     * @param locMyLongtiude location longtiude
+     * @param locMyLatiude location latitude
+     */
     private void fillInAdress(View myView, String AddressName, String Address, Double locMyLongtiude, Double locMyLatiude) {
         TextView textView_name = myView.findViewById(R.id.qr_detail_loacation_name);
         textView_name.setText(AddressName);
@@ -366,6 +385,12 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
         textView_latitude.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * when pricy setting how shold card react settings
+     * @param view current vire
+     * @param noting note
+     * @param options booean for additional note
+     */
     private void switch_operations(View view, String noting, Boolean options) {
         locEnable = view.findViewById(R.id.qr_detail_location_enable_switch);
         listener.onLocationUpdate(mapboxMap, locEnable.isChecked(), localLongtiude, localLatiude, localName, localAdress);

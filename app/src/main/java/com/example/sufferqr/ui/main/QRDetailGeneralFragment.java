@@ -18,9 +18,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.firestore.AggregateQuery;
+import com.google.firebase.firestore.AggregateQuerySnapshot;
+import com.google.firebase.firestore.AggregateSource;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -134,6 +138,7 @@ public class QRDetailGeneralFragment extends Fragment{
             points.setText(QRpoints);
             listener.onGeneralUpdate("");
             name.setEnabled(true);
+            estmaterankging(view);
         } else if (Objects.equals(mode, "modified")) {
             name.setEnabled(true);
             name.setText(oldName);
@@ -232,6 +237,31 @@ public class QRDetailGeneralFragment extends Fragment{
         if (Objects.equals((String) data.get("user"), userName11)){
             button.setEnabled(true);
         }
+    }
+
+    /**
+     * get estimate ranking
+     * @param view get view component
+     */
+    private void estmaterankging(View view){
+        FirebaseFirestore db= FirebaseFirestore.getInstance();
+        Query query = db.collection("GameQrCode").whereEqualTo("allowViewScanRecord",true)
+                .whereGreaterThanOrEqualTo("points",myGeneralBudle.getString("points"));
+        query.count().get(AggregateSource.SERVER).addOnCompleteListener(new OnCompleteListener<AggregateQuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<AggregateQuerySnapshot> task) {
+                if (task.isSuccessful()){
+                    AggregateQuerySnapshot snapshot = task.getResult();
+                    String rank = String.valueOf(snapshot.getCount()+1);
+                    TextView textViewRank = view.findViewById(R.id.qr_detail_general_qrtext_estimate_ranking);
+                    textViewRank.setText("Estimate Ranking: #"+rank);
+                    textViewRank.setVisibility(View.VISIBLE);
+                }else {
+                    System.out.println("Count failed: "+ task.getException());
+                }
+            }
+        });
+
     }
 
 }
