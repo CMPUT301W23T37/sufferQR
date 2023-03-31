@@ -101,17 +101,17 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
             FirebaseFirestoreException error) {
                 qrCodeDataList.clear();
                 for(QueryDocumentSnapshot doc: value) {
-                    Log.d("Sample", String.valueOf(doc.getData().get("LocationAddress")));
-                    Log.d("Sample", String.valueOf(doc.getData().get("LocationExist")));
-                    Log.d("Sample", String.valueOf(doc.getData().get("LocationLatitude")));
-                    Log.d("Sample", String.valueOf(doc.getData().get("LocationLongitude")));
-                    Log.d("Sample", String.valueOf(doc.getData().get("LocationName")));
-                    Log.d("Sample", String.valueOf(doc.getData().get("QRname")));
-                    Log.d("Sample", String.valueOf(doc.getData().get("QRtext")));
-                    Log.d("Sample", String.valueOf(doc.getData().get("date")));
-                    Log.d("Sample", String.valueOf(doc.getData().get("imageExist")));
-                    Log.d("Sample", String.valueOf(doc.getData().get("points")));
-                    Log.d("Sample", String.valueOf(doc.getData().get("userName")));
+//                    Log.d("Sample", String.valueOf(doc.getData().get("LocationAddress")));
+//                    Log.d("Sample", String.valueOf(doc.getData().get("LocationExist")));
+//                    Log.d("Sample", String.valueOf(doc.getData().get("LocationLatitude")));
+//                    Log.d("Sample", String.valueOf(doc.getData().get("LocationLongitude")));
+//                    Log.d("Sample", String.valueOf(doc.getData().get("LocationName")));
+//                    Log.d("Sample", String.valueOf(doc.getData().get("QRname")));
+//                    Log.d("Sample", String.valueOf(doc.getData().get("QRtext")));
+//                    Log.d("Sample", String.valueOf(doc.getData().get("date")));
+//                    Log.d("Sample", String.valueOf(doc.getData().get("imageExist")));
+//                    Log.d("Sample", String.valueOf(doc.getData().get("points")));
+//                    Log.d("Sample", String.valueOf(doc.getData().get("userName")));
 
                     String LocationAddress = (String) doc.getData().get("LocationAddress");
                     boolean LocationExist = (boolean) doc.getData().get("LocationExist");
@@ -164,6 +164,7 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
             public void onClick(View v) {
                 Intent intent = new Intent(nearbyQrCodeList.this, MapsActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
     }
