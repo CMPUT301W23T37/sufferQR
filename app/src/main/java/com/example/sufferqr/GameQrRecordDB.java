@@ -361,7 +361,7 @@ public class GameQrRecordDB {
 
 
         } else {
-            // de;tete
+            // delete
             try{
                 File fdel = new File(imageUri.getPath());//create path from uri
                 if (fdel.exists()) {
