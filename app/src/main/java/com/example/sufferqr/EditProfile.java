@@ -32,6 +32,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 /**
  * allow user to edit their profile
+ * Change in username
+ * Change in email
+ * Change in privacy setting: allow other user to view owner email, qr id, and code scanned
  */
 public class EditProfile extends AppCompatActivity {
 
@@ -69,6 +72,9 @@ public class EditProfile extends AppCompatActivity {
 
             }
 
+            /*
+            Auto detect name and email changed
+             */
             @Override
             public void afterTextChanged(Editable editable) {
                 if(editable.length() > 0){
