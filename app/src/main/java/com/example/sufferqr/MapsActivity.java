@@ -26,6 +26,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -49,9 +50,72 @@ import java.util.ArrayList;
  * marker that represents the nearby QR code
  * when the marker is clicked, the QR code name and points are shown
  */
-public class MapsActivity extends DrawerBase implements OnMapReadyCallback {
+public class MapsActivity extends DrawerBase implements OnMapReadyCallback, search_location.SearchDialogListener,GoogleMap.OnCameraIdleListener {
+    //current camera position
+    private LatLng currentCameraPosition;
+
+    @Override
+    public void onSearch(String latitude, String longitude) {
+        try {
+            double lat = Double.parseDouble(latitude);
+            double lng = Double.parseDouble(longitude);
+            LatLng searchedLocation = new LatLng(lat, lng);
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchedLocation, 16));
+            updateMarkersWithinOneKilometer(searchedLocation);
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "Invalid latitude or longitude", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void updateMarkersWithinOneKilometer(LatLng searchedLocation) {
+        clusterManager.clearItems();
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference collectionRef = db.collection("GameQrCode");
+
+        collectionRef.whereEqualTo("allowViewScanRecord", true).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Double latitude = document.getDouble("LocationLatitude");
+                        Double longitude = document.getDouble("LocationLongitude");
+                        String name = document.getString("QRname");
+                        String points = (String) document.getData().get("points").toString();
+
+                        if (latitude != null && longitude != null) {
+                            LatLng latLng = new LatLng(latitude, longitude);
+
+                            if (isWithinOneKilometer(searchedLocation, latLng)) {
+                                String id = name;
+                                String point = points;
+                                MyClusterItem clusterItem = new MyClusterItem(latLng.latitude, latLng.longitude, id, "Points: " + point);
+                                clusterManager.addItem(clusterItem);
+                            }
+                        }
+                    }
+
+                    // Force the cluster manager to render the clusters
+                    clusterManager.cluster();
+
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onCameraIdle() {
+        LatLng center = mMap.getCameraPosition().target;
+        updateMarkersWithinOneKilometer(center);
+    }
+
+
+
 
     public static class MyClusterItem implements ClusterItem {
+
         private final LatLng position;
         private final String title;
         private final String snippet;
@@ -120,6 +184,8 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setOnCameraIdleListener(this);
+
 
 
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -129,13 +195,6 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback {
         }
 
         setUpClusterManager();
-
-        // move camera to current location
-//        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-//        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//        LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16));
-
 
         // Get the last known location using the FusedLocationProviderClient
         fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
@@ -152,10 +211,10 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback {
                 // arraylist of scores
                 ArrayList<String> scores = new ArrayList<>();
 
+                currentCameraPosition = currentLocation;
 
 
-
-                collectionRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                collectionRef.whereEqualTo("allowViewScanRecord", true).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
@@ -198,13 +257,17 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback {
             }
         });
 
+        // search button clicked, ask for location
+        binding.SeachLocationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create an instance of the search_location DialogFragment
+                search_location searchLocationDialog = new search_location();
 
-
-
-
-
-
-
+                // Show the DialogFragment
+                searchLocationDialog.show(getSupportFragmentManager(), "search_location");
+            }
+        });
 
 
         /**
@@ -218,10 +281,6 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback {
                 startActivity(intent);
             }
         });
-
-
-
-
 
     }
 

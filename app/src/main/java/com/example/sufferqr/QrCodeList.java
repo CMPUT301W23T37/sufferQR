@@ -48,7 +48,7 @@ public class QrCodeList extends ArrayAdapter<QrCode> {
         qrName.setText("QRname: " + qrCode.getQrName());
         pointsNum.setText(qrCode.getPoints());
         address.setText("Address: " + qrCode.getLocationAddress());
-        date.setText("Date: " + qrCode.getDate());
+        date.setText("Distance: " + qrCode.getDis() +" KM");
 
         return view;
 
