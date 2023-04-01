@@ -32,6 +32,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 /**
  * allow user to edit their profile
+ * Change in username
+ * Change in email
+ * Change in privacy setting: allow other user to view owner email, qr id, and code scanned
  */
 public class EditProfile extends AppCompatActivity {
 
@@ -69,6 +72,9 @@ public class EditProfile extends AppCompatActivity {
 
             }
 
+            /*
+            Auto detect name and email changed
+             */
             @Override
             public void afterTextChanged(Editable editable) {
                 if(editable.length() > 0){
@@ -141,7 +147,9 @@ public class EditProfile extends AppCompatActivity {
             public void onClick(View view) {
                 String changedUserName_editProfile = username.getEditableText().toString();
                 String changedUserEmail_editProfile = email.getEditableText().toString();
-
+                // do not put this after profile update(uodateing Game Qr db)
+                GameQrRecordDB gdb = new GameQrRecordDB();
+                gdb.PlayerProfileChange(oldName,changedUserName_editProfile,allowScanRecord.isChecked());
                 userInfo.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -167,6 +175,8 @@ public class EditProfile extends AppCompatActivity {
         delButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                GameQrRecordDB gdb = new GameQrRecordDB();
+                gdb.PlayerProfileDelete(oldName);
                 userInfo.delete();
 
                 Intent i = new Intent(EditProfile.this, DashBoard.class);

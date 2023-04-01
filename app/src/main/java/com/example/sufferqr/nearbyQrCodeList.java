@@ -18,6 +18,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Looper;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -39,8 +40,11 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * a list for showing nearby qr list
@@ -92,6 +96,7 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
 
         Query query = db.collection("GameQrCode")
                 .whereEqualTo("LocationExist",true)
+                .whereEqualTo("allowViewScanRecord",true)
                 .whereLessThanOrEqualTo("LocationLatitude",maxLat)
                 .whereGreaterThanOrEqualTo("LocationLatitude",minLat);
 
@@ -99,44 +104,32 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable
             FirebaseFirestoreException error) {
+                System.out.println(error);
                 qrCodeDataList.clear();
-                for(QueryDocumentSnapshot doc: value) {
-                    Log.d("Sample", String.valueOf(doc.getData().get("LocationAddress")));
-                    Log.d("Sample", String.valueOf(doc.getData().get("LocationExist")));
-                    Log.d("Sample", String.valueOf(doc.getData().get("LocationLatitude")));
-                    Log.d("Sample", String.valueOf(doc.getData().get("LocationLongitude")));
-                    Log.d("Sample", String.valueOf(doc.getData().get("LocationName")));
-                    Log.d("Sample", String.valueOf(doc.getData().get("QRname")));
-                    Log.d("Sample", String.valueOf(doc.getData().get("QRtext")));
-                    Log.d("Sample", String.valueOf(doc.getData().get("date")));
-                    Log.d("Sample", String.valueOf(doc.getData().get("imageExist")));
-                    Log.d("Sample", String.valueOf(doc.getData().get("points")));
-                    Log.d("Sample", String.valueOf(doc.getData().get("userName")));
 
-                    String LocationAddress = (String) doc.getData().get("LocationAddress");
-                    boolean LocationExist = (boolean) doc.getData().get("LocationExist");
-                    String LocationLatitude = (String) doc.getData().get("LocationLatitude").toString();
-                    String LocationLongitude = (String) doc.getData().get("LocationLongitude").toString();
-                    String LocationName = (String) doc.getData().get("LocationName");
-                    String QrName = (String) doc.getData().get("QRname");
-                    String QrText = (String) doc.getData().get("QRtext");
-                    String date = (String) doc.getData().get("date");
-                    boolean imageExist = (boolean) doc.getData().get("imageExist");
-                    String points = (String) doc.getData().get("points").toString();
-                    String user = (String) doc.getData().get("userName");
+                Map<Double, Map<String,Object>> tempDataHolder = new HashMap<>();
+                for(QueryDocumentSnapshot doc: value) {
+
+                    Map<String,Object> data = doc.getData();
+
 
                     double tempLat = (double) doc.getData().get("LocationLatitude");
                     double tempLon = (double) doc.getData().get("LocationLongitude");
-                    boolean whetherInOneKmDis = isWithinOneKilometer(latitude, longitude, tempLat, tempLon);
-                    if ( whetherInOneKmDis == true ) {
-
-                        qrCodeDataList.add(new QrCode(LocationAddress, LocationExist, LocationLatitude,
-                                LocationLongitude, LocationName, QrName, QrText, date, imageExist, points, user)); // Adding
-                        qrCodeAdapter.notifyDataSetChanged();
-
+                    double dis = isWithinOneKilometer(latitude, longitude, tempLat, tempLon);
+                    if ( dis <= 10000 ) {
+                        tempDataHolder.put(dis,data);
                     }
                 }
 
+                // ordering
+                while (!tempDataHolder.isEmpty()){
+                    Double min = (Double) Collections.min(tempDataHolder.keySet());
+                    Map<String,Object> data = tempDataHolder.get(min);
+                    tempDataHolder.remove(min);
+                    qrCodeDataList.add(new QrCode(min, data)); // Adding
+                    qrCodeAdapter.notifyDataSetChanged();
+
+                }
             }
         });
 
@@ -144,17 +137,21 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectQrCode = qrCodeAdapter.getItem(position);
-                QrCodeDetailFragment myFragment = new QrCodeDetailFragment();
+
+                Intent scanIntent = new Intent(getApplicationContext(),QRQuickViewScrollingActivity.class);
+                String myname = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+                scanIntent.putExtra("local ",myname);
+                scanIntent.putExtra("qrID", selectQrCode.getQrName());
+
                 Bundle bundle = new Bundle();
-                bundle.putString("key1",selectQrCode.getLocationAddress());
-                bundle.putString("key2",selectQrCode.getLocationLatitude());
-                bundle.putString("key3",selectQrCode.getLocationLongitude());
-                bundle.putString("key4",selectQrCode.getDate());
-                bundle.putString("key5",selectQrCode.getPoints());
-                bundle.putString("key6",selectQrCode.getUserName());
-                bundle.putString("key7",selectQrCode.getQrName());
-                myFragment.setArguments(bundle);
-                myFragment.show(getSupportFragmentManager(),"Detail of QR");
+
+                for (Map.Entry<String, Object> entry : selectQrCode.getData().entrySet()) {
+                    bundle.putString(entry.getKey(),String.valueOf(entry.getValue()));
+                }
+
+                scanIntent.putExtra("MapData",bundle);
+                startActivity(scanIntent);
+
             }
         });
 
@@ -164,6 +161,7 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
             public void onClick(View v) {
                 Intent intent = new Intent(nearbyQrCodeList.this, MapsActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
     }
@@ -184,7 +182,7 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
     @param qrLongitude: a double which represent the longitude of nearby QRcode.
     @return return the boolean that represented whether in the required area.
      */
-    public boolean isWithinOneKilometer(double userLatitude, double userLongitude, double qrLatitude, double qrLongitude) {
+    public double isWithinOneKilometer(double userLatitude, double userLongitude, double qrLatitude, double qrLongitude) {
         final int R = 6371; // Radius of the earth in km
         double latDistance = Math.toRadians(userLatitude - qrLatitude);
         double lonDistance = Math.toRadians(userLongitude - qrLongitude);
@@ -192,8 +190,9 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
                 + Math.cos(Math.toRadians(userLatitude)) * Math.cos(Math.toRadians(qrLatitude))
                 * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
         double distance = R * c * 1000; // convert to meters
-        return distance <= 1000; // return true if distance is less than or equal to 1km
+        return distance ; // return true if distance is less than or equal to 1km
     }
 
 
