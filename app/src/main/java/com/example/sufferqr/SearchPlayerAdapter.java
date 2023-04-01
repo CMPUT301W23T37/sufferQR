@@ -22,11 +22,19 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+    set up adapter for search player
+ **/
 public class SearchPlayerAdapter extends ArrayAdapter<User> {
 
     Context context;
     ArrayList<User> users;
 
+    /**
+     * constructor
+     * @param context where to use
+     * @param objects which list to use
+     */
     public SearchPlayerAdapter(@NonNull Context context, ArrayList<User> objects) {
         super(context, 0, objects);
         this.context = context;
@@ -34,7 +42,13 @@ public class SearchPlayerAdapter extends ArrayAdapter<User> {
     }
 
 
-
+    /**
+     * set up on click action
+     * @param position
+     * @param convertView
+     * @param parent
+     * @return view
+     */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
