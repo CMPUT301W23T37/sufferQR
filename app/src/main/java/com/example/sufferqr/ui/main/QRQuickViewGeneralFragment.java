@@ -29,6 +29,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.sufferqr.OtherUser;
 import com.example.sufferqr.QRQuickViewScrollingActivity;
 import com.example.sufferqr.R;
 import com.google.android.gms.common.util.ScopeUtil;
@@ -83,8 +84,6 @@ public class QRQuickViewGeneralFragment extends Fragment  implements OnMapReadyC
     CardView location_card,map_card;
     Button go_button;
     View gbView;
-    Map<String,Map<String,Object>> mapData;
-    ChipGroup chipGroup;
     String locUser;
 
     /**
@@ -142,7 +141,6 @@ public class QRQuickViewGeneralFragment extends Fragment  implements OnMapReadyC
         go_button = view.findViewById(R.id.fragment_q_r_quick_view_general_go_elevatedButton);
 
         map_card = view.findViewById(R.id.fragment_q_r_quick_view_general_location_map_cardView);
-        chipGroup = view.findViewById(R.id.fragment_q_r_quick_view_general_same_qr_code);
 
         //mapView= view.findViewById(R.id.qr_detail_location_content_map_view);
         mapView.onCreate(savedInstanceState);
@@ -231,6 +229,15 @@ public class QRQuickViewGeneralFragment extends Fragment  implements OnMapReadyC
             author.setText(ss);
         }else{
             author.setText(bundle.getString("user","author"));
+            author.setClickable(true);
+            author.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getContext(), OtherUser.class);
+                    intent.putExtra("username",locUser);
+                    startActivity(intent);
+                }
+            });
         }
 
         points.setText(bundle.getString("points","0")+" Points");

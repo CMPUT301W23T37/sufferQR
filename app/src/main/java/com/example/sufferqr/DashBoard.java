@@ -62,7 +62,6 @@ public class DashBoard extends DrawerBase {
     final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
-
     private void getUserRank(String userID, long userHighestScore,TextView highest_rank) {
         db.collection("Player")
                 .get()
@@ -158,16 +157,16 @@ public class DashBoard extends DrawerBase {
         // Get AAID
         String android_id = Settings.Secure.getString(getContentResolver(), Secure.ANDROID_ID);
         DocumentReference userAAID = db.collection("Player").document(android_id);
-//        userAAID.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//            @SuppressLint("StringFormatInvalid")
-//            @Override
-//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                if(task.isSuccessful()){
-//                    DocumentSnapshot userInfo = task.getResult();
-//                    if(!userInfo.exists()){
-//                        Intent i = new Intent(DashBoard.this, RegisterPage.class);
-//                        startActivity(i);
-//                    }
+        userAAID.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @SuppressLint("StringFormatInvalid")
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot userInfo = task.getResult();
+                    if(!userInfo.exists()){
+                        Intent i = new Intent(DashBoard.this, RegisterPage.class);
+                        startActivity(i);
+                    }
 //                    else {
 //                        // get the score list
 //                        List<Long> scoresList = (List<Long>) userInfo.get("scores");
@@ -210,11 +209,11 @@ public class DashBoard extends DrawerBase {
 //                            hScore.setText(String.valueOf(scoresSorted.get(0)));
 //                        }
 //                    }
-//                } else {
-//                    Log.d(TAG, "failed with ", task.getException());
-//                }
-//            }
-//        });
+                } else {
+                    Log.d(TAG, "failed with ", task.getException());
+                }
+            }
+        });
         userAAID.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -225,8 +224,10 @@ public class DashBoard extends DrawerBase {
                 DocumentSnapshot userInfo = value;
                 if (value != null && value.exists()) {
                     if(!userInfo.exists()){
-                        Intent i = new Intent(DashBoard.this, RegisterPage.class);
-                        startActivity(i);
+//                        Intent i = new Intent(DashBoard.this, RegisterPage.class);
+//                        startActivity(i);
+//                        DashBoard.this.onDestroy();
+//                        finish();
                     }
                     else {
                         // get the score list
@@ -297,8 +298,10 @@ public class DashBoard extends DrawerBase {
                         }
                     }
                 } else {
-                    Intent i = new Intent(DashBoard.this, RegisterPage.class);
-                    startActivity(i);
+//                    Intent i = new Intent(DashBoard.this, RegisterPage.class);
+//                    startActivity(i);
+//                    DashBoard.this.onDestroy();
+//                    finish();
                 }
 
             }
