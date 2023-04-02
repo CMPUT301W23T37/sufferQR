@@ -43,6 +43,9 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * Other user profile contain all the info that this user allow other to view
+ */
 public class OtherUser extends DrawerBase {
 
     ActivityOtherUserLayoutBinding activityOtherUserLayoutBinding;

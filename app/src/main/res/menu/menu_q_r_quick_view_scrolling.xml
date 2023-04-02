@@ -4,8 +4,7 @@
     tools:context="com.example.sufferqr.QRQuickViewScrollingActivity">
     <item
         android:id="@+id/qr_quick_view_edit"
-        android:icon="@drawable/ic_edit"
-        android:iconTint="@color/white"
+        android:icon="@drawable/edit"
         app:showAsAction="always"
         android:title="@string/edit">
     </item>

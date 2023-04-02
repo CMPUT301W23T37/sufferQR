@@ -120,7 +120,5 @@ public class ScanHistory extends DrawerBase {
                         }
                     }
                 });
-
-
     }
 }

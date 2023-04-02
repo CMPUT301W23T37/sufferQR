@@ -5,6 +5,7 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
@@ -75,10 +76,6 @@ public class MapTest {
         solo.clickOnView(solo.getView(R.id.nearbylist));
         solo.assertCurrentActivity("Wrong Activity", nearbyQrCodeList.class);
     }
-
-
-
-
 
 
 }

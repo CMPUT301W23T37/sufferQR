@@ -28,6 +28,12 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.util.ArrayList;
 
+/**
+ * This class is the last part of the leader board of the application
+ * It will display a list of game-wide high unique QR code score.
+ * The top 10 users with the highest unique QR code score are displayed in descending order based on the scores.
+ * user can see those users' username, scores and QR code (generate by qrid)
+ */
 
 public class Highest extends Fragment {
     FirebaseFirestore db;

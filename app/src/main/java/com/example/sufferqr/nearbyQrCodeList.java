@@ -49,6 +49,7 @@ import java.util.Map;
 /**
  * a list for showing nearby qr list
  */
+
 public class nearbyQrCodeList extends AppCompatActivity implements LocationListener {
     private Double latitude,longitude;
     private LocationManager locationManager;
@@ -161,9 +162,15 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
             public void onClick(View v) {
                 Intent intent = new Intent(nearbyQrCodeList.this, MapsActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
     }
+
+    /**
+     * get user's location
+     * @param location the updated location
+     */
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
