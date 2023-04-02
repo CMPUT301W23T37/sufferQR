@@ -2,6 +2,7 @@ package com.example.sufferqr;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.libraries.places.api.Places;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 
@@ -40,8 +41,13 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import android.location.Address;
+import android.location.Geocoder;
 
+
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 //extends FragmentActivity,Drawerbase implements OnMapReadyCallback
 
@@ -54,26 +60,47 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback, sear
     //current camera position
     private LatLng currentCameraPosition;
 
+
+    /**
+     This method gets called when the user searches for a location by entering an address.
+     It geocodes the address to get a LatLng object, moves the camera to the location,
+     and updates the markers within one kilometer of the searched location.
+     @param address The address entered by the user as a string.
+     */
     @Override
-    public void onSearch(String latitude, String longitude) {
+    public void onSearch(String address) {
+        Geocoder geocoder = new Geocoder(this);
         try {
-            double lat = Double.parseDouble(latitude);
-            double lng = Double.parseDouble(longitude);
-            LatLng searchedLocation = new LatLng(lat, lng);
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchedLocation, 16));
-            updateMarkersWithinOneKilometer(searchedLocation);
-        } catch (NumberFormatException e) {
-            Toast.makeText(this, "Invalid latitude or longitude", Toast.LENGTH_SHORT).show();
+            List<Address> addresses = geocoder.getFromLocationName(address, 1);
+            if (!addresses.isEmpty()) {
+                Address location = addresses.get(0);
+                LatLng searchedLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchedLocation, 16));
+                updateMarkersWithinOneKilometer(searchedLocation);
+            } else {
+                Toast.makeText(this, "Address not found", Toast.LENGTH_SHORT).show();
+            }
+        } catch (IOException e) {
+            Toast.makeText(this, "Geocoder service not available", Toast.LENGTH_SHORT).show();
         }
     }
 
+
+    /**
+     This method updates the markers within one kilometer of the searched location.
+     It fetches the QR codes from the Firebase Firestore database and adds them
+     to the cluster manager if they are within one kilometer of the searched location.
+     @param searchedLocation The LatLng object representing the searched location.
+     */
     private void updateMarkersWithinOneKilometer(LatLng searchedLocation) {
         clusterManager.clearItems();
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference collectionRef = db.collection("GameQrCode");
 
-        collectionRef.whereEqualTo("allowViewScanRecord", true).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        collectionRef.whereEqualTo("allowViewScanRecord", true)
+                .whereEqualTo("LocationExist",true)
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
@@ -105,6 +132,11 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback, sear
         });
     }
 
+
+    /**
+     This method is called when the camera position is changed.
+     It updates the markers within one kilometer of the new camera position.
+     */
     @Override
     public void onCameraIdle() {
         LatLng center = mMap.getCameraPosition().target;
@@ -113,7 +145,10 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback, sear
 
 
 
-
+    /**
+     A class that represents a cluster item, which holds information about the position,
+     title, and snippet of a marker on the map.
+     */
     public static class MyClusterItem implements ClusterItem {
 
         private final LatLng position;
@@ -151,6 +186,12 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback, sear
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Initialize Places SDK
+        String apiKey = "AIzaSyBl3Acwz4pkNuDzIkvEVW-wZIVKFHg19hs";
+        if (!Places.isInitialized()) {
+            Places.initialize(getApplicationContext(), apiKey);
+        }
+
         super.onCreate(savedInstanceState);
 
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
@@ -181,6 +222,11 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback, sear
     }
 
 
+    /**
+     This method initializes the cluster manager, sets up the map and its properties,
+     and fetches the QR codes from the Firebase Firestore database.
+     @param googleMap The GoogleMap object representing the map.
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -214,7 +260,9 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback, sear
                 currentCameraPosition = currentLocation;
 
 
-                collectionRef.whereEqualTo("allowViewScanRecord", true).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                collectionRef.whereEqualTo("allowViewScanRecord", true)
+                        .whereEqualTo("LocationExist",true)
+                        .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
@@ -241,6 +289,7 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback, sear
                                     String points = scores.get(i);
                                     MyClusterItem clusterItem = new MyClusterItem(latLng.latitude, latLng.longitude, id, "Points: " + points);
                                     clusterManager.addItem(clusterItem);
+                                    Log.d(TAG, "Added MyClusterItem: id=" + id );
                                 }
                             }
 
@@ -302,11 +351,16 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback, sear
         return distance <= 1000; // return true if distance is less than or equal to 1km
     }
 
+    /**
+     This method sets up the cluster manager, which handles clustering markers on the map.
+     It also sets the listener for the camera idle event.
+     */
     private void setUpClusterManager() {
         clusterManager = new ClusterManager<>(this, mMap);
         mMap.setOnCameraIdleListener(clusterManager);
         mMap.setOnMarkerClickListener(clusterManager);
     }
+
 
 
 }
