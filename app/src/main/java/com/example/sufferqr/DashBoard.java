@@ -52,7 +52,7 @@ import java.util.stream.Collectors;
  * it will have a short cut to camera, the total number of the score collected
  * the total number of code been scanned, the highest score ever, and the score for
  * the last code scanned. Also, a small scale of map will display at the bottom with
- * indications of surrounding scannable code
+ * indications of surrounding scan-able code
  *
  */
 public class DashBoard extends DrawerBase {
@@ -166,6 +166,7 @@ public class DashBoard extends DrawerBase {
                     if(!userInfo.exists()){
                         Intent i = new Intent(DashBoard.this, RegisterPage.class);
                         startActivity(i);
+                        finish();
                     }
 //                    else {
 //                        // get the score list

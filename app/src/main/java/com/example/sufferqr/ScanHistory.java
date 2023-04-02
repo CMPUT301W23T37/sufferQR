@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sufferqr.databinding.ActivityScanHistoryBinding;
@@ -34,7 +35,7 @@ import java.util.Map;
 public class ScanHistory extends DrawerBase {
 
     ActivityScanHistoryBinding activityScanHistoryBinding;
-
+    TextView noQrCode;
     ListView qrList;
     ArrayAdapter<ScanHistoryQRRecord> qrAdapter;
     ArrayList<ScanHistoryQRRecord> qrDataList;
@@ -59,6 +60,7 @@ public class ScanHistory extends DrawerBase {
 
         db = FirebaseFirestore.getInstance();
         qrList=findViewById(R.id.scan_history_recycleView);
+        noQrCode = findViewById(R.id.no_scan_scanHistory);
         Intent myNewIntent = getIntent();
         UserName = myNewIntent.getStringExtra("user");
 
@@ -67,6 +69,8 @@ public class ScanHistory extends DrawerBase {
         qrAdapter = new ScanHistoryCustomList(this,qrDataList);
 
         qrList.setAdapter(qrAdapter);
+        qrList.setVisibility(View.VISIBLE);
+        noQrCode.setVisibility(View.INVISIBLE);
 
         qrList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -104,6 +108,8 @@ public class ScanHistory extends DrawerBase {
                             System.err.println("Listen failed: " + error);
                         }
                         if (value != null && !value.isEmpty()){
+                            qrList.setVisibility(View.VISIBLE);
+                            noQrCode.setVisibility(View.INVISIBLE);
                             qrDataList.clear();
                             for (DocumentSnapshot doc : value.getDocuments()) {
                                 String qrName = String.valueOf(doc.getData().get("QRname"));
@@ -114,6 +120,8 @@ public class ScanHistory extends DrawerBase {
                             }
                             qrAdapter.notifyDataSetChanged();
                         } else {
+                            qrList.setVisibility(View.INVISIBLE);
+                            noQrCode.setVisibility(View.VISIBLE);
                             qrDataList.clear();
                             qrAdapter.notifyDataSetChanged();
                             Toast toast = Toast.makeText(getApplicationContext(),"no result", Toast.LENGTH_SHORT);
