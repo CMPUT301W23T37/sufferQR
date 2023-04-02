@@ -182,13 +182,15 @@
             android:layout_width="140dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/app_sub_blue"
+            android:enabled="false"
             android:text="Apply"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:clickable="true"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
