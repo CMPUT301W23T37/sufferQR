@@ -289,7 +289,6 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback, sear
                                     String points = scores.get(i);
                                     MyClusterItem clusterItem = new MyClusterItem(latLng.latitude, latLng.longitude, id, "Points: " + points);
                                     clusterManager.addItem(clusterItem);
-                                    Log.d(TAG, "Added MyClusterItem: id=" + id );
                                 }
                             }
 
