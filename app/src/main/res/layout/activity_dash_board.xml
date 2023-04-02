@@ -331,7 +331,7 @@
                 android:id="@+id/small_qr"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/small_qr"
+                android:src="@drawable/qrcode2"
                 app:layout_constraintBottom_toBottomOf="@id/blue_rec_b"
                 app:layout_constraintStart_toStartOf="@id/blue_rec_b"
                 app:layout_constraintEnd_toEndOf="@id/blue_rec_b"
