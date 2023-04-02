@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="185dp"
     android:background="@color/app_sub_blue"
-    android:padding="30dp"
+    android:padding="35dp"
     android:orientation="vertical">
 
 <!--    Application Logo    -->
