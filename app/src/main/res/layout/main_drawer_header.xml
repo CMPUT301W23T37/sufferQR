@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="185dp"
     android:background="@color/app_sub_blue"
-    android:padding="40dp"
+    android:padding="30dp"
     android:orientation="vertical">
 
 <!--    Application Logo    -->
@@ -11,7 +11,7 @@
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_gravity="center"
-        android:src="@drawable/dashboard"/>
+        android:src="@drawable/qr_code"/>
 
 <!--    Application Name     -->
     <TextView
