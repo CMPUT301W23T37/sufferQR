@@ -29,6 +29,12 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class is the first part of the leader board of the application
+ * It will display a list of game-wide high total score.
+ * The top 10 users with the highest total score are displayed in descending order based on the scores.
+ * user can see those users' username, scores and QR code (generate by qrid)
+ */
 
 public class Total extends Fragment {
     FirebaseFirestore db;
