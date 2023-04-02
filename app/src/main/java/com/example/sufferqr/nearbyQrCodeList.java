@@ -83,8 +83,14 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
 
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();
+        if (location!=null){
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
+        } else {
+            latitude = 0.0;
+            longitude = 0.0;
+        }
+
 
         db = FirebaseFirestore.getInstance();
 

@@ -1,11 +1,13 @@
 package com.example.sufferqr;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -58,7 +60,7 @@ public class Total extends Fragment {
         ArrayList<HighScorePlayer> Data = new ArrayList<>();
 
 
-        Query query = db.collection("Player").orderBy("sumScore", Query.Direction.DESCENDING).limit(10);
+        Query query = db.collection("Player").whereEqualTo("allowViewScanRecord",true).orderBy("sumScore", Query.Direction.DESCENDING).limit(10);
 
         query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -83,18 +85,47 @@ public class Total extends Fragment {
                         FirstUsername.setText(name);
                         FirstScore.setText(score);
                         userIdQrImage = view.findViewById(R.id.total_first_qr);
+                        userIdQrImage.setClickable(true);
+                        userIdQrImage.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                String name = (String) FirstUsername.getText();
+                                Intent intent = new Intent(requireActivity(),OtherUser.class);
+                                intent.putExtra("username",name);
+                                startActivity(intent);
+                            }
+                        });
                     }
                     else if (i == 2) {
                         SecondUsername.setText(name);
                         SecondScore.setText(score);
                         userIdQrImage = view.findViewById(R.id.total_second_qr);
+                        userIdQrImage.setClickable(true);
+                        userIdQrImage.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                String name = (String) SecondUsername.getText();
+                                Intent intent = new Intent(requireActivity(),OtherUser.class);
+                                intent.putExtra("username",name);
+                                startActivity(intent);
+                            }
+                        });
                     }
                     else if (i == 3) {
                         ThirdUsername.setText(name);
                         ThirdScore.setText(score);
                         userIdQrImage = view.findViewById(R.id.total_thrid_qr);
-                    }
-                    else if (i > 3) {
+                        userIdQrImage.setClickable(true);
+                        userIdQrImage.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                String name = (String) ThirdUsername.getText();
+                                Intent intent = new Intent(requireActivity(),OtherUser.class);
+                                intent.putExtra("username",name);
+                                startActivity(intent);
+                            }
+                        });
+                    } else {
                         Data.add(new HighScorePlayer(rank,name,intScore,userQRid));
                         HighScorePlayerList adapter = new HighScorePlayerList(requireContext(), Data);
                         highScorePlayerArrayList = view.findViewById(R.id.ranks_listview);
@@ -113,6 +144,18 @@ public class Total extends Fragment {
                     }
                 }
 
+            }
+        });
+
+        highScorePlayerArrayList = view.findViewById(R.id.ranks_listview);
+        highScorePlayerArrayList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                HighScorePlayer highScorePlayer = (HighScorePlayer) parent.getItemAtPosition(position);
+                String name = highScorePlayer.getUsername();
+                Intent intent = new Intent(requireActivity(),OtherUser.class);
+                intent.putExtra("username",name);
+                startActivity(intent);
             }
         });
 
