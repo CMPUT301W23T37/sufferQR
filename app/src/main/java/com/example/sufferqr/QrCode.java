@@ -1,49 +1,40 @@
 package com.example.sufferqr;
 
+import java.text.DecimalFormat;
+import java.util.Map;
+
 /**
  * saving qrcode clss for nearby 1km qr
  */
 public class QrCode {
-    private String locationAddress;
-    private boolean locationExist;
-    private String locationLatitude;
-    private String locationLongitude;
-    private String locationName;
-    private String QrName;
-    private String QrText;
-    private String date;
-    private boolean imageExist;
-    private String points;
-    private String userName;
 
-    QrCode(String locationAddress, boolean locationExist, String locationLatitude,
-           String locationLongitude, String locationName, String QrName, String QrText,
-           String date, boolean imageExist, String points, String userName){
-        this.locationAddress = locationAddress;
-        this.locationExist = locationExist;
-        this.locationLatitude = locationLatitude;
-        this.locationLongitude = locationLongitude;
-        this.locationName = locationName;
-        this.QrName = QrName;
-        this.QrText = QrText;
-        this.date = date;
-        this.imageExist = imageExist;
-        this.points = points;
-        this.userName = userName;
+    private  double dist;
+    private Map<String,Object> doc;
 
+
+    QrCode(double dis, Map<String,Object> data){
+        this.dist = dis;
+        this.doc = data;
     }
 
-    String getLocationAddress(){ return this.locationAddress; }
-    boolean getlocationExist(){ return this.locationExist; }
-    String getLocationLatitude(){ return this.locationLatitude; }
-    String getLocationLongitude(){ return this.locationLongitude; }
-    String getLocationName(){ return this.locationName; }
-    String getQrName(){ return this.QrName; }
-    String getQrText(){ return this.QrText; }
-    String getDate(){ return this.date; }
-    boolean getImageExist(){ return this.imageExist; }
-    String getPoints(){ return this.points; }
-    String getUserName(){ return this.userName; }
+
+    String getLocationAddress(){ return (String) this.doc.get("LocationAddress"); }
+    boolean getlocationExist(){ return (boolean) this.doc.get("LocationExist"); }
+    String getLocationLatitude(){ return (String) doc.get("LocationLatitude"); }
+    String getLocationLongitude(){ return (String)doc.get("LocationLongitude"); }
+    String getLocationName(){ return (String) doc.get("LocationName"); }
+    String getQrName(){ return (String) doc.get("QRname"); }
+    String getDate(){ return (String) doc.get("date"); }
+    String getPoints(){ return (String) doc.get("points"); }
+
+    String getDis(){
+        DecimalFormat df = new DecimalFormat("0.00");
+        return String.valueOf(df.format(dist));
+    }
+
+    Map<String,Object> getData(){
+        return this.doc;
+    }
 
 }
 

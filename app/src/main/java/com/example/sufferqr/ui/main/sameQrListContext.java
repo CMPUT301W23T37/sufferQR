@@ -2,9 +2,10 @@ package com.example.sufferqr.ui.main;
 
 import java.util.Map;
 
+/**
+ * a list for saving all the context of item
+ */
 public class sameQrListContext {
-
-
     private String user;
 
     /**

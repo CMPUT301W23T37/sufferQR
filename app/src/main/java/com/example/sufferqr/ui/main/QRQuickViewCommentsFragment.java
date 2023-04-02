@@ -28,13 +28,14 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.protobuf.Value;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 
 public class QRQuickViewCommentsFragment extends Fragment {
 
     Bundle bundle;
     View view;
-    String qrName;
+    String qrName,localUser,QROwner;
     ListView commentsList;
     ArrayList<QRQuickViewComment> dataList;
     ArrayAdapter<QRQuickViewComment> commentsAdapter;
@@ -70,6 +71,11 @@ public class QRQuickViewCommentsFragment extends Fragment {
         commentsList.setAdapter(commentsAdapter);
 
         qrName = bundle.getString("QRname");
+
+        // android ID
+        localUser = bundle.getString("localUser");
+        QROwner = bundle.getString("user");
+
         Intent in = new Intent(requireContext(), CommentPage.class);
         in.putExtra("QRName", qrName);
 
@@ -86,6 +92,14 @@ public class QRQuickViewCommentsFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 in.putExtra("title", "Delete Comment");
                 in.putExtra("commentContent", dataList.get(i).getComment());
+                in.putExtra("commentOwner", dataList.get(i).getAndroidId());
+
+                if (Objects.equals(localUser, QROwner)) {
+                    in.putExtra("Owner", "1");
+                } else {
+                    in.putExtra("Owner", "0");
+                }
+
                 startActivity(in);
             }
         });

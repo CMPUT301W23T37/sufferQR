@@ -22,6 +22,7 @@ import androidx.core.widget.NestedScrollView;
 import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.provider.Settings;
 import android.view.ContextMenu;
 import android.view.DragEvent;
 import android.view.Menu;
@@ -57,7 +58,14 @@ public class QRQuickViewScrollingActivity extends AppCompatActivity {
 
     QuickViewSectionsPageAdapter quickViewSectionsPageAdapter;
 
-    @SuppressLint("UseCompatLoadingForDrawables")
+    /**
+     * draw respnse of the fragment view
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
+    @SuppressLint({"UseCompatLoadingForDrawables", "HardwareIds"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,11 +79,16 @@ public class QRQuickViewScrollingActivity extends AppCompatActivity {
         qrID = myIntent.getStringExtra("qrID");
         data = myIntent.getBundleExtra("MapData");
         data.putString("localUser",user);
-        if (user == null || qrID == null || data == null){
-            System.out.println(user+qrID+data);
+        if (user == null){
+            user  = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        }
+        if (user == null || qrID == null ){
+            System.out.println(user+qrID);
             Toast.makeText(getBaseContext(),"document required but ull",Toast.LENGTH_LONG).show();
             finish();
         }
+        data.putString("localUser",user);
+
         // toolbar
 
         Toolbar toolbar = binding.qRQuickViewToolbar;
@@ -154,6 +167,10 @@ public class QRQuickViewScrollingActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * get image from firestone
+     * @param FilePath url path
+     */
     private void imageFetchFirestone(String FilePath) {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();

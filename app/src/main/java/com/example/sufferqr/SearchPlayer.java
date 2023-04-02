@@ -23,7 +23,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 
 /**
- * search player
+ * search player by username, blur search
  */
 public class SearchPlayer extends DrawerBase {
 

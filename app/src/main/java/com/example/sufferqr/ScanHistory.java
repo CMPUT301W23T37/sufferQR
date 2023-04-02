@@ -114,11 +114,11 @@ public class ScanHistory extends DrawerBase {
                             }
                             qrAdapter.notifyDataSetChanged();
                         } else {
+                            qrDataList.clear();
+                            qrAdapter.notifyDataSetChanged();
                             Toast toast = Toast.makeText(getApplicationContext(),"no result", Toast.LENGTH_SHORT);
                         }
                     }
                 });
-
-
     }
 }

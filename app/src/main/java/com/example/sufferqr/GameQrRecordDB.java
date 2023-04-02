@@ -9,17 +9,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.Log;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 
-import com.example.sufferqr.ui.main.QRDetailGeneralFragment;
-import com.example.sufferqr.ui.main.QRDetailLocationFragment;
-import com.example.sufferqr.ui.main.ScanHistoryQRRecord;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -27,17 +20,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.google.firestore.v1.WriteResult;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -53,8 +42,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
-import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicMarkableReference;
 
 /**
  * This is a class that connect with database GameQRRecord
@@ -361,7 +348,7 @@ public class GameQrRecordDB {
 
 
         } else {
-            // de;tete
+            // delete
             try{
                 File fdel = new File(imageUri.getPath());//create path from uri
                 if (fdel.exists()) {
@@ -492,16 +479,23 @@ public class GameQrRecordDB {
 
     }
 
-    public void UserNameChange(String oldName,String newName){
+    /**
+     * change doc when info updated
+     *
+     * @param oldName old username
+     * @param newName new username
+     */
+    public void PlayerProfileChange(String oldName, String newName, boolean checked){
         final CollectionReference collectionReference = db.collection("GameQrCode");
-        final Query query= collectionReference.whereEqualTo("user",oldName);
+        final Query query= collectionReference.whereEqualTo("userName",oldName);
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful() ){
                     for (DocumentSnapshot doc:task.getResult()){
                         data = (HashMap<String, Object>) doc.getData();
-                        HashMapValidate("user",newName);
+                        HashMapValidate("allowViewScanRecord",checked);
+                        HashMapValidate("userName",newName);
                         collectionReference.document(doc.getId()).update(data).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
@@ -520,6 +514,36 @@ public class GameQrRecordDB {
         });
     }
 
+
+    /**
+     * change doc when info updated
+     *
+     * @param oldName old username
+     */
+    public void PlayerProfileDelete(String oldName){
+        final CollectionReference collectionReference = db.collection("GameQrCode");
+        final Query query= collectionReference.whereEqualTo("userName",oldName);
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful() ){
+                    for (DocumentSnapshot doc:task.getResult()){
+                        collectionReference.document(doc.getId()).delete();
+                    }
+                }
+            }
+
+        });
+    }
+
+    /**
+     * data preprocessing
+     * @param context appcontext
+     * @param data1 mapp of ocument
+     * @param us username
+     * @param cr content resolver
+     * @return return data correctness
+     */
     public boolean NewPreProcessing(Context context,HashMap<String,Object> data1,String us,ContentResolver cr){
         data =data1;
         // if new push the image and then database
@@ -560,6 +584,13 @@ public class GameQrRecordDB {
         }
     }
 
+    /**
+     *  when editing submit data preprocessing
+     * @param data1 map of the data
+     * @param QRname name of the qrcode
+     * @param OrginalName if user name changed submit the change the docname
+     * @return return data correctness
+     */
     public boolean ChangePreProcessing(HashMap<String,Object> data1,String QRname,String OrginalName){
         data =data1;
         // check if change,something releated also need to change
