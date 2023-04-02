@@ -20,6 +20,10 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
+/**
+ * set up the item in Highest Total Score List
+ * and the item in Highest Unique QR Code Score List
+ */
 
 public class HighScorePlayerList extends ArrayAdapter<HighScorePlayer> {
     public HighScorePlayerList(Context context, List<HighScorePlayer> highScorePlayerArrayList){
