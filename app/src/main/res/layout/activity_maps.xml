@@ -20,4 +20,14 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp" />
 
+    <Button
+        android:id="@+id/Seach_location_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Search"
+        android:layout_gravity="bottom|start"
+        android:layout_margin="16dp"
+        />
+
+
 </FrameLayout>

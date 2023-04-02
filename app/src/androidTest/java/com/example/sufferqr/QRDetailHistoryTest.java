@@ -98,7 +98,7 @@ public class QRDetailHistoryTest {
                 solo.waitForText((String) (String)document.get("date"),1,1000);
                 Object points = document.get("points");
                 solo.waitForText(String.valueOf(points),1,1000);
-                solo.waitForText((String)document.get("QVisual"),1,1000);
+                solo.waitForText((String)document.get("QRVisual"),1,1000);
             }
         });
 

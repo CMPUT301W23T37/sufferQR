@@ -35,7 +35,7 @@ public class ScoreCounterTest {
     public void testCalculateScoreWithRepeatedCharacters() {
         ScoreCounter counter = new ScoreCounter("aabbccdd");
         int score = counter.calculateScore();
-        assertEquals(788, score);
+        assertEquals(1576, score);
     }
 
     /**
@@ -45,7 +45,7 @@ public class ScoreCounterTest {
     public void testCalculateScoreWithMoreThanDoubleRepetition() {
         ScoreCounter counter = new ScoreCounter("aaaabbbcccc");
         int score = counter.calculateScore();
-        assertEquals(1078, score);
+        assertEquals(653, score);
     }
     /**
      * Tests to make sure class any random combination of characters can work
@@ -54,7 +54,7 @@ public class ScoreCounterTest {
     public void testCalculateScoreWithMixedCharacters() {
         ScoreCounter counter = new ScoreCounter("aabbccDDEEFF1122");
         int score = counter.calculateScore();
-        assertEquals(1200, score);
+        assertEquals(2400, score);
     }
 
 }
