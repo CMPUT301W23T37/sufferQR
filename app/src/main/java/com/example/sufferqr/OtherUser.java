@@ -179,7 +179,7 @@ public class OtherUser extends DrawerBase {
             }
         });
         final CollectionReference qr_collectionReference = db.collection("GameQrCode");
-        qr_collectionReference.whereEqualTo("userName",name).orderBy("time", Query.Direction.DESCENDING)
+        qr_collectionReference.whereEqualTo("userName",name).orderBy("points", Query.Direction.DESCENDING)
                 .addSnapshotListener(MetadataChanges.INCLUDE, new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {

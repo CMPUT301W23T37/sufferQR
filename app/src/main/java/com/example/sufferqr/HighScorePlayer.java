@@ -1,5 +1,7 @@
 package com.example.sufferqr;
 
+import java.util.Map;
+
 /**
  * highest total scores user info saving
  * highest unique QR code score user info saving
@@ -9,6 +11,7 @@ public class HighScorePlayer {
     private String username;
     private int score;
     private String qrid;
+
 
 
     HighScorePlayer(int rank, String username, int score, String qrid){
@@ -22,5 +25,6 @@ public class HighScorePlayer {
     String getUsername(){ return this.username; }
     int getScore(){ return this.score; }
     String gerQrid(){ return this.qrid;}
+
 
 }
