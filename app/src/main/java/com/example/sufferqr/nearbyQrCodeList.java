@@ -140,7 +140,7 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
 
                 Intent scanIntent = new Intent(getApplicationContext(),QRQuickViewScrollingActivity.class);
                 String myname = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-                scanIntent.putExtra("local ",myname);
+                scanIntent.putExtra("localUser",myname);
                 scanIntent.putExtra("qrID", selectQrCode.getQrName());
 
                 Bundle bundle = new Bundle();
