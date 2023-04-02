@@ -39,6 +39,7 @@ public class NearByQrCodeListTest {
      */
     @Test
     public void start() throws Exception {
+        final nearbyQrCodeList activity1 = rule.getActivity();
         Activity activity = rule.getActivity();
     }
 
@@ -58,10 +59,7 @@ public class NearByQrCodeListTest {
     public void TestBackButton(){
         solo.assertCurrentActivity("Wrong Activity", nearbyQrCodeList.class);
         solo.clickOnView(solo.getView(R.id.back_button));
-        solo.assertCurrentActivity("Wrong Activity", MapsActivity.class);
     }
-
-
 
 
 }

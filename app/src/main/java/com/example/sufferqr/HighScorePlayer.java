@@ -1,5 +1,9 @@
 package com.example.sufferqr;
 
+/**
+ * highest total scores user info saving
+ * highest unique QR code score user info saving
+ */
 public class HighScorePlayer {
     private int rank;
     private String username;
