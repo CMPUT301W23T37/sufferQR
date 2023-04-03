@@ -5,6 +5,7 @@ import static android.content.ContentValues.TAG;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Editable;
@@ -174,6 +175,8 @@ public class RegisterPage extends AppCompatActivity {
 
                     User user = new User(usernameEntered, emailEntered, qrIdGenerated, QRcount, highest, lowest, sum, scores, allowEmail, allowQrid, allowScan);
                     db.collection("Player").document(android_id).set(user);
+                    Intent i = new Intent(RegisterPage.this, DashBoard.class);
+                    startActivity(i);
                     finish();
                 } else{
                     Toast.makeText(RegisterPage.this, "Please enter a correct email!", Toast.LENGTH_SHORT).show();

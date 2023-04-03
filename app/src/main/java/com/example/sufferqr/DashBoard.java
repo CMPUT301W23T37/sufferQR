@@ -52,7 +52,7 @@ import java.util.stream.Collectors;
  * it will have a short cut to camera, the total number of the score collected
  * the total number of code been scanned, the highest score ever, and the score for
  * the last code scanned. Also, a small scale of map will display at the bottom with
- * indications of surrounding scannable code
+ * indications of surrounding scan-able code
  *
  */
 public class DashBoard extends DrawerBase {
@@ -70,6 +70,7 @@ public class DashBoard extends DrawerBase {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             int rank = 1;
+
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 List<Long> scoresList = (List<Long>) document.get("scores");
                                 if (scoresList != null && !scoresList.isEmpty()) {
@@ -94,10 +95,6 @@ public class DashBoard extends DrawerBase {
         activityDashBoardBinding = ActivityDashBoardBinding.inflate(getLayoutInflater());
         setContentView(activityDashBoardBinding.getRoot());
         allocateActivityTitle("Suffer QR");
-
-
-
-
 
         // click qr code icon to scan code
         ImageView qrScan = findViewById(R.id.qr_image);
@@ -166,49 +163,8 @@ public class DashBoard extends DrawerBase {
                     if(!userInfo.exists()){
                         Intent i = new Intent(DashBoard.this, RegisterPage.class);
                         startActivity(i);
+                        finish();
                     }
-//                    else {
-//                        // get the score list
-//                        List<Long> scoresList = (List<Long>) userInfo.get("scores");
-//                        int length = 0;
-//                        if (scoresList.size() != 0) {
-//                            length = scoresList.size();
-//                        }
-//                        // check if there is any code record
-//                        if (length != 0) {
-//                            // set last scan
-//                            lScan.setText(getString(R.string.last_scan_number, String.valueOf(scoresList.get(0))));
-//
-//                            // set percentage that point increased
-//                            double pPercent;
-//
-//                            String sum = String.valueOf(userInfo.get("sumScore"));
-//
-//                            pPercent = (scoresList.get(0)/(Double.parseDouble(sum)-scoresList.get(0))) * 100;
-//
-//                            pointPercent.setText(getString(R.string.point_percent, pPercent));
-//
-//                            // sort the score list in reverse order
-//                            List<Long> scoresSorted = scoresList.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
-//
-//                            // set total qr code scanned
-//                            if (length == 1 && scoresSorted.get(0) == 0) {
-//                                totalQR.setText(String.valueOf(0));
-//                            } else {
-//                                totalQR.setText(String.valueOf(length));
-//                            }
-//
-//                            // set total points
-//                            long sumScores = 0;
-//                            for (int i = 0; i < length; i++) {
-//                                sumScores += scoresList.get(i);
-//                            }
-//                            totalPoint.setText(String.valueOf(sumScores));
-//
-//                            // set highest score
-//                            hScore.setText(String.valueOf(scoresSorted.get(0)));
-//                        }
-//                    }
                 } else {
                     Log.d(TAG, "failed with ", task.getException());
                 }
@@ -248,8 +204,10 @@ public class DashBoard extends DrawerBase {
 
                             pPercent = (scoresList.get(0)/(Double.parseDouble(sum)-scoresList.get(0))) * 100;
 
-                            if (scoresList.size() == 1){
+                            if (scoresList.size() == 1 && scoresList.get(0) != 0){
                                 pointPercent.setText("+100%");
+                            } else if(scoresList.get(0) == 0){
+                                pointPercent.setText("+0%");
                             } else{
                                 pointPercent.setText(getString(R.string.point_percent, pPercent));
                             }
@@ -277,7 +235,13 @@ public class DashBoard extends DrawerBase {
                             hScore.setText(String.valueOf(userHighestScore));
 
                             // set highest rank
-                            getUserRank(android_id, userHighestScore,highest_rank);
+                            if(! (Boolean) userInfo.get("allowViewScanRecord")){
+                                highest_rank.setText("N/A");
+                            }else{
+                                getUserRank(android_id, userHighestScore, highest_rank);
+                            }
+
+
 
                             // set total rank
                             Query query = db.collection("Player").orderBy("sumScore", Query.Direction.DESCENDING);
@@ -285,16 +249,20 @@ public class DashBoard extends DrawerBase {
                                 @Override
                                 public void onEvent(@Nullable QuerySnapshot value, @Nullable
                                 FirebaseFirestoreException error) {
-                                    //Data.clear();
                                     int i = 0;
-                                    for(QueryDocumentSnapshot doc: value) {
-                                        Log.d("Sample", String.valueOf(doc.getData().get("sumScore")));
-                                        String tempScore = (String) doc.getData().get("sumScore").toString();
-                                        int intScore = Integer.valueOf(tempScore);
-                                        i += 1;
-                                        int totalRank = i;
-                                        if (tempScore.equals(sum)){
-                                            total_rank.setText(String.valueOf(totalRank));
+
+                                    if(! (Boolean) userInfo.get("allowViewScanRecord")){
+                                        total_rank.setText("N/A");
+                                    }else {
+                                        for (QueryDocumentSnapshot doc : value) {
+//                                            Log.d("Sample", String.valueOf(doc.getData().get("sumScore")));
+                                            String tempScore = (String) doc.getData().get("sumScore").toString();
+                                            int intScore = Integer.valueOf(tempScore);
+                                            i += 1;
+                                            int totalRank = i;
+                                            if (tempScore.equals(sum)) {
+                                                total_rank.setText(String.valueOf(totalRank));
+                                            }
                                         }
                                     }
                                 }
@@ -302,11 +270,6 @@ public class DashBoard extends DrawerBase {
 
                         }
                     }
-                } else {
-//                    Intent i = new Intent(DashBoard.this, RegisterPage.class);
-//                    startActivity(i);
-//                    DashBoard.this.onDestroy();
-//                    finish();
                 }
 
             }

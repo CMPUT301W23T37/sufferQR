@@ -2,6 +2,7 @@ package com.example.sufferqr;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -21,8 +22,10 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.robotium.solo.Solo;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -49,6 +52,15 @@ public class userUITest {
     }
 
     /**
+     * close activity after each test
+     * @throws Exception if not correctly closed
+     */
+    @After
+    public void tearDown() throws Exception{
+        solo.finishOpenedActivities();
+    }
+
+    /**
      * Gets the Activity
      *
      * @throws Exception something
@@ -57,6 +69,7 @@ public class userUITest {
     public void start() throws Exception {
         Activity activity = rule.getActivity();
     }
+
 
     /**
      * This method is used to test if user can use this button
@@ -141,9 +154,15 @@ public class userUITest {
         solo.enterText((EditText) solo.getView(R.id.userEmail_editProfile), "rHuang@uablerta.ca");
         assertTrue(solo.waitForText("rHuang@uablerta.ca", 1, 3000));
 
+        // perform changes
+        onView(withId(R.id.allow_email)).perform(click());
+        onView(withId(R.id.allow_scan_record)).perform(click());
+        onView(withId(R.id.allow_qrid)).perform(click());
+
         solo.clickOnButton("Apply");
         solo.assertCurrentActivity("Wrong Activity", DashBoard.class);
 
     }
+
 
 }

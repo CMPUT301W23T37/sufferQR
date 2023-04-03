@@ -1,12 +1,17 @@
 package com.example.sufferqr;
 
+import static com.mapbox.mapboxsdk.Mapbox.getApplicationContext;
+
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.Image;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -27,7 +32,14 @@ import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.util.ArrayList;
+import java.util.Map;
 
+/**
+ * This class is the last part of the leader board of the application
+ * It will display a list of game-wide high unique QR code score.
+ * The top 10 users with the highest unique QR code score are displayed in descending order based on the scores.
+ * user can see those users' username, scores and QR code (generate by qrid)
+ */
 
 public class Highest extends Fragment {
     FirebaseFirestore db;
@@ -51,7 +63,7 @@ public class Highest extends Fragment {
         ArrayList<HighScorePlayer> Data = new ArrayList<>();
 
 
-        Query query = db.collection("Player").orderBy("highestScore", Query.Direction.DESCENDING).limit(10);
+        Query query = db.collection("Player").whereEqualTo("allowViewScanRecord",true).orderBy("highestScore", Query.Direction.DESCENDING).limit(10);
 
         query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -73,23 +85,53 @@ public class Highest extends Fragment {
                         FirstUsername.setText(name);
                         FirstScore.setText(score);
                         userIdQrImage = view.findViewById(R.id.total_first_qr);
+                        userIdQrImage.setClickable(true);
+                        userIdQrImage.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                String name = (String) FirstUsername.getText();
+                                Intent intent = new Intent(requireActivity(),OtherUser.class);
+                                intent.putExtra("username",name);
+                                startActivity(intent);
+                            }
+                        });
                     }
                     else if (i == 2) {
                         SecondUsername.setText(name);
                         SecondScore.setText(score);
                         userIdQrImage = view.findViewById(R.id.total_second_qr);
+                        userIdQrImage.setClickable(true);
+                        userIdQrImage.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                String name = (String) SecondUsername.getText();
+                                Intent intent = new Intent(requireActivity(),OtherUser.class);
+                                intent.putExtra("username",name);
+                                startActivity(intent);
+                            }
+                        });
                     }
                     else if (i == 3) {
                         ThirdUsername.setText(name);
                         ThirdScore.setText(score);
                         userIdQrImage = view.findViewById(R.id.total_thrid_qr);
-                    }
-                    else if (i > 3) {
+                        userIdQrImage.setClickable(true);
+                        userIdQrImage.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                String name = (String) ThirdUsername.getText();
+                                Intent intent = new Intent(requireActivity(),OtherUser.class);
+                                intent.putExtra("username",name);
+                                startActivity(intent);
+                            }
+                        });
+                    } else {
                         Data.add(new HighScorePlayer(rank,name,intScore,userQRid));
                         HighScorePlayerList adapter = new HighScorePlayerList(requireContext(), Data);
                         highScorePlayerArrayList = view.findViewById(R.id.ranks_listview);
                         highScorePlayerArrayList.setAdapter(adapter);
                     }
+
                     String qrCode = userQRid + name;
                     MultiFormatWriter mWriter = new MultiFormatWriter();
                     try {
@@ -104,6 +146,19 @@ public class Highest extends Fragment {
                 }
             }
         });
+
+        highScorePlayerArrayList = view.findViewById(R.id.ranks_listview);
+        highScorePlayerArrayList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                HighScorePlayer highScorePlayer = (HighScorePlayer) parent.getItemAtPosition(position);
+                String name = highScorePlayer.getUsername();
+                Intent intent = new Intent(requireActivity(),OtherUser.class);
+                intent.putExtra("username",name);
+                startActivity(intent);
+            }
+        });
+
         return view;
     }
 }

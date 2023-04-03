@@ -59,6 +59,7 @@ public class EditProfile extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         String oldName = extras.getString("username");
 
+        applyButton = findViewById(R.id.applyButton_editProfile);
         username = findViewById(R.id.userName_editProfile);
         userName_editProfile_layout = findViewById(R.id.userName_editProfile_layout);
         username.addTextChangedListener(new TextWatcher() {
@@ -72,9 +73,9 @@ public class EditProfile extends AppCompatActivity {
 
             }
 
-            /*
+            /**
             Auto detect name and email changed
-             */
+             **/
             @Override
             public void afterTextChanged(Editable editable) {
                 if(editable.length() > 0){
@@ -85,24 +86,29 @@ public class EditProfile extends AppCompatActivity {
                             if (error != null){
                                 System.err.println("Listen failed: " + error);
                             }
+
                             String ms = editable.toString();
-                            for (DocumentSnapshot doc : value.getDocuments()){
+
+                            for (DocumentSnapshot doc : value.getDocuments()) {
 //                                Log.d(TAG, "name: " + doc.get("name"));
-                                if(!ms.equals(doc.get("name")) || ms.equals(oldName)){
+                                if (!ms.equals(doc.get("name")) || ms.equals(oldName)) {
                                     Log.d(TAG, "not find");
                                     userName_editProfile_layout.setErrorEnabled(false);
                                     userName_editProfile_layout.setError("");
                                     userName_editProfile_layout.setHelperText("Username looks Good!");
+                                    applyButton.setEnabled(true);
                                 } else {
                                     userName_editProfile_layout.setErrorEnabled(true);
                                     userName_editProfile_layout.setError("Username already exists");
+                                    applyButton.setEnabled(false);
                                     break;
                                 }
                             }
                         }
                     });
                 } else{
-                    userName_editProfile_layout.setError("Username cannot be empty");
+                    userName_editProfile_layout.setError("User name can not be empty");
+                    applyButton.setEnabled(false);
                 }
             }
         });
@@ -135,13 +141,14 @@ public class EditProfile extends AppCompatActivity {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent i = new Intent(EditProfile.this, UserProfile.class);
+                startActivity(i);
                 finish();
             }
         });
 
 
         // apply change action
-        applyButton = findViewById(R.id.applyButton_editProfile);
         applyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

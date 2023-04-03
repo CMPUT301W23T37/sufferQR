@@ -49,6 +49,7 @@ import java.util.Map;
 /**
  * a list for showing nearby qr list
  */
+
 public class nearbyQrCodeList extends AppCompatActivity implements LocationListener {
     private Double latitude,longitude;
     private LocationManager locationManager;
@@ -82,8 +83,14 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
 
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();
+        if (location!=null){
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
+        } else {
+            latitude = 0.0;
+            longitude = 0.0;
+        }
+
 
         db = FirebaseFirestore.getInstance();
 
@@ -116,7 +123,7 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
                     double tempLat = (double) doc.getData().get("LocationLatitude");
                     double tempLon = (double) doc.getData().get("LocationLongitude");
                     double dis = isWithinOneKilometer(latitude, longitude, tempLat, tempLon);
-                    if ( dis <= 10000 ) {
+                    if ( dis <= 1000 ) {
                         tempDataHolder.put(dis,data);
                     }
                 }
@@ -140,7 +147,7 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
 
                 Intent scanIntent = new Intent(getApplicationContext(),QRQuickViewScrollingActivity.class);
                 String myname = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-                scanIntent.putExtra("local ",myname);
+                scanIntent.putExtra("localUser",myname);
                 scanIntent.putExtra("qrID", selectQrCode.getQrName());
 
                 Bundle bundle = new Bundle();
@@ -165,6 +172,11 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
             }
         });
     }
+
+    /**
+     * get user's location
+     * @param location the updated location
+     */
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
