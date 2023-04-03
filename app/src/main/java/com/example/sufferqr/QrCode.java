@@ -18,14 +18,14 @@ public class QrCode {
     }
 
 
-    String getLocationAddress(){ return (String) this.doc.get("LocationAddress"); }
-    boolean getlocationExist(){ return (boolean) this.doc.get("LocationExist"); }
-    String getLocationLatitude(){ return (String) doc.get("LocationLatitude"); }
-    String getLocationLongitude(){ return (String)doc.get("LocationLongitude"); }
-    String getLocationName(){ return (String) doc.get("LocationName"); }
-    String getQrName(){ return (String) doc.get("QRname"); }
-    String getDate(){ return (String) doc.get("date"); }
-    String getPoints(){ return (String) doc.get("points"); }
+    String getLocationAddress(){ return String.valueOf(this.doc.get("LocationAddress")); }
+    boolean getlocationExist(){ return (Boolean) this.doc.get("LocationExist"); }
+    String getLocationLatitude(){ return String.valueOf(doc.get("LocationLatitude")); }
+    String getLocationLongitude(){ return String.valueOf(doc.get("LocationLongitude")); }
+    String getLocationName(){ return String.valueOf(doc.get("LocationName")); }
+    String getQrName(){ return String.valueOf(doc.get("QRname")); }
+    String getDate(){ return String.valueOf(doc.get("date")); }
+    String getPoints(){ return String.valueOf(doc.get("points")); }
 
     String getDis(){
         DecimalFormat df = new DecimalFormat("0.00");
