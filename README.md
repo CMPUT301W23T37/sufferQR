@@ -18,3 +18,6 @@ Maps of QRcode
 To see how this project develop click ![here](https://github.com/CMPUT301W23T37/sufferQR/wiki)
 
 To Download apk,click ![here](https://github.com/CMPUT301W23T37/sufferQR/releases/download/Release/sufferQR.apk) 
+
+Rank image source:<a href="https://www.flaticon.com/free-icons/rank" title="rank icons">Rank icons created by Flat Icons - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/rank" title="rank icons">Rank icons created by Freepik - Flaticon</a>
