@@ -13,6 +13,8 @@
         android:layout_height="match_parent"
         android:divider="@null"
         android:dividerHeight="0dp"
+        android:nestedScrollingEnabled="true"
+        android:isScrollContainer="true"
         tools:layout_editor_absoluteX="-40dp"
         tools:layout_editor_absoluteY="0dp" />
 
