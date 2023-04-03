@@ -54,7 +54,7 @@ public class GameQRRecordDBTest {
     private Solo solo;
 
     @Rule
-    public ActivityTestRule<MainActivity> rule = new ActivityTestRule<>(MainActivity.class, true, true);
+    public ActivityTestRule<DashBoard> rule = new ActivityTestRule<>(DashBoard.class, true, true);
 
 
 

@@ -20,6 +20,9 @@ public class MapsUnitTest {
     @Mock
     private LatLng location2 ;
 
+    /**
+     * same locating
+     */
     @Test
     public void testIsWithinOneKilometer_sameLocation_returnsTrue() {
         // Given
@@ -33,6 +36,9 @@ public class MapsUnitTest {
         assertTrue(result);
     }
 
+    /**
+     * with in 1 KM
+     */
     @Test
     public void testIsWithinOneKilometer_withinOneKilometer_returnsTrue() {
         // Given
@@ -46,6 +52,9 @@ public class MapsUnitTest {
         assertTrue(result);
     }
 
+    /**
+     * out of 1 km
+     */
     @Test
     public void testIsWithinOneKilometer_outsideOneKilometer_returnsFalse() {
         // Given

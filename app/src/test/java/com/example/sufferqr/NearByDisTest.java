@@ -4,8 +4,13 @@ import static com.example.sufferqr.nearbyQrCodeList.isWithinOneKilometer;
 import static org.junit.Assert.assertEquals;
 import org.junit.jupiter.api.Test;
 
-
+/**
+ * distance test
+ */
 public class NearByDisTest {
+    /**
+     * same distance check
+     */
     @Test
     public void testIsWithinOneKilometer_sameLocation_returnsTrue() {
         // Given
@@ -18,6 +23,9 @@ public class NearByDisTest {
         assertEquals(0.0, result, 0.001);
     }
 
+    /**
+     * with in 1 km
+     */
     @Test
     public void testIsWithinOneKilometer_withinOneKilometer_returnsTrue() {
 
@@ -28,6 +36,9 @@ public class NearByDisTest {
         assertEquals(808.252, result, 1);
     }
 
+    /**
+     * out of 1 km
+     */
     @Test
     public void testIsWithinOneKilometer_outsideOneKilometer_returnsFalse() {
         // When

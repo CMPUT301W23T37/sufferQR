@@ -48,6 +48,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * ser edited QRcode content.same Qr,comment
+ */
 public class QRQuickViewScrollingActivity extends AppCompatActivity {
 
     private ActivityQrquickViewScrollingBinding binding;
