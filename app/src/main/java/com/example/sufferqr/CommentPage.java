@@ -169,7 +169,6 @@ public class CommentPage extends AppCompatActivity {
                 ref
                         .collection("Comment")
                         .whereEqualTo("comment", comToDel)
-                        .whereEqualTo("userName", uName)
                         .get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
