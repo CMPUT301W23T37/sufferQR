@@ -240,6 +240,7 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback, sear
 
             LatLng currentLocation = new LatLng(latitude, longitude);
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16));
+            updateMarkersWithinOneKilometer(currentLocation);
 
         }
     }
