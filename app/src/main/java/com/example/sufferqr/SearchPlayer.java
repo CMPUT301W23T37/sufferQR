@@ -53,7 +53,7 @@ public class SearchPlayer extends DrawerBase {
 
 
         searchContent = findViewById(R.id.search_content);
-        searchView = findViewById(R.id.search_bar);
+        searchView = findViewById(R.id.searchBar_searchPlayer);
         searchView.clearFocus();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
