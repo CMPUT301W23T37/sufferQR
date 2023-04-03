@@ -15,17 +15,23 @@ import android.provider.Settings;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
+import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.robotium.solo.Solo;
 
 import org.hamcrest.Matcher;
@@ -78,5 +84,30 @@ public class searchTest {
         solo.assertCurrentActivity("Wrong Activity", SearchPlayer.class);
         onView(withId(R.id.searchBar_searchPlayer)).perform(click()).check(matches(isDisplayed()));
     }
+
+    /**
+     * Test if user able to find
+     */
+    @Test
+    public void testSearchResult(){
+        solo.assertCurrentActivity("Wrong Activity", SearchPlayer.class);
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("Player").orderBy("sumScore", Query.Direction.DESCENDING).limit(1).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (value != null) {
+                    DocumentSnapshot documentSnapshot = value.getDocuments().get(0);
+                    String name =String.valueOf( documentSnapshot.getData().get("name"));
+
+                    final SearchPlayer activity = rule.getActivity();
+                    SearchView searchView = (SearchView) solo.getView(R.id.searchBar_searchPlayer);
+                    searchView.setQuery(name,true);
+                    solo.waitForText(name,1,3000);
+                }
+
+            }
+        });
+    }
+
 
 }
