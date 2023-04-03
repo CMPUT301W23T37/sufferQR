@@ -62,6 +62,17 @@ public class DashBoard extends DrawerBase {
     final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
+    int len;
+    long oldPt;
+
+
+
+    /**
+     * get rank of the user
+     * @param userID device id
+     * @param userHighestScore highest socre
+     * @param highest_rank view resource
+     */
     private void getUserRank(String userID, long userHighestScore,TextView highest_rank) {
         db.collection("Player")
                 .get()
@@ -89,6 +100,13 @@ public class DashBoard extends DrawerBase {
     }
 
 
+    /**
+     * lauch class
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -165,12 +183,23 @@ public class DashBoard extends DrawerBase {
                         startActivity(i);
                         finish();
                     }
+                    User u = userInfo.toObject(User.class);
+
+                    List<Long> scoresList = u.getScores();
+                    if(scoresList.size() > 0){
+                        len = u.getQRcount();
+                        oldPt = scoresList.get(0);
+                    } else {
+                        len = 0;
+                        oldPt = 0;
+                    }
+
                 } else {
                     Log.d(TAG, "failed with ", task.getException());
                 }
             }
         });
-        userAAID.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+        userAAID.addSnapshotListener(MetadataChanges.INCLUDE, new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {
@@ -180,10 +209,7 @@ public class DashBoard extends DrawerBase {
                 DocumentSnapshot userInfo = value;
                 if (value != null && value.exists()) {
                     if(!userInfo.exists()){
-//                        Intent i = new Intent(DashBoard.this, RegisterPage.class);
-//                        startActivity(i);
-//                        DashBoard.this.onDestroy();
-//                        finish();
+                        Log.d(TAG, "User does not exits");
                     }
                     else {
                         // get the score list
@@ -206,8 +232,11 @@ public class DashBoard extends DrawerBase {
 
                             if (scoresList.size() == 1 && scoresList.get(0) != 0){
                                 pointPercent.setText("+100%");
-                            } else if(scoresList.get(0) == 0){
+                            } else if((scoresList.get(0) == 0) && oldPt == 0){
                                 pointPercent.setText("+0%");
+                            } else if ((scoresList.size() == (len - 1)) && scoresList.get(0) != 0) {
+                                pPercent = oldPt / (Double.parseDouble(sum) + oldPt) * 100;
+                                pointPercent.setText(getString(R.string.point_nPercent, pPercent));
                             } else{
                                 pointPercent.setText(getString(R.string.point_percent, pPercent));
                             }

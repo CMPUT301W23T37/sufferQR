@@ -8,7 +8,7 @@
     android:orientation="vertical">
 
     <androidx.appcompat.widget.SearchView
-        android:id="@+id/search_bar"
+        android:id="@+id/searchBar_searchPlayer"
         android:layout_width="match_parent"
         android:layout_height="40sp"
         android:layout_marginStart="15sp"

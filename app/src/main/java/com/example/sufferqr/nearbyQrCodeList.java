@@ -194,7 +194,7 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
     @param qrLongitude: a double which represent the longitude of nearby QRcode.
     @return return the boolean that represented whether in the required area.
      */
-    public double isWithinOneKilometer(double userLatitude, double userLongitude, double qrLatitude, double qrLongitude) {
+    public static double isWithinOneKilometer(double userLatitude, double userLongitude, double qrLatitude, double qrLongitude) {
         final int R = 6371; // Radius of the earth in km
         double latDistance = Math.toRadians(userLatitude - qrLatitude);
         double lonDistance = Math.toRadians(userLongitude - qrLongitude);

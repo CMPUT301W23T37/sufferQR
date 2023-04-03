@@ -388,7 +388,7 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback, sear
      * @param location2 something
      * @return true if within 1km, false if not
      */
-    public boolean isWithinOneKilometer(LatLng location1, LatLng location2) {
+    public static boolean isWithinOneKilometer(LatLng location1, LatLng location2) {
         final int R = 6371; // Radius of the earth in km
         double latDistance = Math.toRadians(location2.latitude - location1.latitude);
         double lonDistance = Math.toRadians(location2.longitude - location1.longitude);
@@ -446,7 +446,8 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback, sear
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
                 builder.setTitle("select your QRcode")
-                        .setCancelable(false)
+                        .setCancelable(true)
+                        .setNegativeButton("Cancel", null)
                         .setItems(cs, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
