@@ -24,6 +24,8 @@ public class SameQrListAdapter extends ArrayAdapter<sameQrListContext> {
 
     /**
      * set up list item
+     * @param context context
+     * @param qrname name
      */
     public SameQrListAdapter(Context context, ArrayList<sameQrListContext> qrname){
         super(context,0, qrname);
