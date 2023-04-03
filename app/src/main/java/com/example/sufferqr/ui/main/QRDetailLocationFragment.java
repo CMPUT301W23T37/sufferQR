@@ -31,7 +31,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.sufferqr.MainActivity;
+import com.example.sufferqr.DashBoard;
 import com.example.sufferqr.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -89,7 +89,7 @@ public class QRDetailLocationFragment extends Fragment implements OnMapReadyCall
     private static final int REQUEST_CHECK_SETTING = 10;
     private static final long UPDATE_INTERVAL = 10;
     private static final long FAST_UPDATE_IN_ML = 100;
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = DashBoard.class.getSimpleName();
     MapboxMap mapboxMap;
     MapView mapView;
 

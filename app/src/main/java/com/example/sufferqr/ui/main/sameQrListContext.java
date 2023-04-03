@@ -10,6 +10,7 @@ public class sameQrListContext {
 
     /**
      * load info into list
+     * @param myUser user name
      */
     public sameQrListContext(String myUser){
         user = myUser;

@@ -44,10 +44,10 @@ public class SearchPlayerAdapter extends ArrayAdapter<User> {
 
     /**
      * set up on click action
-     * @param position
-     * @param convertView
-     * @param parent
-     * @return view
+     * @param position locaiton tabed
+     * @param convertView view
+     * @param parent parent group
+     * @return view view
      */
     @NonNull
     @Override

@@ -11,18 +11,9 @@ import static org.junit.Assert.assertTrue;
 import android.app.Activity;
 import android.widget.EditText;
 
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.navigation.Navigation;
-import androidx.navigation.testing.TestNavHostController;
-import androidx.test.core.app.ApplicationProvider;
-import androidx.test.espresso.DaggerBaseLayerComponent;
-import androidx.test.espresso.action.ViewActions;
-import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
-import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.robotium.solo.Solo;
 
 import org.junit.After;

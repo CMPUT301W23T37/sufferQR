@@ -198,7 +198,7 @@ public class ScanCode extends DrawerBase {
         String face="";
         int points = 0;
         try {
-            hashed =  QRHash.toHexString(QRHash.getSHA(QRstring));
+            hashed =  QRhash.toHexString(QRhash.getSHA(QRstring));
             EmojiDraw emojiDraw = new EmojiDraw(hashed);
             face = emojiDraw.draw(); //call to draw the visual respresentation
 
@@ -228,12 +228,12 @@ public class ScanCode extends DrawerBase {
         finish();
     }
 
-    private void validation(ArrayList<String> codes){
+    private void validation(ArrayList<String> codes,List<Barcode> barcodes){
         ArrayList<String> hashcode = new ArrayList<>();
         // forum arraylist of hash
         for (int i=0;i<codes.size();i++){
             try {
-                hashcode.add(QRHash.toHexString(QRHash.getSHA(codes.get(i))));
+                hashcode.add(QRhash.toHexString(QRhash.getSHA(codes.get(i))));
             } catch (Exception e) {
                 hashcode.add("error");
             }
@@ -261,6 +261,7 @@ public class ScanCode extends DrawerBase {
                             int index =  hashcode.indexOf(hashed);
                             codes.remove(index);
                             hashcode.remove(index);
+                            barcodes.remove(index);
                         }
                         if (codes.contains(thisUserQRID+thisUserName) && !thisUserQRID.equals("")){
                             forwardUserName=thisUserName;
@@ -318,7 +319,22 @@ public class ScanCode extends DrawerBase {
                         }
                     } else {
                         System.out.println("more than one");
-                        CharSequence[] cs = codes.toArray(new CharSequence[codes.size()]);
+                        ArrayList<String> DisplayCode = new ArrayList<>();
+                        for (int i=0;i<codes.size();i++){
+                            if (barcodes.get(i).getValueType() == Barcode.TYPE_WIFI){
+                                DisplayCode.add("WIFI Password");
+                            } else if (barcodes.get(i).getValueType() == Barcode.TYPE_DRIVER_LICENSE) {
+                                DisplayCode.add("Driver Licennse");
+                            } else if (codes.get(i).substring(0, 5).equals("shc:/")) {
+                                DisplayCode.add("Vacine Passort");
+                            } else if (codes.get(i).length() <= 15) {
+                                DisplayCode.add(codes.get(i));
+                            } else {
+                                DisplayCode.add(codes.get(i).substring(0,15)+" ...");
+                            }
+                        }
+
+                        CharSequence[] cs = DisplayCode.toArray(new CharSequence[DisplayCode.size()]);
                         AlertDialog.Builder builder = new AlertDialog.Builder(ScanCode.this);
                         builder.setTitle("select your QRcode")
                                 .setCancelable(false)
@@ -421,7 +437,7 @@ public class ScanCode extends DrawerBase {
                             qrcodes.add(rawValue);
                         }
                         if (qrcodes.size()>=1){
-                            validation(qrcodes);
+                            validation(qrcodes,barcodes);
                         } else {
                             Toast.makeText(getApplicationContext(),"no QRcode found",Toast.LENGTH_SHORT).show();
                             relativeLayout.setVisibility(View.INVISIBLE);
@@ -485,11 +501,10 @@ public class ScanCode extends DrawerBase {
 
     /**
      * check permission status
-     * @param requestCode The request code passed in {@link (
-     * android.app.Activity, String[], int)}
+     * @param requestCode The request code passed in integer
      * @param permissions The requested permissions. Never null.
      * @param grantResults The grant results for the corresponding permissions
-     *     which is either {@link android.content.pm.PackageManager#PERMISSION_GRANTED}
+     *     which is either PERMISSION_GRANTED
      *     or {@link android.content.pm.PackageManager#PERMISSION_DENIED}. Never null.
      *
      */
