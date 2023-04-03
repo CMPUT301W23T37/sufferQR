@@ -10,7 +10,7 @@ import com.google.android.material.tabs.TabLayout;
 import org.checkerframework.checker.units.qual.A;
 
 /**
- * leadboard
+ * leadboard for user and score
  */
 public class LeaderBoard extends DrawerBase {
     TabLayout tabLayout;

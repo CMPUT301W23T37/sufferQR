@@ -11,6 +11,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import com.google.android.gms.maps.model.LatLng;
 
+/**
+ * 1km distance true/false test
+ */
 @RunWith(MockitoJUnitRunner.class)
 public class MapsUnitTest {
 
