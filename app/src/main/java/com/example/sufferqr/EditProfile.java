@@ -141,6 +141,8 @@ public class EditProfile extends AppCompatActivity {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent i = new Intent(EditProfile.this, UserProfile.class);
+                startActivity(i);
                 finish();
             }
         });
