@@ -1,5 +1,10 @@
 package com.example.sufferqr;
 
+import android.content.Context;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
+
+
 
 import java.util.Random;
 
@@ -9,7 +14,6 @@ import java.util.Random;
 public class EmojiDraw {
     private final String qrhash;
     private final String[][] face;
-
 
     /**
      * stars the class by taking qrhash as input and generating a face
@@ -30,6 +34,7 @@ public class EmojiDraw {
         int sizeX = face[0].length;
         int sizeY = face.length;
 
+
         // find the length of the longest row
         int longestRowLength = 0;
         for (String[] row : face) {
@@ -49,7 +54,7 @@ public class EmojiDraw {
             for (int j = 0; j < sizeX; j++) {
                 String sa= face[i][j];
                 output.append(sa);
-                System.out.print(face[i][j]);
+
             }
             System.out.println();
             output.append("\n");
@@ -59,7 +64,7 @@ public class EmojiDraw {
 
 
     /**
-     * generates the face itself by using 2D arrays to combine alll the facial features into 1 2D list
+     * generates the face itself by using 2D arrays to combine all the facial features into 1 2D list
      * @return string
      * */
     private String[][] generateFace() {
@@ -67,6 +72,7 @@ public class EmojiDraw {
         int sizeY = 13 + random.nextInt(5); // random size between 13 and 18 for the y-axis
         int sizeX = 20 + random.nextInt(6); // random size between 18 and 24 for the x-axis
         String[][] face = new String[sizeY][sizeX];
+
 
         // draw face structure
         String structure = "#";
@@ -84,6 +90,7 @@ public class EmojiDraw {
                 structure = "&";
                 break;
         }
+
 
         for (int i = 0; i < sizeY; i++) {
             for (int j = 0; j < sizeX; j++) {
@@ -304,8 +311,10 @@ public class EmojiDraw {
 
         }
 
+
         return face;
     }
+
 
 }
 
