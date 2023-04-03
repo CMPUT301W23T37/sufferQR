@@ -446,7 +446,8 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback, sear
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
                 builder.setTitle("select your QRcode")
-                        .setCancelable(false)
+                        .setCancelable(true)
+                        .setNegativeButton("Cancel", null)
                         .setItems(cs, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
