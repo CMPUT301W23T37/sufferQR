@@ -198,7 +198,7 @@ public class ScanCode extends DrawerBase {
         String face="";
         int points = 0;
         try {
-            hashed =  QRHash.toHexString(QRHash.getSHA(QRstring));
+            hashed =  QRhash.toHexString(QRhash.getSHA(QRstring));
             EmojiDraw emojiDraw = new EmojiDraw(hashed);
             face = emojiDraw.draw(); //call to draw the visual respresentation
 
@@ -233,7 +233,7 @@ public class ScanCode extends DrawerBase {
         // forum arraylist of hash
         for (int i=0;i<codes.size();i++){
             try {
-                hashcode.add(QRHash.toHexString(QRHash.getSHA(codes.get(i))));
+                hashcode.add(QRhash.toHexString(QRhash.getSHA(codes.get(i))));
             } catch (Exception e) {
                 hashcode.add("error");
             }

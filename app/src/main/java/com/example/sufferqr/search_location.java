@@ -27,12 +27,18 @@ import java.util.Arrays;
 public class search_location extends DialogFragment {
     private static final int AUTOCOMPLETE_REQUEST_CODE = 1;
 
+    /**
+     * search listener
+     */
     interface SearchDialogListener {
         void onSearch(String address);
     }
 
     private SearchDialogListener listener;
 
+    /**
+     * @param context attach listener
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -43,6 +49,11 @@ public class search_location extends DialogFragment {
         }
     }
 
+    /**
+     * create class
+     * @param savedInstanceState If the fragment is being re-created from
+     * a previous saved state, this is the state.
+     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +67,17 @@ public class search_location extends DialogFragment {
         startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
     }
 
+    /**
+     * poi searching result
+     * @param requestCode The integer request code originally supplied to
+     *                    startActivityForResult(), allowing you to identify who this
+     *                    result came from.
+     * @param resultCode The integer result code returned by the child activity
+     *                   through its setResult().
+     * @param data An Intent, which can return result data to the caller
+     *               (various data can be attached to Intent "extras").
+     *
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {

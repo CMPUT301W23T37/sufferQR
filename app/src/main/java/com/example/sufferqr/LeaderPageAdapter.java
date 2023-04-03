@@ -8,12 +8,24 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import com.example.sufferqr.Highest;
 import com.example.sufferqr.Total;
 
+/**
+ * leaderboard ViewPager adapter
+ */
 public class LeaderPageAdapter extends FragmentStateAdapter {
 
+    /**
+     * launch class
+     * @param fragmentActivity fragment name
+     */
     public LeaderPageAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
     }
 
+    /**
+     * draw viewPager
+     * @param position clicked item
+     * @return items
+     */
     @NonNull
     @Override
     public Fragment createFragment(int position) {
@@ -27,6 +39,10 @@ public class LeaderPageAdapter extends FragmentStateAdapter {
         }
     }
 
+    /**
+     * number of item
+     * @return total
+     */
     @Override
     public int getItemCount() {
         return 2;

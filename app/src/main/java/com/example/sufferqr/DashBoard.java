@@ -61,10 +61,18 @@ public class DashBoard extends DrawerBase {
 
     final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+
     int len;
     long oldPt;
 
 
+
+    /**
+     * get rank of the user
+     * @param userID device id
+     * @param userHighestScore highest socre
+     * @param highest_rank view resource
+     */
     private void getUserRank(String userID, long userHighestScore,TextView highest_rank) {
         db.collection("Player")
                 .get()
@@ -92,6 +100,13 @@ public class DashBoard extends DrawerBase {
     }
 
 
+    /**
+     * lauch class
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

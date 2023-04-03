@@ -13,7 +13,7 @@ import java.security.NoSuchAlgorithmException;
 /**
  * class provides hash value of a string in the form of hexidecimal values
  */
-class  QRHash {
+class  QRhash {
     /**
      *turns the string input into a hash value in the form of a byte array
      *@param input the input string
