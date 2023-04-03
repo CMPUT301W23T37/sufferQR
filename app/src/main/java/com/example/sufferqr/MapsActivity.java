@@ -3,6 +3,7 @@ package com.example.sufferqr;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.libraries.places.api.Places;
+import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 
@@ -19,14 +20,20 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -41,13 +48,23 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.maps.android.collections.MarkerManager;
+import com.mapbox.api.geocoding.v5.models.CarmenFeature;
+import com.mapbox.geojson.Point;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete;
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions;
+
 import android.location.Address;
 import android.location.Geocoder;
 
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 //extends FragmentActivity,Drawerbase implements OnMapReadyCallback
 
@@ -116,7 +133,7 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback, sear
                             if (isWithinOneKilometer(searchedLocation, latLng)) {
                                 String id = name;
                                 String point = points;
-                                MyClusterItem clusterItem = new MyClusterItem(latLng.latitude, latLng.longitude, id, "Points: " + point);
+                                MyClusterItem clusterItem = new MyClusterItem(latLng.latitude, latLng.longitude, id, "Points: " + point,document.getData());
                                 clusterManager.addItem(clusterItem);
                             }
                         }
@@ -155,10 +172,13 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback, sear
         private final String title;
         private final String snippet;
 
-        public MyClusterItem(double lat, double lng, String title, String snippet) {
+        private Map<String,Object> data;
+
+        public MyClusterItem(double lat, double lng, String title, String snippet,Map<String,Object> data1) {
             this.position = new LatLng(lat, lng);
             this.title = title;
             this.snippet = snippet;
+            this.data = data1;
         }
 
         @Override
@@ -172,6 +192,10 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback, sear
 
         public String getSnippet() {
             return snippet;
+        }
+
+        public Map<String,Object> getData(){
+            return this.data;
         }
     }
 
@@ -222,6 +246,22 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback, sear
     }
 
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK && requestCode == 10322) {
+            CarmenFeature feature = PlaceAutocomplete.getPlace(data);
+            Point point = feature.center();
+            Double latitude = point.latitude();
+            Double longitude = point.longitude();
+
+            LatLng currentLocation = new LatLng(latitude, longitude);
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16));
+            updateMarkersWithinOneKilometer(currentLocation);
+
+        }
+    }
+
     /**
      This method initializes the cluster manager, sets up the map and its properties,
      and fetches the QR codes from the Firebase Firestore database.
@@ -266,17 +306,20 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback, sear
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
+                            ArrayList<Map<String,Object>> data = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Double latitude = document.getDouble("LocationLatitude");
                                 Double longitude = document.getDouble("LocationLongitude");
                                 String name = document.getString("QRname");
                                 String points = (String) document.getData().get("points").toString();
 
+
                                 if (latitude != null && longitude != null) {
                                     latitudeList.add(latitude);
                                     longitudeList.add(longitude);
                                     QRnames.add(name);
                                     scores.add(points);
+                                    data.add(document.getData());
                                 }
                             }
 
@@ -287,7 +330,7 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback, sear
 
                                     String id = QRnames.get(i);
                                     String points = scores.get(i);
-                                    MyClusterItem clusterItem = new MyClusterItem(latLng.latitude, latLng.longitude, id, "Points: " + points);
+                                    MyClusterItem clusterItem = new MyClusterItem(latLng.latitude, latLng.longitude, id, "Points: " + points,data.get(i));
                                     clusterManager.addItem(clusterItem);
                                 }
                             }
@@ -309,11 +352,18 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback, sear
         binding.SeachLocationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Create an instance of the search_location DialogFragment
-                search_location searchLocationDialog = new search_location();
+                Intent intent = new PlaceAutocomplete.IntentBuilder().accessToken(getResources().getString(R.string.mapbox_access_token))
+                        .placeOptions(PlaceOptions.builder().backgroundColor(getResources().getColor(R.color.white)).build())
+                        .build(MapsActivity.this);
+                startActivityForResult(intent, 10322);
 
-                // Show the DialogFragment
-                searchLocationDialog.show(getSupportFragmentManager(), "search_location");
+
+
+//                // Create an instance of the search_location DialogFragment
+//                search_location searchLocationDialog = new search_location();
+//
+//                // Show the DialogFragment
+//                searchLocationDialog.show(getSupportFragmentManager(), "search_location");
             }
         });
 
@@ -357,7 +407,73 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback, sear
     private void setUpClusterManager() {
         clusterManager = new ClusterManager<>(this, mMap);
         mMap.setOnCameraIdleListener(clusterManager);
-        mMap.setOnMarkerClickListener(clusterManager);
+        clusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<MyClusterItem>() {
+            @Override
+            public boolean onClusterItemClick(MyClusterItem item) {
+
+                Map<String,Object> hsp = item.getData();
+                String android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+                Intent scanIntent = new Intent(getApplicationContext(),QRQuickViewScrollingActivity.class);
+                scanIntent.putExtra("localUser",android_id);
+                scanIntent.putExtra("qrID",String.valueOf(hsp.get("QRname")));
+
+                Bundle bundle = new Bundle();
+                for (Map.Entry<String, Object> entry : hsp.entrySet()) {
+                    bundle.putString(entry.getKey(),String.valueOf(entry.getValue()));
+                }
+                scanIntent.putExtra("MapData",bundle);
+                startActivity(scanIntent);
+
+                return true;
+            }
+        });
+
+
+
+        clusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<MyClusterItem>() {
+            @Override
+            public boolean onClusterClick(Cluster<MyClusterItem> cluster) {
+                Collection<MyClusterItem> my =  cluster.getItems();
+                ArrayList<String> name = new ArrayList<>();
+                ArrayList<Map<String,Object>> m = new ArrayList<>();
+                for (MyClusterItem iterable_element : my) {
+                    String pt = "    "+String.valueOf(iterable_element.getData().get("points"))+" points";
+                    name.add(iterable_element.getTitle()+pt );
+                    m.add(iterable_element.getData());
+                }
+
+                CharSequence[] cs = name.toArray(new CharSequence[name.size()]);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+                builder.setTitle("select your QRcode")
+                        .setCancelable(false)
+                        .setItems(cs, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Map<String,Object> hsp= m.get(which);
+
+                                String android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+                                Intent scanIntent = new Intent(getApplicationContext(),QRQuickViewScrollingActivity.class);
+                                scanIntent.putExtra("localUser",android_id);
+                                scanIntent.putExtra("qrID",String.valueOf(hsp.get("QRname")));
+
+                                Bundle bundle = new Bundle();
+                                for (Map.Entry<String, Object> entry : hsp.entrySet()) {
+                                    bundle.putString(entry.getKey(),String.valueOf(entry.getValue()));
+                                }
+                                scanIntent.putExtra("MapData",bundle);
+                                startActivity(scanIntent);
+                            }
+                        });
+
+                AlertDialog dialog =  builder.create();
+                dialog.show();
+                return false;
+            }
+        });
+
+
+
     }
 
 
