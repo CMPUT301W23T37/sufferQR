@@ -228,7 +228,7 @@ public class ScanCode extends DrawerBase {
         finish();
     }
 
-    private void validation(ArrayList<String> codes){
+    private void validation(ArrayList<String> codes,List<Barcode> barcodes){
         ArrayList<String> hashcode = new ArrayList<>();
         // forum arraylist of hash
         for (int i=0;i<codes.size();i++){
@@ -261,6 +261,7 @@ public class ScanCode extends DrawerBase {
                             int index =  hashcode.indexOf(hashed);
                             codes.remove(index);
                             hashcode.remove(index);
+                            barcodes.remove(index);
                         }
                         if (codes.contains(thisUserQRID+thisUserName) && !thisUserQRID.equals("")){
                             forwardUserName=thisUserName;
@@ -318,7 +319,22 @@ public class ScanCode extends DrawerBase {
                         }
                     } else {
                         System.out.println("more than one");
-                        CharSequence[] cs = codes.toArray(new CharSequence[codes.size()]);
+                        ArrayList<String> DisplayCode = new ArrayList<>();
+                        for (int i=0;i<codes.size();i++){
+                            if (barcodes.get(i).getValueType() == Barcode.TYPE_WIFI){
+                                DisplayCode.add("WIFI Password");
+                            } else if (barcodes.get(i).getValueType() == Barcode.TYPE_DRIVER_LICENSE) {
+                                DisplayCode.add("Driver Licennse");
+                            } else if (codes.get(i).substring(0, 5).equals("shc:/")) {
+                                DisplayCode.add("Vacine Passort");
+                            } else if (codes.get(i).length() <= 15) {
+                                DisplayCode.add(codes.get(i));
+                            } else {
+                                DisplayCode.add(codes.get(i).substring(0,15)+" ...");
+                            }
+                        }
+
+                        CharSequence[] cs = DisplayCode.toArray(new CharSequence[DisplayCode.size()]);
                         AlertDialog.Builder builder = new AlertDialog.Builder(ScanCode.this);
                         builder.setTitle("select your QRcode")
                                 .setCancelable(false)
@@ -421,7 +437,7 @@ public class ScanCode extends DrawerBase {
                             qrcodes.add(rawValue);
                         }
                         if (qrcodes.size()>=1){
-                            validation(qrcodes);
+                            validation(qrcodes,barcodes);
                         } else {
                             Toast.makeText(getApplicationContext(),"no QRcode found",Toast.LENGTH_SHORT).show();
                             relativeLayout.setVisibility(View.INVISIBLE);
