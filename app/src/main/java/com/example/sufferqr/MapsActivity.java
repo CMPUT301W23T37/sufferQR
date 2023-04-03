@@ -19,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -41,6 +42,12 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.mapbox.api.geocoding.v5.models.CarmenFeature;
+import com.mapbox.geojson.Point;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete;
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions;
+
 import android.location.Address;
 import android.location.Geocoder;
 
@@ -222,6 +229,22 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback, sear
     }
 
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK && requestCode == 10322) {
+            CarmenFeature feature = PlaceAutocomplete.getPlace(data);
+            Point point = feature.center();
+            Double latitude = point.latitude();
+            Double longitude = point.longitude();
+
+            LatLng currentLocation = new LatLng(latitude, longitude);
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16));
+            updateMarkersWithinOneKilometer(currentLocation);
+
+        }
+    }
+
     /**
      This method initializes the cluster manager, sets up the map and its properties,
      and fetches the QR codes from the Firebase Firestore database.
@@ -309,11 +332,18 @@ public class MapsActivity extends DrawerBase implements OnMapReadyCallback, sear
         binding.SeachLocationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Create an instance of the search_location DialogFragment
-                search_location searchLocationDialog = new search_location();
+                Intent intent = new PlaceAutocomplete.IntentBuilder().accessToken(getResources().getString(R.string.mapbox_access_token))
+                        .placeOptions(PlaceOptions.builder().backgroundColor(getResources().getColor(R.color.white)).build())
+                        .build(MapsActivity.this);
+                startActivityForResult(intent, 10322);
 
-                // Show the DialogFragment
-                searchLocationDialog.show(getSupportFragmentManager(), "search_location");
+
+
+//                // Create an instance of the search_location DialogFragment
+//                search_location searchLocationDialog = new search_location();
+//
+//                // Show the DialogFragment
+//                searchLocationDialog.show(getSupportFragmentManager(), "search_location");
             }
         });
 
