@@ -44,10 +44,7 @@ android {
 }
 
 dependencies {
-    // Mockito for unit testing
-    testImplementation 'org.mockito:mockito-core:3.12.4'
-    testImplementation 'org.mockito:mockito-inline:3.12.4'
-    testImplementation 'org.mockito:mockito-junit-jupiter:3.12.4'
+
 
 
     //javadoc only disable when run app
@@ -88,7 +85,7 @@ dependencies {
 
     implementation 'androidx.camera:camera-core:1.2.1'
     androidTestImplementation 'com.jayway.android.robotium:robotium-solo:5.5.4'
-
+    testImplementation "androidx.arch.core:core-testing:2.1.0"
 
     // firebase
     implementation platform('com.google.firebase:firebase-bom:31.2.2')
