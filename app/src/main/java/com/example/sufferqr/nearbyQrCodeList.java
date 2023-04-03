@@ -123,7 +123,7 @@ public class nearbyQrCodeList extends AppCompatActivity implements LocationListe
                     double tempLat = (double) doc.getData().get("LocationLatitude");
                     double tempLon = (double) doc.getData().get("LocationLongitude");
                     double dis = isWithinOneKilometer(latitude, longitude, tempLat, tempLon);
-                    if ( dis <= 10000 ) {
+                    if ( dis <= 1000 ) {
                         tempDataHolder.put(dis,data);
                     }
                 }
