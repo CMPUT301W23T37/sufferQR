@@ -15,6 +15,9 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * leadboard testing
+ */
 public class LeaderBoardIntent {
     private Solo solo;
 
@@ -26,12 +29,16 @@ public class LeaderBoardIntent {
     public void setUp() throws Exception {
         solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
     }
-
+    
     @Test
     public void start() throws Exception {
         Activity activity = rule.getActivity();
     }
 
+    /**
+     * check if rank correct
+     * @throws Exception incorrect situation
+     */
     @Test
     public void checkLeaderBoardTotalRank() throws Exception {
         solo.assertCurrentActivity("Wrong Activity", LeaderBoard.class);
@@ -40,6 +47,10 @@ public class LeaderBoardIntent {
         assertEquals("Not on the Total Rank page", 0, currentPage);
     }
 
+    /**
+     * check if rank correct
+     * @throws Exception incorrect situation
+     */
     @Test
     public void checkLeaderBoardHighestRank() throws Exception {
         solo.assertCurrentActivity("Wrong Activity", LeaderBoard.class);
