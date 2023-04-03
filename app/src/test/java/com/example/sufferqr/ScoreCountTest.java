@@ -1,14 +1,14 @@
 package com.example.sufferqr;
 
-import org.junit.Test;
-
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import static org.junit.Assert.assertEquals;
 
 
 /**
  * Test to see if the ScoreCounter functions properly
  */
-public class ScoreCounterTest {
+public class ScoreCountTest {
 
     /**
      * Tests to make sure no input is given a score of 0
@@ -17,7 +17,7 @@ public class ScoreCounterTest {
     public void testCalculateScoreWithEmptyString() {
         ScoreCounter counter = new ScoreCounter("");
         int score = counter.calculateScore();
-        assertEquals(0, score);
+        Assertions.assertEquals(0, score);
     }
     /**
      * Tests to make sure if no character is repeating, you will score a 0
@@ -26,7 +26,7 @@ public class ScoreCounterTest {
     public void testCalculateScoreWithUniqueCharacters() {
         ScoreCounter counter = new ScoreCounter("abcd");
         int score = counter.calculateScore();
-        assertEquals(0, score);
+        Assertions.assertEquals(0, score);
     }
     /**
      * Tests to make sure if one repetition is counted,it will still go and not stop
@@ -35,7 +35,7 @@ public class ScoreCounterTest {
     public void testCalculateScoreWithRepeatedCharacters() {
         ScoreCounter counter = new ScoreCounter("aabbccdd");
         int score = counter.calculateScore();
-        assertEquals(1576, score);
+        Assertions.assertEquals(1576, score);
     }
 
     /**
@@ -45,7 +45,7 @@ public class ScoreCounterTest {
     public void testCalculateScoreWithMoreThanDoubleRepetition() {
         ScoreCounter counter = new ScoreCounter("aaaabbbcccc");
         int score = counter.calculateScore();
-        assertEquals(653, score);
+        Assertions.assertEquals(653, score);
     }
     /**
      * Tests to make sure class any random combination of characters can work
@@ -54,7 +54,7 @@ public class ScoreCounterTest {
     public void testCalculateScoreWithMixedCharacters() {
         ScoreCounter counter = new ScoreCounter("aabbccDDEEFF1122");
         int score = counter.calculateScore();
-        assertEquals(2400, score);
+        Assertions.assertEquals(2400, score);
     }
 
 }
