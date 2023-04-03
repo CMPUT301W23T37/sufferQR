@@ -1,6 +1,6 @@
 # sufferQR
 
-Welcome! Finds QR Code NearBu with Our App
+Welcome! Finds QR Code NearBy with Our App
 
 
 LeaderBoard   
