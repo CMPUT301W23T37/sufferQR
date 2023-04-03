@@ -190,6 +190,7 @@ public class UserProfile extends DrawerBase {
                 String name = userName.getText().toString();
                 i.putExtra("username", name);
                 startActivity(i);
+                finish();
             }
         });
     }
