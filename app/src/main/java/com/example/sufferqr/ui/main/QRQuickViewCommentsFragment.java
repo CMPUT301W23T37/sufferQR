@@ -23,6 +23,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.MetadataChanges;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.protobuf.Value;
@@ -127,7 +128,7 @@ public class QRQuickViewCommentsFragment extends Fragment {
         });
 
         CollectionReference comRef = db.collection("GameQrCode").document(qrName).collection("Comment");
-        comRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        comRef.addSnapshotListener(MetadataChanges.INCLUDE,new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 dataList.clear();
