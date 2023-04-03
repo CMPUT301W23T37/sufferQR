@@ -84,9 +84,10 @@ public class otherUserTest {
     @Test
     public void testScanRecord(){
         solo.assertCurrentActivity("Wrong Activity", LeaderBoard.class);
-        onView(withId(R.id.ranks_listview)).perform(click());
+        solo.clickInList(1);
+        //onView(withId(R.id.ranks_listview)).perform(click());
         solo.assertCurrentActivity("Wrong Activity", OtherUser.class);
-        onView(withId(R.id.other_user_profile_list)).perform(click());
+        solo.clickInList(1);
         solo.assertCurrentActivity("Wrong Activity", QRQuickViewScrollingActivity.class);
     }
 
