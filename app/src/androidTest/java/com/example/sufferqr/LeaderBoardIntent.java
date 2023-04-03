@@ -29,7 +29,7 @@ public class LeaderBoardIntent {
     public void setUp() throws Exception {
         solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
     }
-    
+
     @Test
     public void start() throws Exception {
         Activity activity = rule.getActivity();
