@@ -485,11 +485,10 @@ public class ScanCode extends DrawerBase {
 
     /**
      * check permission status
-     * @param requestCode The request code passed in {@link (
-     * android.app.Activity, String[], int)}
+     * @param requestCode The request code passed in integer
      * @param permissions The requested permissions. Never null.
      * @param grantResults The grant results for the corresponding permissions
-     *     which is either {@link android.content.pm.PackageManager#PERMISSION_GRANTED}
+     *     which is either PERMISSION_GRANTED
      *     or {@link android.content.pm.PackageManager#PERMISSION_DENIED}. Never null.
      *
      */

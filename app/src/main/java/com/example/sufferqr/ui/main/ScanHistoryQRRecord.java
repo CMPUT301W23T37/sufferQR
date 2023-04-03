@@ -23,6 +23,7 @@ public class ScanHistoryQRRecord {
      * @param loc location name such as ccis
      * @param name qr code name
      * @param point score of qrcode
+     * @param data1 doc
      */
     public ScanHistoryQRRecord(String name, String point, String d1,String loc,Map<String,Object> data1){
         QRname = name;

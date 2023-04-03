@@ -44,7 +44,7 @@ public class QrCodeList extends ArrayAdapter<QrCode> {
      *        always of the right type (see {@link #getViewTypeCount()} and
      *        {@link #getItemViewType(int)}).
      * @param parent The parent that this view will eventually be attached to
-     * @return
+     * @return view item
      */
     @NonNull
     @Override

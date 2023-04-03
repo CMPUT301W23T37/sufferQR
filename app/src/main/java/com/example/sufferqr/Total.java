@@ -53,7 +53,7 @@ public class Total extends Fragment {
      * @param savedInstanceState If non-null, this fragment is being re-constructed
      * from a previous saved state as given here.
      *
-     * @return
+     * @return views
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

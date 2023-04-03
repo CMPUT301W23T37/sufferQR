@@ -484,6 +484,7 @@ public class GameQrRecordDB {
      *
      * @param oldName old username
      * @param newName new username
+     * @param checked status
      */
     public void PlayerProfileChange(String oldName, String newName, boolean checked){
         final CollectionReference collectionReference = db.collection("GameQrCode");

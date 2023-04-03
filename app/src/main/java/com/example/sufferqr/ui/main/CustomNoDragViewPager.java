@@ -44,7 +44,7 @@ public class CustomNoDragViewPager extends ViewPager {
     /**
      * motion event
      * @param event The motion event being dispatched down the hierarchy.
-     * @return
+     * @return boolean
      */
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
